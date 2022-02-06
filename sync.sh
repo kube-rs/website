@@ -5,6 +5,7 @@ curl -sSL https://raw.githubusercontent.com/kube-rs/.github/main/maintainers.md 
 curl -sSL https://raw.githubusercontent.com/kube-rs/kube-rs/master/CONTRIBUTING.md -o docs/syncs/contributing.md
 curl -sSL https://raw.githubusercontent.com/kube-rs/kube-rs/master/ADOPTERS.md -o docs/syncs/adopters.md
 curl -sSL https://raw.githubusercontent.com/kube-rs/kube-rs/master/CHANGELOG.md -o docs/syncs/changelog.md
+curl -sSL https://raw.githubusercontent.com/kube-rs/kube-rs/master/README.md -o docs/syncs/getting-started.md
 curl -sSL https://raw.githubusercontent.com/kube-rs/.github/main/code-of-conduct.md -o docs/syncs/code-of-conduct.md
 curl -sSL https://raw.githubusercontent.com/kube-rs/.github/main/SECURITY.md -o docs/syncs/security.md
 

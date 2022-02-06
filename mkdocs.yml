@@ -3,8 +3,8 @@
 # mkdocs: https://www.mkdocs.org/user-guide/configuration/
 
 site_name: kube
-repo_url: https://github.com/kube-rs/website
-repo_name: website
+repo_url: https://github.com/kube-rs/kube-rs
+repo_name: kube-rs
 # NB: edit uri won't work well with sync system if we don't have canonical docs in the same repo as the site
 #edit_uri: edit/main/docs
 edit_uri: ''
@@ -12,7 +12,7 @@ theme:
   icon:
     repo: fontawesome/brands/github
   name: material
-  favicon: favicon-96x96.png
+  # TODO: favicon: favicon-96x96.png
   palette:
   - scheme: slate
     accent: orange
