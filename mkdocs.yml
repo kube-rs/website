@@ -38,8 +38,7 @@ theme:
 # Generated from "fd .md ." in docs/ folder.
 # mkdocs serve will tell us about uncovered documents or broken links
 nav:
-# TODO: front index.md that links to key pages (getting started, community, crates, docs.rs, github)
-  # TODO: factor out help docs from main repo?
+- index.md
 - getting-started.md
 - quick-tutorial.md
 - syncs/changelog.md
