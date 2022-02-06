@@ -1,0 +1,34 @@
+{
+  "editor.minimap.enabled": false,
+  "editor.wrappingIndent": "indent",
+  "editor.overviewRulerBorder": false,
+  "editor.lineHeight": 24,
+  "workbench.colorTheme": "Seti Modified",
+  "[markdown]": {
+    "editor.quickSuggestions": true
+  },
+  "foam.openDailyNote.directory": "./docs/proposals",
+  "foam.openDailyNote.fileExtension": "md",
+  "foam.edit.linkReferenceDefinitions": "withoutExtensions",
+  "foam.files.ignore": [
+    "/.vscode",
+    "/README.md",
+  ],
+  "git.enableSmartCommit": true,
+  "git.postCommitCommand": "sync",
+  "files.defaultLanguage": "markdown",
+  "files.exclude": {
+    "**/node_modules": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules": true
+  },
+  "markdown.preview.breaks": true,
+  "pasteImage.path": "${currentFileDir}",
+  "pasteImage.namePrefix": "${currentFileNameWithoutExt}",
+  "pasteImage.showFilePathConfirmInputBox": true,
+  "prettier.singleQuote": false,
+  "spellright.notificationClass": "warning",
+  "vscodeMarkdownNotes.noteCompletionConvention": "noExtension",
+  "vscodeMarkdownNotes.slugifyMethod": "github-slugger"
+}

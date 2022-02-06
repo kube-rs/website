@@ -1,0 +1,121 @@
+# official tutorial
+# mkdocs-material: https://squidfunk.github.io/mkdocs-material/
+# mkdocs: https://www.mkdocs.org/user-guide/configuration/
+
+site_name: kube
+repo_url: https://github.com/kube-rs/kube-rs
+repo_name: kube-rs
+# NB: edit uri won't work well with sync system if we don't have canonical docs in the same repo as the site
+#edit_uri: edit/main/docs
+edit_uri: ''
+theme:
+  icon:
+    repo: fontawesome/brands/github
+  name: material
+  favicon: favicon-96x96.png
+  palette:
+  - scheme: slate
+    accent: orange
+    primary: orange
+    media: "(prefers-color-scheme: dark)"
+    toggle:
+      icon: material/toggle-switch
+      name: Switch to light mode
+  - scheme: default
+    media: "(prefers-color-scheme: light)"
+    toggle:
+      icon: material/toggle-switch-off-outline
+      name: Switch to dark mode
+  language: en
+  features:
+    #- navigation.tabs
+    - navigation.indexes
+    - navigation.sections
+    - navigation.instant
+    - navigation.tracking
+
+# NB: Maintaining the nav list is not necessary, but is needed to reorder.
+# Generated from "fd .md ." in docs/ folder.
+# mkdocs serve will tell us about uncovered documents or broken links
+nav:
+# TODO: front index.md that links to key pages (getting started, community, crates, docs.rs, github)
+  # TODO: factor out help docs from main repo?
+- getting-started.md
+- quick-tutorial.md
+- syncs/changelog.md
+- syncs/architecture.md
+- syncs/governance.md
+- syncs/tools.md
+#- integrations.md
+- syncs/maintainers.md
+- release-process.md
+- syncs/security.md
+- syncs/adopters.md
+
+# Maybe something for the future
+#- Proposals/Rejected: []
+#- Proposals/Done: []
+#- Proposals/Accepted: []
+- Contributing:
+  - syncs/contributing.md
+  - contributing/rust-version.md
+  - syncs/code-of-conduct.md
+  #- comunity.md
+  #- contributing-docs.md
+  #- proposal-process.md
+  #- mentorship.md
+  #- coding-style.md
+- Crates:
+  - crates/kube.md
+  - crates/kube-core.md
+  - crates/kube-client.md
+  - crates/kube-derive.md
+  - crates/kube-runtime.md
+markdown_extensions:
+  - attr_list # https://squidfunk.github.io/mkdocs-material/reference/images/
+  - pymdownx.tabbed  # https://squidfunk.github.io/mkdocs-material/reference/content-tabs/
+  - nl2br # newline-to-break
+  - toc:
+      permalink: '#' # heading anchor
+      slugify: !!python/name:pymdownx.slugs.uslugify
+  - admonition
+  - codehilite:
+      guess_lang: false
+      linenums: false
+  - footnotes
+  - meta
+  - def_list
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist
+  - pymdownx.tilde
+plugins:
+  - search
+  - roamlinks
+    #- autolinks
+  - exclude:
+      glob:
+        - "*.tmp"
+        - "*.pdf"
+        - "*.gz"
+      regex:
+        - '.*\.(tmp|bin|tar)$'
+copyright: ''
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/regular/bookmark
+      link: https://kube.rs
+    - icon: fontawesome/brands/github
+      link: https://github.com/kube-rs/website
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/kube_rs
