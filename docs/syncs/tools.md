@@ -1,6 +1,6 @@
-# Tools we use
+# Tools
 
-All repositories herein are buildable using FLOSS tools, and they are listed herein:
+All repositories under kube-rs are buildable using FLOSS tools, and they are listed herein.
 
 ## User Dependencies
 

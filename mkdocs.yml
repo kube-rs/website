@@ -38,9 +38,9 @@ theme:
 # Generated from "fd .md ." in docs/ folder.
 # mkdocs serve will tell us about uncovered documents or broken links
 nav:
-- index.md
-- getting-started.md
-- quick-tutorial.md
+#- index.md
+- syncs/getting-started.md
+#- quick-tutorial.md
 - syncs/changelog.md
 - syncs/architecture.md
 - syncs/governance.md

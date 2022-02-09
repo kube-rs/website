@@ -1,4 +1,4 @@
-# Kube-rs Governance
+# Governance
 
 This document defines project governance for Kube-rs.
 

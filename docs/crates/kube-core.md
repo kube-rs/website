@@ -3,7 +3,7 @@
 `kube-core` is the core crate with the lowest level abstractions.
 It is re-exported from [[kube]] under `kube::core`.
 
-This crate has the most extensive documentation on [docs.rs/kube/core](https://docs.rs/kube/latest/kube/core/index.html/).
+This crate has the most extensive documentation on [docs.rs/kube/core](https://docs.rs/kube/latest/kube/core/index.html).
 
 ## Contains
 
