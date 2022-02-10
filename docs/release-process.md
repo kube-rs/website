@@ -1,4 +1,4 @@
-# Release process
+# Release Process
 
 The release process for all the crates in kube is briefly outlined in [release.toml](https://github.com/kube-rs/kube-rs/blob/master/release.toml).
 
@@ -101,7 +101,7 @@ Some example release notes from recent history has some ideas:
 - [0.68.0](https://github.com/kube-rs/kube-rs/releases/tag/0.68.0)
 - [0.66.0](https://github.com/kube-rs/kube-rs/releases/tag/0.66.0)
 
-Note that headers should link to PRs/important documents, but it is not necessary to link into the release or the milestone in this document yourself (the next step automates this).
+Note that headers should link to PRs/important documents, but it is not necessary to link into the release or the milestone in this document yourself (the `afterdoc` step automates this).
 
 For breaking changes; consider including migration code samples for users if it provides an easier way to understand the changes. Fenced code blocks with `diff` language are easy to scan:
 
