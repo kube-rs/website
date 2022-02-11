@@ -92,9 +92,9 @@ For these cases, it's perfectly OK to just hit [Publish](#){ .md-button-primary 
 - Run `./scripts/release-afterdoc.sh` to port the changed release notes into the `CHANGELOG.md` and push
 - Run `./sync.sh` in the website repo to port the new release notes onto the website
 
-### Appendix
+## Appendix
 
-#### Header Formatting Tips
+### Header Formatting Tips
 
 Some example release notes from recent history has some ideas:
 
