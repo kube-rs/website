@@ -20,7 +20,9 @@ The [mkdocs.yml](./mkdocs.yml) file's `nav` section dictates the structure of th
 
 ## Interactions
 
-This webpage copies certain files from resources elsewhere..
+This webpage **copies** certain files from resources elsewhere and the **canonical versions** thus live **outside this repo**.
 
-Copied files should not be edited herein because they have other github interaction effects.
-These files are copied into the [docs/syncs](./docs/syncs/) folder via the [sync.sh](./sync.sh) script.
+**Copied files are overwritten herein and should be edited at the root source due to github interaction effects.**
+
+The synchronised files are marked with `<!--GENERATED FROM XXX-->` header, so try to keep an eye out for this.
+For a full overview see the [sync.sh](https://github.com/kube-rs/website/blob/main/sync.sh) script.

@@ -1,3 +1,4 @@
+<!--GENERATED FROM https://github.com/blob/kube-rs/kube-rs/master/CONTRIBUTING.md - CHANGES MUST BE MADE THERE -->
 # Contributing Guide
 
 This document describes the requirements for committing to this repository.

@@ -1,3 +1,4 @@
+<!--GENERATED FROM https://github.com/blob/kube-rs/.github/main/SECURITY.md - CHANGES MUST BE MADE THERE -->
 # Security Policy
 
 ## Supported Versions

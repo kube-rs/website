@@ -39,26 +39,26 @@ theme:
 # mkdocs serve will tell us about uncovered documents or broken links
 nav:
 #- index.md
-- syncs/getting-started.md
+- getting-started.md
 #- quick-tutorial.md
-- syncs/changelog.md
-- syncs/architecture.md
-- syncs/governance.md
-- syncs/tools.md
+- changelog.md
+- architecture.md
+- governance.md
+- tools.md
 #- integrations.md
-- syncs/maintainers.md
+- maintainers.md
 - release-process.md
-- syncs/security.md
-- syncs/adopters.md
+- security.md
+- adopters.md
 
 # Maybe something for the future
 #- Proposals/Rejected: []
 #- Proposals/Done: []
 #- Proposals/Accepted: []
 - Contributing:
-  - syncs/contributing.md
-  - contributing/rust-version.md
-  - syncs/code-of-conduct.md
+  - contributing.md
+  - rust-version.md
+  - code-of-conduct.md
   #- comunity.md
   #- contributing-docs.md
   #- proposal-process.md
