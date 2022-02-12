@@ -17,3 +17,7 @@ develop: venv
   #!/usr/bin/env bash
   (sleep 2 && xdg-open http://127.0.0.1:8000/) &
   mkdocs serve
+
+# synchronize markdown from external repos
+sync:
+  ./sync.sh

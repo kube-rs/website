@@ -5,12 +5,15 @@ sync() {
     repopath="$1"
     namelocal="$2"
     header="$3"
+    # Overwrite the blank file with a big warning:
     echo "<!--GENERATED FROM https://github.com/blob/${repopath} - CHANGES MUST BE MADE THERE -->" > "${namelocal}"
+    # Concat optional extra header
     if [ -n "${header}" ]; then
-        echo "${header}" >> "${namelocal}"
+        echo -e "${header}" >> "${namelocal}"
     fi
-    # TODO: swap to use the github api tool to avoid being rate limited
+    # Concat original file contents
     curl -sSL "https://raw.githubusercontent.com/${repopath}" >> "${namelocal}"
+    # TODO: swap to use the github api tool ^ to avoid being rate limited in the future
 }
 
 main() {
@@ -18,6 +21,7 @@ main() {
     sync kube-rs/kube-rs/master/CONTRIBUTING.md docs/contributing.md
     sync kube-rs/kube-rs/master/ADOPTERS.md docs/adopters.md
     sync kube-rs/.github/main/code-of-conduct.md docs/code-of-conduct.md
+    sync cncf/foundation/main/code-of-conduct.md docs/code-of-conduct.md "# Code of Conduct\nkube-rs follows the [CNCF code of conduct](https://github.com/cncf/foundation/blob/main/code-of-conduct.md) inlined below."
     sync kube-rs/.github/main/SECURITY.md docs/security.md
 
     # main readme requires some re-formatting to be used as getting-started
