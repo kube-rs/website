@@ -5,8 +5,10 @@ sync() {
     repopath="$1"
     namelocal="$2"
     header="$3"
-    # Overwrite the blank file with a big warning:
-    echo "<!--GENERATED FROM https://github.com/blob/${repopath} - CHANGES MUST BE MADE THERE -->" > "${namelocal}"
+    # Overwrite the blank file with a big warning and a link to the file on github ui
+    uipath=${repopath/main/blob/main}
+    uipath=${uipath/master/blob/master}
+    echo "<!--GENERATED FROM https://github.com/${uipath} - CHANGES MUST BE MADE THERE -->" > "${namelocal}"
     # Concat optional extra header
     if [ -n "${header}" ]; then
         echo -e "${header}" >> "${namelocal}"

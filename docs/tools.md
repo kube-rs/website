@@ -1,4 +1,4 @@
-<!--GENERATED FROM https://github.com/blob/kube-rs/.github/main/TOOLS.md - CHANGES MUST BE MADE THERE -->
+<!--GENERATED FROM https://github.com/kube-rs/.github/blob/main/TOOLS.md - CHANGES MUST BE MADE THERE -->
 # Tools
 
 All repositories under kube-rs are buildable using FLOSS tools, and they are listed herein.

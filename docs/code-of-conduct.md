@@ -1,4 +1,4 @@
-<!--GENERATED FROM https://github.com/blob/cncf/foundation/main/code-of-conduct.md - CHANGES MUST BE MADE THERE -->
+<!--GENERATED FROM https://github.com/cncf/foundation/blob/main/code-of-conduct.md - CHANGES MUST BE MADE THERE -->
 # Code of Conduct
 kube-rs follows the [CNCF code of conduct](https://github.com/cncf/foundation/blob/main/code-of-conduct.md) inlined below.
 ## CNCF Community Code of Conduct v1.1

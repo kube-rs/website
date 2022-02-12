@@ -1,4 +1,4 @@
-<!--GENERATED FROM https://github.com/blob/kube-rs/kube-rs/master/ADOPTERS.md - CHANGES MUST BE MADE THERE -->
+<!--GENERATED FROM https://github.com/kube-rs/kube-rs/blob/master/ADOPTERS.md - CHANGES MUST BE MADE THERE -->
 # Adopters
 
 ## Open Source

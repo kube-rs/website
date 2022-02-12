@@ -1,4 +1,4 @@
-<!--GENERATED FROM https://github.com/blob/kube-rs/.github/main/governance.md - CHANGES MUST BE MADE THERE -->
+<!--GENERATED FROM https://github.com/kube-rs/.github/blob/main/governance.md - CHANGES MUST BE MADE THERE -->
 # Governance
 
 This document defines project governance for Kube-rs.

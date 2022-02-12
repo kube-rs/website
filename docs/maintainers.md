@@ -1,4 +1,4 @@
-<!--GENERATED FROM https://github.com/blob/kube-rs/.github/main/maintainers.md - CHANGES MUST BE MADE THERE -->
+<!--GENERATED FROM https://github.com/kube-rs/.github/blob/main/maintainers.md - CHANGES MUST BE MADE THERE -->
 # Maintainers
 
 The Kube-rs maintainers are:
