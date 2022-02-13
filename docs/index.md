@@ -1,5 +1,8 @@
-# kube-rs
-<!-- rewrite selling points here -->
+<figure markdown>
+  <!-- just linking my sketch here for now -->
+  ![kube-rs logo](https://user-images.githubusercontent.com/134092/151768945-41208c05-0ce2-4304-a28e-acbaa3834d32.png){ width="500" }
+</figure>
+
 
 A [Rust](https://rust-lang.org/) client for [Kubernetes](http://kubernetes.io) in the style of a more generic [client-go](https://github.com/kubernetes/client-go), a runtime abstraction inspired by [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime), and a derive macro for [CRDs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/) inspired by [kubebuilder](https://book.kubebuilder.io/reference/generating-crd.html). Hosted by [CNCF](https://cncf.io/) as a [Sandbox Project](https://www.cncf.io/sandbox-projects/)
 

@@ -12,7 +12,8 @@ theme:
   icon:
     repo: fontawesome/brands/github
   name: material
-  # TODO: favicon: favicon-96x96.png
+  logo: favicon.png
+  favicon: favicon.png
   palette:
   - scheme: slate
     accent: orange
@@ -54,7 +55,7 @@ nav:
 #- Proposals/Done: []
 #- Proposals/Accepted: []
 - Contributing:
-  - code-of-conduct.md
+  #- code-of-conduct.md
   - governance.md
   - maintainers.md
   - contributing.md
@@ -75,6 +76,7 @@ markdown_extensions:
   - attr_list # https://squidfunk.github.io/mkdocs-material/reference/images/
   - pymdownx.tabbed  # https://squidfunk.github.io/mkdocs-material/reference/content-tabs/
   - nl2br # newline-to-break
+  - md_in_html # allow markdown within html blocks
   - toc:
       permalink: '#' # heading anchor
       slugify: !!python/name:pymdownx.slugs.uslugify

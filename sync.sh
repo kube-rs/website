@@ -22,8 +22,10 @@ main() {
     sync kube-rs/.github/main/maintainers.md docs/maintainers.md
     sync kube-rs/kube-rs/master/CONTRIBUTING.md docs/contributing.md
     sync kube-rs/kube-rs/master/ADOPTERS.md docs/adopters.md
-    sync kube-rs/.github/main/code-of-conduct.md docs/code-of-conduct.md
-    sync cncf/foundation/main/code-of-conduct.md docs/code-of-conduct.md "# Code of Conduct\nkube-rs follows the [CNCF code of conduct](https://github.com/cncf/foundation/blob/main/code-of-conduct.md) inlined below."
+    # wanted to inline COC, but it links to other documents relatively so won't work
+    # for now left out since it is linked through from the contributing guide
+    #sync kube-rs/.github/main/code-of-conduct.md docs/code-of-conduct.md
+    #sync cncf/foundation/main/code-of-conduct.md docs/code-of-conduct.md "# Code of Conduct\nkube-rs follows the [CNCF code of conduct](https://github.com/cncf/foundation/blob/main/code-of-conduct.md) inlined below."
     sync kube-rs/.github/main/SECURITY.md docs/security.md
 
     # main readme requires some re-formatting to be used as getting-started
