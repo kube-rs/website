@@ -15,15 +15,20 @@ theme:
   logo: favicon.png
   favicon: favicon.png
   palette:
+  # dark mode
   - scheme: slate
-    accent: orange
-    primary: orange
+    # use a lighter blue for banner and buttons (indigo too dark for buttons)
+    primary: blue
+    accent: blue
     media: "(prefers-color-scheme: dark)"
     toggle:
       icon: material/toggle-switch
       name: Switch to light mode
+  # light mode
   - scheme: default
     media: "(prefers-color-scheme: light)"
+    primary: indigo
+    accent: light blue
     toggle:
       icon: material/toggle-switch-off-outline
       name: Switch to dark mode
