@@ -16,6 +16,8 @@ sync() {
     # Concat original file contents
     curl -sSL "https://raw.githubusercontent.com/${repopath}" >> "${namelocal}"
     # TODO: swap to use the github api tool ^ to avoid being rate limited in the future
+
+    # TODO: fix relative links in vendored docs somehow
 }
 
 main() {

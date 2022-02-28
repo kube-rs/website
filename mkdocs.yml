@@ -34,8 +34,8 @@ theme:
       name: Switch to dark mode
   language: en
   features:
-    #- navigation.tabs
-    - navigation.indexes
+    - navigation.tabs
+    #- navigation.indexes
     - navigation.sections
     - navigation.instant
     - navigation.tracking
@@ -44,16 +44,31 @@ theme:
 # Generated from "fd .md ." in docs/ folder.
 # mkdocs serve will tell us about uncovered documents or broken links
 nav:
-#- index.md
-- getting-started.md
-#- quick-tutorial.md
-- changelog.md
-#- integrations.md
-- security.md
-- release-process.md
-- rust-version.md
-- architecture.md
-- adopters.md
+- Information:
+  #- index.md
+  - getting-started.md
+  #- quick-tutorial.md
+  - changelog.md
+  #- integrations.md
+  - security.md
+  - release-process.md
+  - rust-version.md
+  - architecture.md
+  - adopters.md
+
+- Controller Guide:
+  - controllers/intro.md
+
+  #- comunity.md
+  #- proposal-process.md
+  #- mentorship.md
+  #- coding-style.md
+- Crates:
+  - crates/kube.md
+  - crates/kube-core.md
+  - crates/kube-client.md
+  - crates/kube-derive.md
+  - crates/kube-runtime.md
 
 # Maybe something for the future
 #- Proposals/Rejected: []
@@ -67,16 +82,6 @@ nav:
   - website.md
   - tools.md
 
-  #- comunity.md
-  #- proposal-process.md
-  #- mentorship.md
-  #- coding-style.md
-- Crates:
-  - crates/kube.md
-  - crates/kube-core.md
-  - crates/kube-client.md
-  - crates/kube-derive.md
-  - crates/kube-runtime.md
 markdown_extensions:
   - attr_list # https://squidfunk.github.io/mkdocs-material/reference/images/
   - pymdownx.tabbed  # https://squidfunk.github.io/mkdocs-material/reference/content-tabs/
