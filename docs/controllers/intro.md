@@ -4,7 +4,7 @@ This chapter contains information on how to build controllers with kube-rs.
 
 A controller consist of three pieces:
 
-- an object dictating what the world should see (the **spec**)
+- a main object dictating what the world should see (the **object**)
 - an application running inside kubernetes watching the spec and related objects (the **application**)
 - an idempotent function that ensures the state of one object is applied to the world (the **reconciler**)
 
@@ -12,11 +12,22 @@ In short:
 
 > A controller a long-running program that ensures the kubernetes state of an object, matches the state of the world.
 
-It ensures this by watching the object, and reconciling any differences when they occur.
+It ensures this by watching the object, and reconciling any differences when they occur:
 
-## The Specification
+```mermaid
+flowchart TD
+    A[User/CD] -- kubectl apply object.yaml --> K[Kubernetes Api]
+    C[Controller] -- watch objects --> K
+    C -- schedule object --> R[Reconciler]
+    R -- result --> C
+    R -- update related objects --> K
+```
 
-The main object is the specification for what the world should be like, and it takes the form of one or more Kubernetes objects, like say a:
+The controller picks up on related changes from the kubernetes api, then starts **reconciling** the main object. The reconciliation process updates the state of world, and the outcome is fed back into the reconciler for retries/requeing.
+
+## The Object
+
+The main object is the source of truth for what the world should be like, and it takes the form of one or more Kubernetes objects, like say a:
 
 - [Pod](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/api/core/v1/struct.Pod.html)
 - [Deployment](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/api/apps/v1/struct.Deployment.html)
@@ -26,7 +37,7 @@ The main object is the specification for what the world should be like, and it t
 
 Because Kubernetes already a [core controller manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) for the core native objects, the most common use-case is Custom Resources, but the process outlined herein system works equally well for all resources.
 
-The object(s) we are interested in [typically contains a Spec](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/#object-spec-and-status) (or something equivalent) which describe the **desired state of the world** and we will use this term to refer to our main object(s) in a controller.
+See the [[object]] section for how to use the various types.
 
 ## The Application
 
@@ -76,3 +87,40 @@ In practice the reconciler, is the warmest user-defined code in your controller,
 ..and to make matters more confusing, sometimes controllers sit in front of the watch machinery and is in charge of [admission into Kubernetes](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/).
 
 We will go through all these details herein and you can compose the various techniques as you see fit depending on your use case.
+
+## Controllers and Operators
+
+The terminology between **controllers** and **operators** are quite similar:
+
+1. Kubernetes uses the following [controller terminology](https://kubernetes.io/docs/concepts/architecture/controller/):
+
+> In Kubernetes, controllers are **control loops** that watch the **state** of your cluster, then make or request **changes where needed**. Each controller tries to move the current cluster state closer to the desired state.
+
+2. The term **operator**, on the other hand, was originally introduced by `CoreOS` as:
+
+> An Operator is an application-specific controller that extends the Kubernetes API to create, configure and manage instances of complex stateful applications on behalf of a Kubernetes user. It builds upon the basic Kubernetes resource and controller concepts, but also includes domain or application-specific knowledge to automate common tasks better managed by computers.
+
+Which is further reworded now under their new [agglomerate banner](https://cloud.redhat.com/learn/topics/operators).
+
+They key **differences** between the two is that **operators** generally a specific type of controller, sometimes more than one in a single application. A controller would at the very least need to:
+
+- manage custom resource definition(s)
+- maintain single app focus
+
+to be classified as an operator.
+
+The term **operator** is thus a flashier word that makes the **common use-case** for user-written CRD controllers more understandable. If you have a CRD you likely want a controller for it.
+
+## Guide Focus
+
+Our goal is that with this guide, you will learn how to use and apply the various controller patterns, so that you can avoid scaffolding out a large / complex / underutilized structure.
+
+We will focus on all the patterns as to not betray the versatility of the Kubernetes API, because components found within complex controllers can generally be mixed and matched as you see fit.
+
+We will focus on how the variour element **composes** so you can take advantage of any controller archetypes - operators included.
+
+TODO: get us listed on https://kubernetes.io/docs/concepts/extend-kubernetes/operator/#writing-operator
+
+[//begin]: # "Autogenerated link references for markdown compatibility"
+[object]: object "The Object"
+[//end]: # "Autogenerated link references"

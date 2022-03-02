@@ -1,0 +1,1 @@
+*[HPA]: Horizontal Pod Autoscaler
