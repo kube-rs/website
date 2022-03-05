@@ -64,7 +64,7 @@ Controller::new(pods, ListParams::default())
 
 !!! note "Custom resources require schemas"
 
-    Since **v1** of [CustomResourceDefinition] became the main variant (v1beta1 was removed in Kubernetes >= 1.22 TODO: link), a schema is **required**. These schemas are generated using [schemars] by specifying the `JsonSchema` derive. See the schemas section (TODO) for further information on advanced usage.
+    Since **v1** of [CustomResourceDefinition] became the main variant ([`v1beta1` was removed in Kubernetes 1.22](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.22.md#removal-of-several-beta-kubernetes-apis)), a schema is **required**. These schemas are generated using [schemars] by specifying the `JsonSchema` derive. See the schemas section (TODO) for further information on advanced usage.
 
 #### Installation
 
