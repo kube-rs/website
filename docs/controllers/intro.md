@@ -22,12 +22,12 @@ any unsuccessful reconciliations are retried or requeued, so a controller will (
 In other words, writing a controller requires **three** pieces:
 
 - an **object** dictating what the world should see
+- an **reconciler** function that ensures the state of one object is applied to the world
 - an **application** living in kubernetes watching the object and related objects
-- an idempotent **reconciler** function that ensures the state of one object is applied to the world
 
 ## The Object
 
-The main object is the source of truth for what the world should be like, and it takes the form of one or more Kubernetes objects, like say a:
+The main object is the source of truth for what the world should be like, and it takes the form of a Kubernetes object like a:
 
 - [Pod](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/api/core/v1/struct.Pod.html)
 - [Deployment](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/api/apps/v1/struct.Deployment.html)
@@ -39,53 +39,52 @@ The main object is the source of truth for what the world should be like, and it
 Because Kubernetes already has a [core controller manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) for the core native objects, the most common use-case for controller writing is Custom Resources.
 
 
-See the [[object]] section for how to use the various types.
-
-## The Application
-
-The job of the controller application is simply to watch the core object(s), and any related objects for changes, and then relay the information to the reconciler.
-
-The application, as far as this guide is concerned, takes the form of a **rust application** using the `kube` crate as a **dependency** with the `runtime` feature, compiled into a **container**, and deployed in kubernetes as a **`Deployment`**.
-
-The core components inside the application are:
-
-- infinite [watch loops](https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes) around relevant objects
-- a system that maps object changes to the relevant specification
-- one or more **idempotent reconcilers** acting on a single object
-
-And because of Kubernetes constraints; the system must be **fault-tolerant**. It must be able to recover from **crashes**, **downtime**, and resuming even having **missed messages**.
-
-Setting up a blank controller in rust is fairly simply, can be done with minimal boilerplate (no generated files need be inlined in your project), and will be covered in TODO: APPLICATIONDOC.
-
-The hard part of writing a controller lies in the business logic: the reconciler.
+See the [[object]] document for how to use the various types.
 
 ## The Reconciler
 
-In its simplest form, this is what a noop reconciler (a reconciler that does nothing) looks like:
+The reconconciler is the part of the controller that ensures the world is up to date.
+
+It takes the form of an `async fn` taking the object along with some context, and performs the alignment between the state of world and the `object`.
+
+In its simplest form, this is what a reconciler (that does nothing) looks like:
 
 ```rust
-async fn reconcile(object: Arc<MyObject>, data: Context<Data>) -> Result<ReconcilerAction, Error> {
+async fn reconcile(object: Arc<MyObject>, data: Context<Data>) ->
+    Result<ReconcilerAction, Error>
+{
+    // TODO: logic here
     Ok(ReconcilerAction {
         requeue_after: Some(Duration::from_secs(3600 / 2)),
     })
 }
 ```
 
-It takes the last seen version of your `object`, passes it to a user-defined function along with some user `data`, and then performs actions to align the world with `object`.
+As a controller writer, your job is to complete the logic that align the world with what is inside the `object`.
+The core reconciler must at **minimum** contain **mutating api calls** to what your `object` is meant to manage, and in some situations, handle annotations management for [ownership](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/) or [garbage collection](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/).
 
-In practice the reconciler, is the warmest user-defined code in your controller, and it will end up doing a range of tasks including:
+Writing a goood **idempotent reconciler** is the most difficult part of the whole affair, and its difficulty is the reason we generally provide diagnostics and observability:
 
-- extracting a `Client` or an `Api` from the `Data`
-- performing mutating api calls to:
-  * your `object`'s **child resources** / related resources
-  * the `object`'s **status struct** for other api consumers of the object
-  * the `Event` api for diagnostic information
-- managing annotations for [ownership](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/) or [garbage collection](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/) within kubernetes
-- handling instrumentation for tracing, logs and metrics
+See the [[reconciler]] document for a run-down with all the best-practices.
 
-..and to make matters more confusing, sometimes controllers sit in front of the watch machinery and is in charge of [admission into Kubernetes](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/).
+## The Application
 
-We will go through all these details herein and you can compose the various techniques as you see fit depending on your use case.
+The controller application is the part that watches for changes, determines what root object needs reconciliations, and then schedules reconciliations for those changes. It is the glue that turns what you want into __something__ running in Kubernetes.
+
+In this guide; the **application** is written in [rust], using the [kube] crate as a **dependency** with the `runtime` feature, compiled into a **container**, and deployed in Kubernetes as a **`Deployment`**.
+
+The core features inside the application are:
+
+- an encoding of the main object + relevant objects
+- an infinite [watch loop](https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes) around relevant objects
+- a system that maps object changes to the relevant main object
+- an **idempotent reconciler** acting on a main object
+
+The system must be **fault-tolerant**, and thus must be able to recover from **crashes**, **downtime**, and resuming even having **missed messages**.
+
+Setting up a blank controller in rust satisfying these constraints is fairly simple, and can be done with minimal boilerplate (no generated files need be inlined in your project).
+
+See the [[application]] document for the high-level details.
 
 ## Controllers and Operators
 
@@ -118,7 +117,11 @@ We will focus on all the patterns as to not betray the versatility of the Kubern
 
 We will focus on how the variour element **composes** so you can take advantage of any controller archetypes - operators included.
 
+--8<-- "includes/abbreviations.md"
+--8<-- "includes/links.md"
 
 [//begin]: # "Autogenerated link references for markdown compatibility"
 [object]: object "The Object"
+[reconciler]: reconciler "Reconciler WIP"
+[application]: application "Application WIP"
 [//end]: # "Autogenerated link references"

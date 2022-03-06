@@ -21,3 +21,4 @@
 [k8s-openapi]: https://crates.io/crates/k8s-openapi
 [Pod]: https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.Pod.html
 [CustomResourceDefinition]: https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html
+[rust]: https://www.rust-lang.org/
