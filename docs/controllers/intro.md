@@ -2,17 +2,11 @@
 
 This chapter contains information on how to build controllers with kube-rs.
 
-A controller consist of three pieces:
+## Overview
 
-- a main object dictating what the world should see (the **object**)
-- an application running inside kubernetes watching the spec and related objects (the **application**)
-- an idempotent function that ensures the state of one object is applied to the world (the **reconciler**)
+A controller a long-running program that ensures the kubernetes state of an object, matches the state of the world.
 
-In short:
-
-> A controller a long-running program that ensures the kubernetes state of an object, matches the state of the world.
-
-It ensures this by watching the object, and reconciling any differences when they occur:
+As users update the desired state, the controller sees the change and schedules a reconciliation, which will update the state of the world:
 
 ```mermaid
 flowchart TD
@@ -20,10 +14,16 @@ flowchart TD
     C[Controller] -- watch objects --> K
     C -- schedule object --> R[Reconciler]
     R -- result --> C
-    R -- update related objects --> K
+    R -- update state --> K
 ```
 
-The controller picks up on related changes from the kubernetes api, then starts **reconciling** the main object. The reconciliation process updates the state of world, and the outcome is fed back into the reconciler for retries/requeing.
+any unsuccessful reconciliations are retried or requeued, so a controller will (in theory) always eventually apply the desired state to the world.
+
+In other words, writing a controller requires **three** pieces:
+
+- an **object** dictating what the world should see
+- an **application** living in kubernetes watching the object and related objects
+- an idempotent **reconciler** function that ensures the state of one object is applied to the world
 
 ## The Object
 
@@ -32,10 +32,12 @@ The main object is the source of truth for what the world should be like, and it
 - [Pod](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/api/core/v1/struct.Pod.html)
 - [Deployment](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/api/apps/v1/struct.Deployment.html)
 - ..[any native Kubernetes Resource](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/trait.Resource.html#implementors)
-- a dynamic object from [api discovery](https://docs.rs/kube/latest/kube/discovery/index.html)
+- a partially typed or dynamically typed Kubernetes Resource
+- an object from [api discovery](https://docs.rs/kube/latest/kube/discovery/index.html)
 - a [Custom Resource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
 
-Because Kubernetes already a [core controller manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) for the core native objects, the most common use-case is Custom Resources, but the process outlined herein system works equally well for all resources.
+Because Kubernetes already has a [core controller manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) for the core native objects, the most common use-case for controller writing is Custom Resources.
+
 
 See the [[object]] section for how to use the various types.
 
