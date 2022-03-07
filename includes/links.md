@@ -3,6 +3,7 @@
 [CustomResource]: https://docs.rs/kube/latest/kube/derive.CustomResource.html
 [Resource]: https://docs.rs/kube/latest/kube/trait.Resource.html
 [ApiResource]: https://docs.rs/kube/latest/kube/core/struct.ApiResource.html
+[ListParams]: https://docs.rs/kube/latest/kube/api/struct.ListParams.html
 [Object]: https://docs.rs/kube/latest/kube/core/struct.Object.html
 [DynamicObject]: https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html
 [discovery]: https://docs.rs/kube/latest/kube/discovery/index.html

@@ -59,6 +59,8 @@ nav:
 - Controller Guide:
   - controllers/intro.md
   - controllers/object.md
+  - controllers/reconciler.md
+  - controllers/application.md
 
   #- comunity.md
   #- proposal-process.md

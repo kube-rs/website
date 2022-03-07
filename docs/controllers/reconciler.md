@@ -1,5 +1,4 @@
-# Reconciler WIP
-
+# The Reconciler
 
 The reconciler is the warmest user-defined code in your controller, and it will end up doing a range of tasks.
 
