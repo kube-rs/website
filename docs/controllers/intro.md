@@ -1,6 +1,6 @@
 # Introduction
 
-This guide showcases how to build controllers with kube-rs, and is a WIP (2 chapters done).
+This guide showcases how to build controllers with kube-rs, and is a [WIP - 2 documents done](https://github.com/kube-rs/website/issues/5).
 
 ## Overview
 
