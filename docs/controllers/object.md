@@ -29,7 +29,7 @@ This is the simplest flow and works right out of the box because the openapi imp
 
 If you have a native Kubernetes type, **you generally want to start with [k8s-openapi]**. If will likely do exactly what you want without further issues. **That said**, if both your clusters and your chosen object are large, then you can **consider optimizing** further by changing to a [partially typed resource](#partially-typed-resource) for smaller memory profile.
 
-A separate [k8s-pb] repository for our [future protobuf serialization structs](https://github.com/kube-rs/kube-rs/issues/725) also exists, and while it will slot into this category and be hotswappable with [k8s-openapi], it is **not yet usable** here.
+A separate [k8s-pb] repository for our [future protobuf serialization structs](https://github.com/kube-rs/kube-rs/issues/725) also exists, and while it will slot into this category and should hotswappable with [k8s-openapi], it is **not yet usable** here.
 
 ## Custom Resources
 ### Derived Custom Resource
@@ -223,9 +223,9 @@ let ar = ApiResource::erase::<k8s_openapi::api::core::v1::Pod>(&());
 Controller::new_with(api, ListParams::default(), &ar)
 ```
 
-In the end, we end up with some extra lines to define our [Pod], but we also drop every field inside spec + status except `spec.container.image`. If your cluster has thousands of pods and you want to do some kind of common operation on a small subset of fields, then this can give a very quick win in terms of memory use, as a Controller will maintain a cache of all owned objects.
+In the end, we end up with some extra lines to define our [Pod], but we also drop every field inside spec + status except `spec.container.image`. If your cluster has thousands of pods and you want to do some kind of common operation on a small subset of fields, then this can give a very quick win in terms of memory use (a Controller will usually maintain a `Store` of all owned objects). <!-- TODO: mention that it's possible to drop managedFields from this cache as well? it's a lot harder though.. -->
 
-### Common Caveat
+### Dynamic new_with constructors
 
 !!! warning "Partial or dynamic typing always needs additional type information"
 
@@ -238,10 +238,12 @@ All the fully typed methods all have a **consistent usage pattern** once the typ
 | typing                    | Source                               | Implementation              |
 | ------------------------- | ------------------------------------ |---------------------------- |
 | :material-check-all: full | [k8s-openapi]                        | `use k8s-openapi::X`        |
-| :material-check-all: full | kube_derive::[CustomResource]        | `#[derive(CustomResource)]` |
+| :material-check-all: full | kube::[CustomResource]               | `#[derive(CustomResource)]` |
 | :material-check-all: full | [kopium]                             | `kopium > gen.rs`           |
 | :material-check: partial  | kube::core::[Object]                 | partial copy-paste          |
 | :material-close: none     | kube::core::[DynamicObject]          | write nothing               |
+
+<!-- TODO: mention somewhere that you can do partial typing with CustomResource deriving as well? -->
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"

@@ -1,6 +1,6 @@
 # Introduction
 
-This chapter contains information on how to build controllers with kube-rs.
+This guide showcases how to build controllers with kube-rs, and is a WIP (2 chapters done).
 
 ## Overview
 
@@ -17,9 +17,9 @@ flowchart TD
     R -- update state --> K
 ```
 
-any unsuccessful reconciliations are retried or requeued, so a controller will (in theory) always eventually apply the desired state to the world.
+any unsuccessful reconciliations are retried or requeued, so a controller should **eventually** apply the desired state to the world.
 
-In other words, writing a controller requires **three** pieces:
+Writing a controller requires **three** pieces:
 
 - an **object** dictating what the world should see
 - an **reconciler** function that ensures the state of one object is applied to the world
@@ -36,8 +36,7 @@ The main object is the source of truth for what the world should be like, and it
 - an object from [api discovery](https://docs.rs/kube/latest/kube/discovery/index.html)
 - a [Custom Resource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
 
-Because Kubernetes already has a [core controller manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) for the core native objects, the most common use-case for controller writing is Custom Resources.
-
+Kubernetes already has a [core controller manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) for the core native objects, so the most common use-case for controller writing is a **Custom Resource**, but many more fine-grained use-cases exist. <!-- TODO: talk about use cases? -->
 
 See the [[object]] document for how to use the various types.
 
@@ -107,7 +106,7 @@ They key **differences** between the two is that **operators** generally a speci
 
 to be classified as an operator.
 
-The term **operator** is thus a flashier word that makes the **common use-case** for user-written CRD controllers more understandable. If you have a CRD you likely want a controller for it.
+The term **operator** is a flashier term that makes the **common use-case** for user-written CRD controllers more understandable. If you have a CRD, you likely want to write a controller for it ([otherwise why](https://kubernetes.io/docs/concepts/configuration/configmap/) go through the effort of making a custom resource?).
 
 ## Guide Focus
 
