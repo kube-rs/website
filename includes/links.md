@@ -1,4 +1,8 @@
 [Controller]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html
+[Controller::owns]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.owns
+[Controller::watches]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.watches
+[Controller::run]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.run
+[Context]: https://docs.rs/kube/latest/kube/runtime/controller/struct.Context.html
 [Api]: https://docs.rs/kube/latest/kube/struct.Api.html
 [CustomResource]: https://docs.rs/kube/latest/kube/derive.CustomResource.html
 [Resource]: https://docs.rs/kube/latest/kube/trait.Resource.html
@@ -23,3 +27,5 @@
 [Pod]: https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.Pod.html
 [CustomResourceDefinition]: https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html
 [rust]: https://www.rust-lang.org/
+[ownerReferences]: https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/#owner-references-in-object-specifications
+[finalizers]: https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/#ownership-and-finalizers
