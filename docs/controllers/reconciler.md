@@ -2,23 +2,100 @@
 
 The reconciler is the user-defined function in charge of reconciling the object state with the **state of the world**.
 
+```rust
+async fn reconcile(o: Arc<K>, ctx: Context<T>) -> Result<Action, Error>
+```
+
+It is always called with the [[object]] type (here `K`) that you instantiate the [Controller] with, regardless of what auxillary objects you end up watching:
+
+```mermaid
+graph TD
+    K{{Kubernetes}} -->|Change| W(watcher)
+    W -->|correlate| S(scheduler)
+    S -->|run| R(reconciler)
+    R -->|Update| X{{World}}
+    R -.->|result| S
+    subgraph "Controller"
+    W
+    S
+    end
+    subgraph "Application"
+    Controller
+    R
+    end
+```
+
+A [Controller] contains an internal machinery that will:
+
+- watch the relevant api endpoints in Kubernetes
+- map/correlate changes from those apis into your [[object]]
+- schedule reconciliations (no parallel reconciliations of same object)
+- call out to your `reconcile` function
+- take the result of that reconciliation to decide when to reschedule
+
+Notably, it's more than a simple watch that's glued to your reconciler. It's an infinite loop with tolerance for a wide class of failures, and a user-specifiable mechanism to correlate changes from different objects to your object.
+
 ## The World
 
-The state of the world is very often a Kubernetes object with [ownerReferences], but this does not have to be the case; it can be just one related object that happens to have information related to your main object (i.e. it does not need to be cleaned up if your main object gets deleted).
+The state of the world is generally one or more Kubernetes objects, possibly linked with [ownerReferences], but this is not always the case.
 
-We say state of the **world**, because it **does not need** to be a Kubernetes object - it could be some external api that you have semantically linked to your cluster. You could have populated the API from a custom resource, in which case you will need [finalizers] to ensure the api gets cleaned up on deletion, or you could simply use it as a source of additional information.
+We say **state of the world** because you could control things **outside Kubernetes**; you could be dependent on some external api that you have semantically linked to your cluster. You could have populated this API from a custom resource - in which case you may want [finalizers] to ensure the api gets cleaned up on CRD deletion - or you could simply use this external API as an auxillary source of information.
+
+The **relations** between your main [[object]] and **child objects** needs to be clearly defined for a controller to be most effective. These relations are defined with either [Controller::owns] or [Controller::watches]:
+
+### Owned Relation
+
+The [Controller::owns] relation is the most straight-forward and most ubiquitous one. One object controls the lifecycle of a child object, and cleanup happens automatically via [ownerReferences].
+
+```rust
+let cmgs = Api::<ConfigMapGenerator>::all(client.clone());
+let cms = Api::<ConfigMap>::all(client.clone());
+
+Controller::new(cmgs, ListParams::default())
+    .owns(cms, ListParams::default())
+```
+
+This [configmapgen example](https://github.com/kube-rs/kube-rs/blob/master/examples/configmapgen_controller.rs) uses one custom resource `ConfigMapGenerator` whose controller is in charge of the lifecycle of the child `ConfigMap`.
+Delete the `ConfigMapGenerator` instance? Kubernetes will automatically cleanup the associated `ConfigMap`, and the controller association/correlation is done using Kubernetes' own [ownerReferences] with no manual mapping logic required.
+
+### Watched Relations
+
+The [Controller::watches] relation is for related Kubernetes objects **withot** [ownerReferences], i.e. without a standard way for the controller to map the object to the root object. Thus, you need to define this mapper yourself:
+
+```rust
+let main = Api::<MainObj>::all(client);
+let related = Api::<RelatedObject>::all(client);
+
+let mapper = |obj: RelatedObject| {
+    obj.spec.object_ref.map(|oref| {
+        ReconcileRequest::from(oref)
+    })
+};
+
+Controller::new(main, ListParams::default())
+    .watches(related, ListParams::default(), mapper)
+```
+
+<!-- TODO: ReconcileRequest::from sets reason to Unknow, needs a method to set reason, ReconcileReason -> controller::Reason -->
+
+In this case we are extracing an object reference from the spec of our object.
+
+### External Relations
+
+In the case of changes from an external api / 3rd party resource needing to trigger reconcilliations, you need to write some custom logic.
+
+There's currently no way to inject non-Kubernetes watch streams into the Controller's machinery so the recommended way to watch 3rd party resources is to start it separately, and manually call `reconcile` when changes are detected.
+
+<!-- TODO: maybe open an issue for Controller::external -->
+
+### Relations Summary
 
 | Child              | Controller relation    | Setup                  |  Cleanup          |
 | ------------------ | ---------------------- | ---------------------- | ----------------- |
 | Kubernetes object  | Owned object           | [Controller::owns]     | [ownerReferences] |
 | Kubernetes object  | Related object         | [Controller::watches]  | n/a               |
-| External API       | Managed                | [Controller::watches]  | [finalizers]      |
-| External API       | Related info           | [Controller::watches]  | n/a               |
-
-
-
-that the controller calls in response to changes, or at regular intervals
-The reconciler is the warmest user-defined code in your controller, and it will end up doing a range of tasks.
+| External API       | Managed                | custom                 | [finalizers]      |
+| External API       | Related info           | custom                 | n/a               |
 
 ## Scheduling
 
@@ -130,3 +207,7 @@ async fn reconcile(object: Arc<MyObject>, data: Context<Data>) ->
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
+
+[//begin]: # "Autogenerated link references for markdown compatibility"
+[object]: object "The Object"
+[//end]: # "Autogenerated link references"
