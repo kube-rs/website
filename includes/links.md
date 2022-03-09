@@ -3,6 +3,7 @@
 [Controller::watches]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.watches
 [Controller::run]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.run
 [Context]: https://docs.rs/kube/latest/kube/runtime/controller/struct.Context.html
+[ObjectRef]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.ObjectRef.html
 [Api]: https://docs.rs/kube/latest/kube/struct.Api.html
 [CustomResource]: https://docs.rs/kube/latest/kube/derive.CustomResource.html
 [Resource]: https://docs.rs/kube/latest/kube/trait.Resource.html
