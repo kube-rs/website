@@ -60,7 +60,7 @@ Delete the `ConfigMapGenerator` instance? Kubernetes will automatically cleanup 
 
 ### Watched Relations
 
-The [Controller::watches] relation is for related Kubernetes objects **withot** [ownerReferences], i.e. without a standard way for the controller to map the object to the root object. Thus, you need to define this mapper yourself:
+The [Controller::watches] relation is for related Kubernetes objects **without** [ownerReferences], i.e. without a standard way for the controller to map the object to the root object. Thus, you need to define this mapper yourself:
 
 ```rust
 let main = Api::<MainObj>::all(client);
@@ -90,12 +90,12 @@ There's currently no way to inject non-Kubernetes watch streams into the Control
 
 ### Relations Summary
 
-| Child              | Controller relation    | Setup                  |  Cleanup          |
-| ------------------ | ---------------------- | ---------------------- | ----------------- |
-| Kubernetes object  | Owned object           | [Controller::owns]     | [ownerReferences] |
-| Kubernetes object  | Related object         | [Controller::watches]  | n/a               |
-| External API       | Managed                | custom                 | [finalizers]      |
-| External API       | Related info           | custom                 | n/a               |
+| Child              | Controller relation  | Setup                  |  Cleanup          |
+| ------------------ | -------------------- | ---------------------- | ----------------- |
+| Kubernetes object  | Owned                | [Controller::owns]     | [ownerReferences] |
+| Kubernetes object  | Related              | [Controller::watches]  | n/a               |
+| External API       | Managed              | custom                 | [finalizers]      |
+| External API       | Related              | custom                 | n/a               |
 
 ## Scheduling
 
@@ -117,7 +117,7 @@ It is unsafe to give you a reason for why you got a `reconcile` call, because it
 
 Kube leans into this impossibility and hides this information from you, and in turn forces you to write a **defensive reconciler** where you **check everything**.
 
-This also ends up being the right choice for error handling because **what happens** if your reconciler **errored** half-way through a run? The only way you would know what failed is if you check everything.
+This also ends up being the right choice for error handling because of **what happens** if your reconciler **errored** half-way through a run; the only way you would know **what failed**, is if you check everything.
 
 ## Idempotency
 
@@ -146,9 +146,6 @@ async fn reconcile(object: Arc<MyObject>, data: Context<Data>) ->
     })
 }
 ```
-
-## Object
-
 
 ## Using Context
 
@@ -189,17 +186,20 @@ async fn reconcile(object: Arc<MyObject>, data: Context<Data>) ->
 }
 ```
 
+## Cleanup
 
-## OwnerReferences
+Kubernetes provides **two methods of cleanup** of resources; the automatic [ownerReferences], and the manual (but safe) [finalizers].
 
-## Finalizers
+We will talk about using these in a separate part. TODO.
 
-## Observability
+## Instrumentation
+
+### Observability
 
 - tracing instrumentation of the fn
 - metrics
 
-## Diagnostics
+### Diagnostics
 
 - api updates to the `object`'s **status struct**
 - `Event` records populated for diagnostic informatio
