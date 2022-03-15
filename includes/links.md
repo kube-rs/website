@@ -7,6 +7,7 @@
 [ObjectRef]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.ObjectRef.html
 [applier]: https://docs.rs/kube/latest/kube/runtime/fn.applier.html
 [Api]: https://docs.rs/kube/latest/kube/struct.Api.html
+[Client]: https://docs.rs/kube/latest/kube/struct.Client.html
 [CustomResource]: https://docs.rs/kube/latest/kube/derive.CustomResource.html
 [Resource]: https://docs.rs/kube/latest/kube/trait.Resource.html
 [ApiResource]: https://docs.rs/kube/latest/kube/core/struct.ApiResource.html
@@ -32,3 +33,4 @@
 [rust]: https://www.rust-lang.org/
 [ownerReferences]: https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/#owner-references-in-object-specifications
 [finalizers]: https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/#ownership-and-finalizers
+[cargo-edit]: https://github.com/killercup/cargo-edit
