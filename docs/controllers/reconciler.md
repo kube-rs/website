@@ -6,18 +6,18 @@ The reconciler is the user-defined function in charge of reconciling the object 
 async fn reconcile(o: Arc<K>, ctx: Context<T>) -> Result<Action, Error>
 ```
 
-It is always called with the [[object]] type (here `K`) that you instantiate the [Controller] with, regardless of what auxillary objects you end up watching:
+It is always called with the [[object]] type that you instantiate the [Controller] with, regardless of what auxillary objects you end up watching:
 
 ```mermaid
 graph TD
-    K{{Kubernetes}} -->|Change| W(watcher)
-    W -->|correlate| S(scheduler)
-    S -->|run| R(reconciler)
+    K{{Kubernetes}} -->|changes| W(watchers)
+    W -->|correlate| A(applier)
+    A -->|run| R(reconciler)
     R -->|Update| X{{World}}
-    R -.->|result| S
+    R -.->|result| A
     subgraph "Controller"
     W
-    S
+    A
     end
     subgraph "Application"
     Controller
@@ -27,78 +27,31 @@ graph TD
 
 A [Controller] contains an internal machinery that will:
 
-- watch the relevant api endpoints in Kubernetes
-- map/correlate changes from those apis into your [[object]]
-- schedule reconciliations (no parallel reconciliations of same object)
-- call out to your `reconcile` function
-- take the result of that reconciliation to decide when to reschedule
+- watch api endpoints in Kubernetes (main object and related objects)
+- map changes from those apis (via [[relations]]) into your main [[object]]
+- schedule and apply reconciliations
+- observe the result of reconciliations to decide when to reschedule
+- tolerate a wide class of failures
 
-Notably, it's more than a simple watch that's glued to your reconciler. It's an infinite loop with tolerance for a wide class of failures, and a user-specifiable mechanism to correlate changes from different objects to your object.
+We will treat [Controller] as a black-box, and leave out inner mechanisms in the [[internals]] page.
 
 ## The World
 
-The state of the world is generally one or more Kubernetes objects, possibly linked with [ownerReferences], but this is not always the case.
+The state of the world is your main Kubernetes object along with **anything** your reconciler touches.
 
-We say **state of the world** because you could control things **outside Kubernetes**; you could be dependent on some external api that you have semantically linked to your cluster. You could have populated this API from a custom resource - in which case you may want [finalizers] to ensure the api gets cleaned up on CRD deletion - or you could simply use this external API as an auxillary source of information.
+!!! warning "World need not be Kubernetes"
 
-The **relations** between your main [[object]] and **child objects** needs to be clearly defined for a controller to be most effective. These relations are defined with either [Controller::owns] or [Controller::watches]:
+    While your **main** object **must** reside **within Kubernetes**, it is perfectly possibly to manage/act on changes **outside Kubernetes**.
 
-### Owned Relation
+## Configuring the World
 
-The [Controller::owns] relation is the most straight-forward and most ubiquitous one. One object controls the lifecycle of a child object, and cleanup happens automatically via [ownerReferences].
+Configuring the world involves setting up [[relations]] between your main object and whatever other thing you have.
 
-```rust
-let cmgs = Api::<ConfigMapGenerator>::all(client.clone());
-let cms = Api::<ConfigMap>::all(client.clone());
-
-Controller::new(cmgs, ListParams::default())
-    .owns(cms, ListParams::default())
-```
-
-This [configmapgen example](https://github.com/kube-rs/kube-rs/blob/master/examples/configmapgen_controller.rs) uses one custom resource `ConfigMapGenerator` whose controller is in charge of the lifecycle of the child `ConfigMap`.
-Delete the `ConfigMapGenerator` instance? Kubernetes will automatically cleanup the associated `ConfigMap`, and the controller association/correlation is done using Kubernetes' own [ownerReferences] with no manual mapping logic required.
-
-### Watched Relations
-
-The [Controller::watches] relation is for related Kubernetes objects **without** [ownerReferences], i.e. without a standard way for the controller to map the object to the root object. Thus, you need to define this mapper yourself:
-
-```rust
-let main = Api::<MainObj>::all(client);
-let related = Api::<RelatedObject>::all(client);
-
-let mapper = |obj: RelatedObject| {
-    obj.spec.object_ref.map(|oref| {
-        ReconcileRequest::from(oref)
-    })
-};
-
-Controller::new(main, ListParams::default())
-    .watches(related, ListParams::default(), mapper)
-```
-<!-- TODO: ReconcileRequest::from sets reason to Unknow, needs a method to set reason, ReconcileReason -> controller::Reason -->
-
-In this case we are extracing an object reference from the spec of our object. Regardless of how you get the information, your mapper must return an iterator of [ObjectRef] for the root object(s) that must be reconciled as a result of the change.
-
-### External Relations
-
-In the case of changes from an external api / 3rd party resource needing to trigger reconcilliations, you need to write some custom logic.
-
-There's currently no way to inject non-Kubernetes watch streams into the Controller's machinery so the recommended way to watch 3rd party resources is to start it separately, and manually call `reconcile` when changes are detected.
-
-<!-- TODO: maybe open an issue for Controller::external -->
-
-### Relations Summary
-
-| Child              | Controller relation  | Setup                  |  Cleanup          |
-| ------------------ | -------------------- | ---------------------- | ----------------- |
-| Kubernetes object  | Owned                | [Controller::owns]     | [ownerReferences] |
-| Kubernetes object  | Related              | [Controller::watches]  | n/a               |
-| External API       | Managed              | custom                 | [finalizers]      |
-| External API       | Related              | custom                 | n/a               |
+Typically, this is accomplished with a call to [Controller::owns] on any owned [Api] and ensuring [ownerReferences] are created in your reconciler.
 
 ## Scheduling
 
-The reconciler is invoked for some `object` by the [Controller] internals for a multitude of reasons:
+The reconciler is invoked for an instance of your `object` by the [Controller] internals if:
 
 - main object changed
 - owned object changed
@@ -209,4 +162,6 @@ We will talk about using these in a separate part. TODO.
 
 [//begin]: # "Autogenerated link references for markdown compatibility"
 [object]: object "The Object"
+[relations]: relations "Relations"
+[internals]: internals "Internals"
 [//end]: # "Autogenerated link references"

@@ -23,11 +23,26 @@ add the following lines to your `[dependencies]` in your `Cargo.toml`:
 ```toml
 kube = { version = "0.69.1", features = ["runtime", "client", "derive"] }
 k8s-openapi = { version = "0.14.0", features = ["v1_22"]}
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 ```
 
 The `k8s-openapi` dependency is not always necessary, but we will be using [Pod] as our controlled [[object]], so we will need it here.
 
-TODO: discuss peripheral dependencies; `tokio`, `futures` (for main + .for_each), `serde` (if making api calls)
+The `tokio` runtime dependency is necessary to use async rust features, and is the supported way to use futures created by kube.
+
+!!! warning "Alternate async runtimes"
+
+    We depend on `tokio` for its `time`, `signal` and `sync` features, and while it is in theory possible to swap out a runtime, you would be sacrificing the most actively supported and most advanced runtime available. Avoid going down this alternate path unless you have a good reason.
+
+### Peripheral Dependencies
+
+While the above dependencies are the minimum needed, you likely want to also add the following for convenience:
+
+- [`futures`](https://crates.io/crates/futures) - async utilities
+- [`serde`](https://crates.io/crates/serde) - handling serialization
+- [`tracing`](https://crates.io/crates/tracing) - instrumentation
+
+These dependencies are **already used** transitively **within kube** and will not inflate your expanded dependencies list.
 
 ### Import the object
 
