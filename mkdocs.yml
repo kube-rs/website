@@ -56,7 +56,7 @@ nav:
   - architecture.md
   - adopters.md
 
-- Controller Guide:
+- Controllers:
   - controllers/intro.md
   - controllers/object.md
   - controllers/reconciler.md

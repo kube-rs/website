@@ -6,7 +6,9 @@ This document showcases common techniques for instrumentation:
 - tracing (via [tracing-subscriber] and [opentelemetry-otlp] + [tonic])
 - metrics (via [tikv/prometheus](https://github.com/tikv/rust-prometheus) exposed via [actix-web])
 
-Most of the setup herein is done in `main`, before any machinery starts, and thus liberally use `unwrap` or `expect`.
+and follows the approach of [controller-rs].
+
+Most of the setup is done in `main`, before any machinery starts, and thus liberally use `unwrap` or `expect`.
 
 ## Adding Logging
 
@@ -37,7 +39,7 @@ We will change how the `collector` is built if using **tracing**, but for now, t
 
 ## Adding Tracing
 
-Following on from logging section, we add extra dependencies to let us push traces to an opentelemetry collector.
+Following on from logging section, we add extra dependencies to let us push traces to an **opentelemetry** collector (sending over gRPC with [tonic]):
 
 ```sh
 cargo add opentelemetry --features=trace,rt-tokio
@@ -58,7 +60,7 @@ let collector = Registry::default().with(telemetry).with(logger).with(env_filter
 tracing::subscriber::set_global_default(collector).unwrap();
 ```
 
-However, tracing requires us to have a configurable location of **where to send spans**, so creating the actual `tracer` requires a bit more work.
+However, tracing requires us to have a configurable location of **where to send spans**, so creating the actual `tracer` requires a bit more work:
 
 ```rust
 async fn init_tracer() -> opentelemetry::sdk::trace::Tracer {
@@ -85,7 +87,7 @@ async fn init_tracer() -> opentelemetry::sdk::trace::Tracer {
 }
 ```
 
-Note the explicit the address (e.g. `OPENTELEMETRY_ENDPOINT_URL=https://0.0.0.0:55680`) must be explicitly wrapped in a `tonic::Channel`, and this forces an explicit dependency on [tonic].
+Note the gRPC address (e.g. `OPENTELEMETRY_ENDPOINT_URL=https://0.0.0.0:55680`) must be explicitly wrapped in a `tonic::Channel`, and this forces an explicit dependency on [tonic].
 
 ### Instrumenting
 
