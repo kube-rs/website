@@ -55,3 +55,5 @@
 [opentelemetry-otlp]: https://crates.io/crates/opentelemetry-otlp
 [EnvFilter]: https://docs.rs/tracing-subscriber/latest/tracing_subscriber/struct.EnvFilter.html
 [Loki]: https://grafana.com/oss/loki/
+[idempotent]: https://en.wikipedia.org/wiki/Idempotence
+[Server-Side Apply]: https://kubernetes.io/docs/reference/using-api/server-side-apply/

@@ -1,4 +1,4 @@
-# Relations
+# Related Objects
 
 A [Controller] needs to specify related resources if changes to them is meant to trigger the [[reconciler]].
 

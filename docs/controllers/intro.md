@@ -64,7 +64,7 @@ The core reconciler must at **minimum** contain **mutating api calls** to what y
 
 Writing a goood **idempotent reconciler** is the most difficult part of the whole affair, and its difficulty is the reason we generally provide diagnostics and observability:
 
-See the [[reconciler]] document for a run-down with all the best-practices.
+See the [[reconciler]] document for more information.
 
 ## The Application
 

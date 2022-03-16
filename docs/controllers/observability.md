@@ -2,15 +2,15 @@
 
 This document showcases common techniques for instrumentation:
 
-- logging (via [tracing] and [tracing-subscriber] + [EnvFilter])
-- tracing (via [tracing-subscriber] and [opentelemetry-otlp] + [tonic])
-- metrics (via [tikv/prometheus](https://github.com/tikv/rust-prometheus) exposed via [actix-web])
+- **logs** (via [tracing] + [tracing-subscriber] + [EnvFilter])
+- **traces** (via [tracing] + [tracing-subscriber] + [opentelemetry-otlp] + [tonic])
+- **metrics** (via [tikv/prometheus](https://github.com/tikv/rust-prometheus) exposed via [actix-web])
 
 and follows the approach of [controller-rs].
 
 Most of the setup is done in `main`, before any machinery starts, and thus liberally use `unwrap` or `expect`.
 
-## Adding Logging
+## Adding Logs
 
 We will use the [tracing] library for logging because it allows us reusing the same system for tracing later.
 
@@ -37,7 +37,7 @@ tracing::subscriber::set_global_default(collector).unwrap();
 
 We will change how the `collector` is built if using **tracing**, but for now, this is sufficient for adding logging.
 
-## Adding Tracing
+## Adding Traces
 
 Following on from logging section, we add extra dependencies to let us push traces to an **opentelemetry** collector (sending over gRPC with [tonic]):
 
