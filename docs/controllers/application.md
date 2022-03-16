@@ -2,16 +2,18 @@
 
 The **application** starts the [Controller] and links it up with the [[reconciler]] for your [[object]].
 
-This doc is a **WIP**.
-
 ## Plan
 
-this document should describe what we plan on describing (super simple pod controller), how to glue it together
+this document should describe what we plan on describing (super simple pod controller from a CRD), how to glue it together
 while it's in the main 3 documents, it needs to be an overview doucment (as it contains the other two in some sense)
 
 should link to sub-sections where we take shortcuts here (different objects, ~~related objects~~, controller options, packaging)
 
 > We will be creating a controller for a subset of Pods with a `category` label. This controller will watch these pods and ensure they are in the correct state, updating them if necessary.
+
+## Requirements
+
+We will assume that you have latest **stable** [rust] installed, along with [cargo-edit]:
 
 ## Project Setup
 
@@ -26,37 +28,39 @@ add then install `kube`, `k8s-openapi` and `tokio` using [cargo-edit]:
 cargo add kube --features=runtime,client,derive
 cargo add k8s-openapi --features=v1_23
 cargo add tokio --features=macros,rt-multi-thread
+cargo add futures
 ```
 
+<!-- do a content tabs feature here if it becomes free to let people tab between
 This should give you a `[dependencies]` part in your `Cargo.toml` looking like:
 
 ```toml
 kube = { version = "LATESTKUBE", features = ["runtime", "client", "derive"] }
 k8s-openapi = { version = "LATESTK8SOPENAPI", features = ["v1_23"]}
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+futures = "0.3"
 ```
+-->
 
-### Dependencies
+This will populate some [`[dependencies]`](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html) in your `Cargo.toml` file.
+
+### Main Dependencies
+
+The [kube] dependency is what we provide. It's used here with its controller `runtime` feature, its Kubernetes `client` and the `derive` macro for custom resources.
 
 The [k8s-openapi] dependency is needed if using core Kubernetes resources.
 
-The [`tokio`](https://crates.io/crates/tokio) runtime dependency is needed to use async rust features, and is the supported way to use futures created by kube.
+The [futures] dependency provides helpful abstractions when working with asynchronous rust.
+
+The [tokio] runtime dependency is needed to use async rust features, and is the supported way to use futures created by kube.
 
 !!! warning "Alternate async runtimes"
 
     We depend on `tokio` for its `time`, `signal` and `sync` features, and while it is in theory possible to swap out a runtime, you would be sacrificing the most actively supported and most advanced runtime available. Avoid going down this alternate path unless you have a good reason.
 
-### Peripheral Dependencies
+Additional dependencies are useful, but we will go through these later as we add more features.
 
-While the above dependencies are the minimum needed, you likely want to also add the following for convenience:
-
-- [`futures`](https://crates.io/crates/futures) - async utilities
-- [`serde`](https://crates.io/crates/serde) - handling serialization
-- [`tracing`](https://crates.io/crates/tracing) - instrumentation
-
-These dependencies are **already used** transitively **within kube** and will not inflate your expanded dependencies list.
-
-### Import the object
+### Define the
 
 Import the [[object]] that you want to control into your `main.rs`.
 
@@ -120,6 +124,23 @@ fn error_policy(_error: &Error, _ctx: Context<Data>) -> ReconcilerAction {
 ```
 
 TODO: discuss saving triggering reconciles
+
+## Extra Dependencies
+
+The following dependencies are **already used** transitively **within kube** and will generally not inflate your full dependencies list by adding:
+
+- [tracing]
+- [futures]
+- [k8s-openapi]
+- [serde]
+- [serde_json]
+- [serde_yaml]
+- [tower]
+- [tower-http]
+- [hyper]
+- [thiserror]
+
+These in turn also pull in their own dependencies (and tls features, depending on your tls stack), consult [cargo-tree] for help minimizing your dependency tree.
 
 ## Deploying
 
