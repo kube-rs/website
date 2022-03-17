@@ -8,7 +8,7 @@ This document showcases common techniques for instrumentation:
 
 and follows the approach of [controller-rs].
 
-Most of the setup is done in `main`, before any machinery starts, and thus liberally use `unwrap` or `expect`.
+Most of this logic happens in `main`, before any machinery starts, so it will liberally `.unwrap()`.
 
 ## Adding Logs
 
@@ -216,15 +216,14 @@ async fn reconcile(foo: Arc<Foo>, ctx: Context<Data>) -> Result<Action, Error> {
 
 For prometheus to obtain our metrics, we require a web server. As per the [[webserver]] guide, we will assume [actix-web].
 
-In our case, we will pass a `Manager` struct that contains the `Metrics` struct and attach it in `main`:
+In our case, we will pass a `Manager` struct that contains the `Metrics` struct and attach it to the `HttpServer` in `main`:
 
 ```rust
-let server = HttpServer::new(move || {
+HttpServer::new(move || {
     App::new()
-        .app_data(Data::new(manager.clone())) // state
+        .app_data(Data::new(manager.clone())) // new state
         .service(metrics) // new endpoint
     })
-    ...
 ```
 
 the `metrics` service is the important one here, and its implementation is able to extract the `Metrics` struct from actix's `web::Data`:

@@ -49,13 +49,9 @@ It takes the form of an `async fn` taking the object along with some context, an
 In its simplest form, this is what a reconciler (that does nothing) looks like:
 
 ```rust
-async fn reconcile(object: Arc<MyObject>, data: Context<Data>) ->
-    Result<ReconcilerAction, Error>
-{
+async fn reconcile(object: Arc<MyObject>, data: Context<Data>) -> Result<Action, Error> {
     // TODO: logic here
-    Ok(ReconcilerAction {
-        requeue_after: Some(Duration::from_secs(3600 / 2)),
-    })
+    Ok(Action::requeue(Duration::from_secs(3600 / 2)))
 }
 ```
 

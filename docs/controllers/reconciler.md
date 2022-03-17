@@ -140,7 +140,7 @@ and let's define the `Pod` we want to create as:
 
 ```rust
 fn create_owned_pod(source: &PodManager) -> Pod {
-    let oref = source.owner_ref(&(), true);
+    let oref = source.controller_owner_ref(&());
     Pod {
         metadata: ObjectMeta {
             name: source.metadata.name.clone(),
@@ -229,15 +229,13 @@ Controller::new(foos, ListParams::default())
 then you can pull out your user defined struct (here `Data`) items inside `reconcile`:
 
 ```rust
-async fn reconcile(object: Arc<MyObject>, data: Context<Data>) ->
-    Result<ReconcilerAction, Error>
-{
+async fn reconcile(object: Arc<MyObject>, data: Context<Data>) -> Result<Action, Error> {
     let client = ctx.get_ref().client.clone();
     ctx.get_ref().state.write().await.last_event = Utc::now();
     let reporter = ctx.get_ref().state.read().await.reporter.clone();
     let objs: Api<MyObject> = Api::all(client);
     // ...
-    Ok(())
+    Ok(Action::await_change())
 }
 ```
 
