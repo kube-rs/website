@@ -208,7 +208,7 @@ I.e. you should get a reconcile request for every pod in your cluster (`kubectl 
 
 If you now edit a pod (via `kubectl edit pod traefik-xxx` and make a change), or create a new pod, you should immediately get a reconcile request.
 
-**Congratulations**. You have just run your first kube controller.
+**Congratulations**. You have just built your first kube controller. 🎉
 
 !!! note "Continuation"
 
