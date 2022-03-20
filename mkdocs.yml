@@ -56,9 +56,13 @@ nav:
   - architecture.md
   - adopters.md
 
-- Controller Guide:
+- Controllers:
   - controllers/intro.md
   - controllers/object.md
+  - controllers/reconciler.md
+  - controllers/application.md
+  - controllers/observability.md
+  - controllers/relations.md
 
   #- comunity.md
   #- proposal-process.md
