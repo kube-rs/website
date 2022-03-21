@@ -2,14 +2,9 @@
 
 The **application** starts the [Controller] and links it up with the [[reconciler]] for your [[object]].
 
-## Plan
+## Goal
 
-this document should describe what we plan on describing (super simple pod controller from a CRD), how to glue it together
-while it's in the main 3 documents, it needs to be an overview doucment (as it contains the other two in some sense)
-
-should link to sub-sections where we take shortcuts here (different objects, ~~related objects~~, controller options, packaging)
-
-> We will be creating a controller for a subset of Pods with a `category` label. This controller will watch these pods and ensure they are in the correct state, updating them if necessary.
+This document shows the basics of creating a simple controller with a `Pod` as the main [[object]].
 
 ## Requirements
 
@@ -22,7 +17,7 @@ cargo new --bin ctrl
 cd ctrl
 ```
 
-add then install `kube`, `k8s-openapi` and `tokio` using [cargo-edit]:
+add then install `kube`, `k8s-openapi`, `thiserror`, `futures`, and `tokio` using [cargo-edit]:
 
 ```sh
 cargo add kube --features=runtime,client,derive
@@ -104,9 +99,9 @@ async fn main() -> Result<(), kube::Error> {
 }
 ```
 
-This creates a [Client], a Pod [Api] object (for all namespaces), and a [Controller] for the subset of pods defined by the [ListParams].
+This creates a [Client], a Pod [Api] object (for all namespaces), and a [Controller] for the full list of pods defined by a default [ListParams].
 
-We are not using [[relations]] here, so we merely tell the controller to call reconcile when our owned subset of pods changes.
+We are not using [[relations]] here, so we merely tell the controller to call reconcile when a pod changes.
 
 ### Creating the reconciler
 
@@ -127,7 +122,7 @@ fn error_policy(_error: &Error, _ctx: Context<()>) -> Action {
 }
 ```
 
-To make this reconciler useful, reuse the one created in the [[reconciler]] document.
+To make this reconciler useful, we can reuse the one created in the [[reconciler]] document, on a custom [[object]].
 
 ## Checkpoint
 
@@ -222,7 +217,7 @@ WIP. Showcase both multi-stage rust build and musl builds into distroless.
 
 ### Containerised Development
 
-WIP. Showcase a basic `tilt` setup with `k3d.
+WIP. Showcase a basic `tilt` setup with `k3d`.
 
 ### Continuous Integration
 
