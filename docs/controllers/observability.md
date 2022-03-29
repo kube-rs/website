@@ -100,7 +100,7 @@ async fn reconcile(foo: Arc<Foo>, ctx: Context<Data>) -> Result<Action, Error>
 
 Note that the `reconcile` span should be **the root span** in the context of a controller. A reconciliation starting is the root of the chain: nothing called into the controller to reconcile an object, this happens regularly automatically.
 
-!!! warning "No higher level spans than reconcile"
+!!! warning "Higher levels spans"
 
     Do not `#[instrument]` any function that creates a [Controller] as this would create an unintentionally wide ([application lifecycle wide](https://github.com/kube-rs/kube-rs/pull/741#issuecomment-991163664)) span being a parent to all `reconcile` spans. Such a span will be **problematic** to manage.
 
@@ -160,7 +160,8 @@ We will start creating a basic `Metrics` struct to house two metrics, a histogra
 /// Metrics exposed on /metrics
 #[derive(Clone)]
 pub struct Metrics {
-    pub handled_events: IntCounter,
+    pub reconciliations: IntCounter,
+    pub failures: IntCounter,
     pub reconcile_duration: HistogramVec,
 }
 impl Metrics {
@@ -174,7 +175,8 @@ impl Metrics {
         .unwrap();
 
         Metrics {
-            handled_events: register_int_counter!("foo_controller_handled_events", "handled events").unwrap(),
+            reconciliations: register_int_counter!("foo_controller_reconciliations_total", "reconciliations").unwrap(),
+            failures: register_int_counter!("foo_controller_reconciliation_errors_total", "reconciliation errors").unwrap(),
             reconcile_duration: reconcile_histogram,
         }
     }
@@ -189,6 +191,7 @@ Measuring our metric values can then be done by extracting the `metrics` struct 
 
 ```rust
 async fn reconcile(foo: Arc<Foo>, ctx: Context<Data>) -> Result<Action, Error> {
+    ctx.get_ref().metrics.reconciliations.inc();
     // Start a timer
     let start = Instant::now();
 
@@ -203,8 +206,17 @@ async fn reconcile(foo: Arc<Foo>, ctx: Context<Data>) -> Result<Action, Error> {
         .reconcile_duration
         .with_label_values(&[])
         .observe(duration);
-    ctx.get_ref().metrics.handled_events.inc();
     Ok(...) // end of fn
+}
+```
+
+and you can increment your `failures` metric inside the `error_policy`:
+
+```rust
+fn error_policy(error: &Error, ctx: Context<Data>) -> Action {
+    warn!("reconcile failed: {:?}", error);
+    ctx.get_ref().metrics.failures.inc();
+    Action::requeue(Duration::from_secs(5 * 60))
 }
 ```
 

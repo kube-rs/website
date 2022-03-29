@@ -44,7 +44,7 @@ Controller::new(main, ListParams::default())
 
 In this case we are extracing an object reference from the spec of our object. Regardless of how you get the information, your mapper must return an iterator of [ObjectRef] for the root object(s) that must be reconciled as a result of the change.
 
-An example of a resource using this pattern is the HPA.
+As a theoretical example; every HPA object bundles a scale ref to the workload, so you could use this to build a Controller for `Deployment` using HPA as a watched object.
 
 ## External Relations
 
