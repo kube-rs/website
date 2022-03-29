@@ -183,7 +183,7 @@ impl Metrics {
 }
 ```
 
-and as these metrics are measurable entirely from **within `reconcile`** we will attach the struct to the context passed to the [[reconciler##using-context]] (omitted here).
+and as these metrics are measurable entirely from within **`reconcile` or `error_policy`** we can attach the struct to the context passed to the [[reconciler##using-context]].
 
 ### Meauring
 
@@ -250,6 +250,25 @@ async fn metrics(c: web::Data<Manager>, _req: HttpRequest) -> impl Responder {
     HttpResponse::Ok().body(buffer)
 }
 ```
+
+### What Metrics
+
+The included metrics `failures`, `reconciliations` and a `reconcile_duration` histogram will be sufficient to have prometheus compute a wide array of details:
+
+- reconcile amounts in last hour - `sum(increase(reconciliations[1h]))`
+- hourly error rates - `sum(rate(failures[1h]) / sum(rate(reconciliations[1h]))`
+- success rates - same rate setup but `reconciliations / (reconciliations + failures)`
+- p90 reconcile duration - `histogram_quantile(0.9, sum(rate(reconciliations[1h])))`
+
+and you could then create alerts on aberrant values (e.g. say 10% error rate, zero reconciliation rate, and maybe p90 durations >30s).
+
+The above metric setup should comprise the core need of a **standard** controller (although you may have [more things to care about](https://sirupsen.com/metrics) than our simple example).
+
+You will also want resource utilization metrics, but this is typically handled upstream. E.g. cpu/memory utilization metrics are generally available via kubelet's metrics and other utilization metrics can be gathered from [node_exporter](https://github.com/prometheus/node_exporter).
+
+!!! note "tokio-metrics"
+
+    New **experimental** runtime metrics are also availble for the tokio runtime via [tokio-metrics](https://github.com/tokio-rs/tokio-metrics).
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
