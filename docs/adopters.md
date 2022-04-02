@@ -5,6 +5,8 @@
 - [linkerd-policy-controller](https://github.com/linkerd/linkerd2/tree/main/policy-controller) - the policy controllers for the Linkerd service mesh
 - [krustlet](https://github.com/krustlet/krustlet) - a complete `WASM` running `kubelet`
 - [stackable operators](https://github.com/stackabletech) - ([kafka](https://github.com/stackabletech/kafka-operator), [zookeeper](https://github.com/stackabletech/zookeeper-operator), and more)
+- [bottlerocket-update-operator](https://github.com/bottlerocket-os/bottlerocket-update-operator)
+- [vector](https://vector.dev/)
 - [kdash tui](https://github.com/kdash-rs/kdash) - terminal dashboard for kubernetes
 - [logdna agent](https://github.com/logdna/logdna-agent-v2)
 - [kubeapps pinniped](https://github.com/kubeapps/kubeapps/tree/master/cmd/pinniped-proxy)
@@ -14,9 +16,11 @@
 
 ## Companies
 
+- [AWS](https://aws.amazon.com/)
 - [Buoyant](https://buoyant.io)
 - [Deis Labs](https://deislabs.io)
 - [Stackable](https://www.stackable.de)
+- [Datadog](https://www.datadoghq.com/)
 - [logdna](https://www.logdna.com)
 - [Bitnami](https://bitnami.com)
 - [Materialize](http://materialize.com)
