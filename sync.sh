@@ -41,7 +41,6 @@ main() {
 
     # TODO: maybe move these files into this repo as they have no interaction effects
     sync kube-rs/.github/main/governance.md docs/governance.md
-    sync kube-rs/.github/main/TOOLS.md docs/tools.md
     sync kube-rs/kube-rs/master/architecture.md docs/architecture.md
 }
 
