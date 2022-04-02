@@ -1,4 +1,3 @@
-<!--GENERATED FROM https://github.com/kube-rs/kube-rs/blob/master/architecture.md - CHANGES MUST BE MADE THERE -->
 # Architecture
 This document describes the high-level architecture of kube-rs.
 
