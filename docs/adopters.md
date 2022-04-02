@@ -1,4 +1,3 @@
-<!--GENERATED FROM https://github.com/kube-rs/kube-rs/blob/master/ADOPTERS.md - CHANGES MUST BE MADE THERE -->
 # Adopters
 
 ## Open Source
@@ -6,6 +5,8 @@
 - [linkerd-policy-controller](https://github.com/linkerd/linkerd2/tree/main/policy-controller) - the policy controllers for the Linkerd service mesh
 - [krustlet](https://github.com/krustlet/krustlet) - a complete `WASM` running `kubelet`
 - [stackable operators](https://github.com/stackabletech) - ([kafka](https://github.com/stackabletech/kafka-operator), [zookeeper](https://github.com/stackabletech/zookeeper-operator), and more)
+- [bottlerocket-update-operator](https://github.com/bottlerocket-os/bottlerocket-update-operator)
+- [vector](https://vector.dev/)
 - [kdash tui](https://github.com/kdash-rs/kdash) - terminal dashboard for kubernetes
 - [logdna agent](https://github.com/logdna/logdna-agent-v2)
 - [kubeapps pinniped](https://github.com/kubeapps/kubeapps/tree/master/cmd/pinniped-proxy)
@@ -15,9 +16,11 @@
 
 ## Companies
 
+- [AWS](https://aws.amazon.com/)
 - [Buoyant](https://buoyant.io)
 - [Deis Labs](https://deislabs.io)
 - [Stackable](https://www.stackable.de)
+- [Datadog](https://www.datadoghq.com/)
 - [logdna](https://www.logdna.com)
 - [Bitnami](https://bitnami.com)
 - [Materialize](http://materialize.com)
@@ -26,4 +29,4 @@
 - [ViacomCBS](https://viacomcbs.com)
 - [nais](https://nais.io)
 
-If you're using `kube-rs` in production and are not on this list, please [submit a pull request](https://github.com/kube-rs/kube-rs/edit/master/ADOPTERS.md)!
+If you're using `kube-rs` in production and are not on this list, please [submit a pull request](https://github.com/kube-rs/website/edit/main/docs/adopters.md)!
