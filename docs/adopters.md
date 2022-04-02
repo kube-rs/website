@@ -1,4 +1,3 @@
-<!--GENERATED FROM https://github.com/kube-rs/kube-rs/blob/master/ADOPTERS.md - CHANGES MUST BE MADE THERE -->
 # Adopters
 
 ## Open Source
@@ -26,4 +25,4 @@
 - [ViacomCBS](https://viacomcbs.com)
 - [nais](https://nais.io)
 
-If you're using `kube-rs` in production and are not on this list, please [submit a pull request](https://github.com/kube-rs/kube-rs/edit/master/ADOPTERS.md)!
+If you're using `kube-rs` in production and are not on this list, please [submit a pull request](https://github.com/kube-rs/website/edit/main/docs/adopters.md)!

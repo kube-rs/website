@@ -23,7 +23,6 @@ sync() {
 main() {
     sync kube-rs/.github/main/maintainers.md docs/maintainers.md
     sync kube-rs/kube-rs/master/CONTRIBUTING.md docs/contributing.md
-    sync kube-rs/kube-rs/master/ADOPTERS.md docs/adopters.md
     # wanted to inline COC, but it links to other documents relatively so won't work
     # for now left out since it is linked through from the contributing guide
     #sync kube-rs/.github/main/code-of-conduct.md docs/code-of-conduct.md
