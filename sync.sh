@@ -21,7 +21,6 @@ sync() {
 }
 
 main() {
-    sync kube-rs/.github/main/maintainers.md docs/maintainers.md
     sync kube-rs/kube-rs/master/CONTRIBUTING.md docs/contributing.md
     # wanted to inline COC, but it links to other documents relatively so won't work
     # for now left out since it is linked through from the contributing guide
@@ -38,9 +37,6 @@ main() {
     sync kube-rs/kube-rs/master/CHANGELOG.md docs/changelog.md "# Changelog"
     sd "^(.+ / [\d-]+)\n===================" "## \$1" docs/changelog.md
     sd "UNRELEASED\n===================" "## Unreleased" docs/changelog.md
-
-    # TODO: maybe move these files into this repo as they have no interaction effects
-    sync kube-rs/.github/main/governance.md docs/governance.md
 }
 
 # shellcheck disable=SC2068
