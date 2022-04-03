@@ -2,15 +2,15 @@
 
 The Kube-rs maintainers are:
 
-* Eirik Albrigtsen <sszynrae@gmail.com> @clux
-* Teo Klestrup Röijezon <teo@nullable.se> @teozkr
-* Kaz Yoshihara <kazk.dev@gmail.com> @kazk
+* Eirik Albrigtsen <sszynrae@gmail.com> [@clux](https://github.com/clux)
+* Teo Klestrup Röijezon <teo@nullable.se> [@teozkr](https://github.com/teozkr)
+* Kaz Yoshihara <kazk.dev@gmail.com> [@kazk](https://github.com/kazk)
 
 ## Emeriti
 
 Former maintainers include:
 
-* Ryan Levick <ryan.levick@gmail.com> @rylev
+* Ryan Levick <ryan.levick@gmail.com> [@rylev](https://github.com/rylev)
 
 <!--
 # Adding a new maintainer
