@@ -98,46 +98,53 @@ In the case that a `customresourcedefinition` **already exists** in your cluster
 Suppose you want to write some extra controller or replace the native controller for `PrometheusRule`:
 
 ```sh
-kopium prometheusrules.monitoring.coreos.com --docs > prometheusrule.rs
+curl -sSL https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml \
+    | kopium -Af - > prometheusrule.rs
 ```
 
 this will read the crd from the cluster, and generate rust-optimized structs for it:
 
 ```rust
 use kube::CustomResource;
+use schemars::JsonSchema;
 use serde::{Serialize, Deserialize};
 use std::collections::BTreeMap;
+use k8s_openapi::apimachinery::pkg::util::intstr::IntOrString;
 
 /// Specification of desired alerting rule definitions for Prometheus.
-#[derive(CustomResource, Serialize, Deserialize, Clone, Debug)]
+#[derive(CustomResource, Serialize, Deserialize, Clone, Debug, JsonSchema)]
 #[kube(group = "monitoring.coreos.com", version = "v1", kind = "PrometheusRule", plural = "prometheusrules")]
 #[kube(namespaced)]
-#[kube(schema = "disabled")]
 pub struct PrometheusRuleSpec {
     /// Content of Prometheus rule file
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub groups: Vec<PrometheusRuleGroups>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub groups: Option<Vec<PrometheusRuleGroups>>,
 }
 
-/// RuleGroup is a list of sequentially evaluated recording and alerting rules. Note: PartialResponseStrategy is only used by ThanosRuler and will be ignored by Prometheus instances.  Valid values for this field are 'warn' or 'abort'.  More info: https://github.com/thanos-io/thanos/blob/master/docs/components/rule.md#partial-response
-#[derive(Serialize, Deserialize, Clone, Debug)]
+/// RuleGroup is a list of sequentially evaluated recording and alerting rules.
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema)]
 pub struct PrometheusRuleGroups {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub interval: Option<String>,
     pub name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub partial_response_strategy: Option<String>,
     pub rules: Vec<PrometheusRuleGroupsRules>,
 }
 
-/// Rule describes an alerting or recording rule See Prometheus documentation: [alerting](https://www.prometheus.io/docs/prometheus/latest/configuration/alerting_rules/) or [recording](https://www.prometheus.io/docs/prometheus/latest/configuration/recording_rules/#recording-rules) rule
-#[derive(Serialize, Deserialize, Clone, Debug)]
+/// Rule describes an alerting or recording rule
+#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema)]
 pub struct PrometheusRuleGroupsRules {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub alert: Option<String>,
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub annotations: BTreeMap<String, String>,
-    pub expr: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub annotations: Option<BTreeMap<String, String>>,
+    pub expr: IntOrString,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub r#for: Option<String>,
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub labels: BTreeMap<String, String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub labels: Option<BTreeMap<String, String>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub record: Option<String>,
 }
 ```
@@ -147,8 +154,8 @@ you typically would then import this file as a module and use it as follows:
 ```rust
 use prometheusrule::PrometheusRule;
 
-let rules: Api<PrometheusRule> = Api::default_namespaced(client);
-Controller::new(rules, ListParams::default())
+let prs: Api<PrometheusRule> = Api::default_namespaced(client);
+Controller::new(prs, ListParams::default())
 ```
 
 !!! warning "Kopium is unstable"
