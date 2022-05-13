@@ -14,6 +14,10 @@
 [ListParams]: https://docs.rs/kube/latest/kube/api/struct.ListParams.html
 [Object]: https://docs.rs/kube/latest/kube/core/struct.Object.html
 [DynamicObject]: https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html
+[Store]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.Store.html
+[reflector]: https://docs.rs/kube/latest/kube/runtime/fn.reflector.html
+[watcher]: https://docs.rs/kube/latest/kube/runtime/fn.watcher.html
+[Event::modify]: https://docs.rs/kube/latest/kube/runtime/watcher/enum.Event.html#method.modify
 [discovery]: https://docs.rs/kube/latest/kube/discovery/index.html
 [recommended_kind]: https://docs.rs/kube/latest/kube/discovery/struct.ApiGroup.html#method.recommended_kind
 [kube]: https://crates.io/crates/kube
@@ -29,6 +33,7 @@
 [k8s-pb]: https://github.com/kube-rs/k8s-pb
 [k8s-openapi]: https://crates.io/crates/k8s-openapi
 [Pod]: https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.Pod.html
+[PodSpec]: https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.PodSpec.html
 [CustomResourceDefinition]: https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html
 [rust]: https://www.rust-lang.org/
 [ownerReferences]: https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/#owner-references-in-object-specifications

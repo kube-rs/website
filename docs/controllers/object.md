@@ -202,7 +202,13 @@ Other ways of doing [discovery] are also available. We are highlighting [recomme
 
 ### Partially-typed Resource
 
-These resources specify a subset of the normal typed information, and allow you to improve memory characterstics of the program, at the cost of slightly more `struct` code.
+A very special-case setup where we specify a subset of the normal typed information, and allows tighter control over memory characterstics, and deserialization cost of the program, but at the cost of more `struct` code.
+
+!!! warning "Better methods available for improving memory characteristics"
+
+    Because almost all methods on Kubernetes objects such as [PodSpec] are wrapped in `Option`s, as long as unnecessary properties are unset before passing them to a [reflector], similar memory reductions can be achieved. One method is to use [Event::modify] chained onto the watcher stream. See the [pod_reflector](https://github.com/kube-rs/kube-rs/blob/05b48cf61a4b55948274d4cfadd26255e026cec4/examples/pod_reflector.rs#L31-L38) for details.
+
+    Because of these advances, the partially-typed resource pattern is not recommended.
 
 It is similar to [DynamicObject] (above) in that [Object] is another umbrella container for arbitrary Kubernetes resources, and also requires you to discover or hard-code an [ApiResource] for extra type information to be queriable.
 
@@ -230,7 +236,9 @@ let ar = ApiResource::erase::<k8s_openapi::api::core::v1::Pod>(&());
 Controller::new_with(api, ListParams::default(), &ar)
 ```
 
-In the end, we end up with some extra lines to define our [Pod], but we also drop every field inside spec + status except `spec.container.image`. If your cluster has thousands of pods and you want to do some kind of common operation on a small subset of fields, then this can give a very quick win in terms of memory use (a Controller will usually maintain a `Store` of all owned objects). <!-- TODO: mention that it's possible to drop managedFields from this cache as well? it's a lot harder though.. -->
+In the end, we end up with some extra lines to define our [Pod], but we also drop every field inside spec + status except `spec.container.image`. If your cluster has thousands of pods and you want to do some kind of common operation on a small subset of fields, then this can give a very quick win in terms of memory use (a Controller will usually maintain a `Store` of all owned objects).
+
+<!-- TODO: mention that it's possible to drop managedFields from this cache as well? it's a lot harder though.. -->
 
 ### Dynamic new_with constructors
 
