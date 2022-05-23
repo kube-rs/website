@@ -3,7 +3,7 @@
 The reconciler is the **user-defined function** in charge of reconciling the **state of the world**.
 
 ```rust
-async fn reconcile(o: Arc<K>, ctx: Context<T>) -> Result<Action, Error>
+async fn reconcile(o: Arc<K>, ctx: Arc<T>) -> Result<Action, Error>
 ```
 
 It is always **called** with the [[object]] type that you instantiate the [Controller] with, regardless of what auxillary objects you end up watching:
@@ -207,7 +207,7 @@ The `patch_status` is already idempotent, and does not technically need the pre-
 
 To do anything useful inside the reconciler like persisting your changes, you typically need to inject some client in there.
 
-The way this is done is through the [Context] parameter on [Controller::run]. It's a simple `Arc` wrapper that you can put anything into.
+The way this is done is through the context parameter on [Controller::run]. It's whatever you want, packed in an `Arc`.
 
 ```rust
 // Context for our reconciler
@@ -219,7 +219,7 @@ struct Data {
     state: Arc<RwLock<State>>,
 }
 
-let context = Context::new(Data {
+let context = Arc::new(Data {
     client: client.clone(),
     state: state.clone(),
 });
@@ -230,11 +230,10 @@ Controller::new(foos, ListParams::default())
 then you can pull out your user defined struct (here `Data`) items inside `reconcile`:
 
 ```rust
-async fn reconcile(object: Arc<MyObject>, data: Context<Data>) -> Result<Action, Error> {
-    let client = ctx.get_ref().client.clone();
-    ctx.get_ref().state.write().await.last_event = Utc::now();
-    let reporter = ctx.get_ref().state.read().await.reporter.clone();
-    let objs: Api<MyObject> = Api::all(client);
+async fn reconcile(object: Arc<MyObject>, data: Arc<Data>) -> Result<Action, Error> {
+    ctx.state.write().await.last_event = Utc::now();
+    let reporter = ctx.state.read().await.reporter.clone();
+    let objs: Api<MyObject> = Api::all(ctx.client.clone());
     // ...
     Ok(Action::await_change())
 }

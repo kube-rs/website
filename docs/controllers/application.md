@@ -91,7 +91,7 @@ async fn main() -> Result<(), kube::Error> {
     let pods = Api::<Pod>::all(client);
 
     Controller::new(pods.clone(), Default::default())
-        .run(reconcile, error_policy, Context::new(()))
+        .run(reconcile, error_policy, Arc::new(()))
         .for_each(|_| futures::future::ready(()))
         .await;
 
@@ -108,7 +108,7 @@ We are not using [[relations]] here, so we merely tell the controller to call re
 You need to define at least a basic `reconcile` fn
 
 ```rust
-async fn reconcile(obj: Arc<Pod>, ctx: Context<()>) -> Result<Action> {
+async fn reconcile(obj: Arc<Pod>, ctx: Arc<()>) -> Result<Action> {
     println!("reconcile request: {}", obj.name());
     Ok(Action::requeue(Duration::from_secs(3600)))
 }
@@ -117,7 +117,7 @@ async fn reconcile(obj: Arc<Pod>, ctx: Context<()>) -> Result<Action> {
 and a basic error handler (for what to do when `reconcile` returns an `Err`):
 
 ```rust
-fn error_policy(_error: &Error, _ctx: Context<()>) -> Action {
+fn error_policy(_error: &Error, _ctx: Arc<()>) -> Action {
     Action::requeue(Duration::from_secs(5))
 }
 ```
@@ -134,7 +134,7 @@ use futures::StreamExt;
 use k8s_openapi::api::core::v1::Pod;
 use kube::{
     Api, Client, ResourceExt,
-    runtime::controller::{Action, Controller, Context}
+    runtime::controller::{Action, Controller}
 };
 
 #[derive(thiserror::Error, Debug)]
@@ -147,19 +147,19 @@ async fn main() -> Result<(), kube::Error> {
     let pods = Api::<Pod>::all(client);
 
     Controller::new(pods.clone(), Default::default())
-        .run(reconcile, error_policy, Context::new(()))
+        .run(reconcile, error_policy, Arc::new(()))
         .for_each(|_| futures::future::ready(()))
         .await;
 
     Ok(())
 }
 
-async fn reconcile(obj: Arc<Pod>, ctx: Context<()>) -> Result<Action> {
+async fn reconcile(obj: Arc<Pod>, ctx: Arc<()>) -> Result<Action> {
     println!("reconcile request: {}", obj.name());
     Ok(Action::requeue(Duration::from_secs(3600)))
 }
 
-fn error_policy(_error: &Error, _ctx: Context<()>) -> Action {
+fn error_policy(_error: &Error, _ctx: Arc<()>) -> Action {
     Action::requeue(Duration::from_secs(5))
 }
 ```

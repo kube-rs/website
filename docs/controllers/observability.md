@@ -95,7 +95,7 @@ At this point, you can start adding `#[instrument]` attributes onto functions yo
 
 ```rust
 #[instrument(skip(ctx))]
-async fn reconcile(foo: Arc<Foo>, ctx: Context<Data>) -> Result<Action, Error>
+async fn reconcile(foo: Arc<Foo>, ctx: Arc<Data>) -> Result<Action, Error>
 ```
 
 Note that the `reconcile` span should be **the root span** in the context of a controller. A reconciliation starting is the root of the chain: nothing called into the controller to reconcile an object, this happens regularly automatically.
@@ -110,7 +110,7 @@ To link logs and traces we take advantage that tracing data is being outputted t
 
 ```rust
 #[instrument(skip(ctx), fields(trace_id))]
-async fn reconcile(foo: Arc<Foo>, ctx: Context<Data>) -> Result<Action, Error> {
+async fn reconcile(foo: Arc<Foo>, ctx: Arc<Data>) -> Result<Action, Error> {
     let trace_id = get_trace_id();
     Span::current().record("trace_id", &field::display(&trace_id));
     todo!("reconcile implementation")
@@ -187,11 +187,11 @@ and as these metrics are measurable entirely from within **`reconcile` or `error
 
 ### Meauring
 
-Measuring our metric values can then be done by extracting the `metrics` struct from the `Context` and doing the necessary computation inside `reconcile`:
+Measuring our metric values can then be done by extracting the `metrics` struct from the context and doing the necessary computation inside `reconcile`:
 
 ```rust
-async fn reconcile(foo: Arc<Foo>, ctx: Context<Data>) -> Result<Action, Error> {
-    ctx.get_ref().metrics.reconciliations.inc();
+async fn reconcile(foo: Arc<Foo>, ctx: Arc<Data>) -> Result<Action, Error> {
+    ctx.metrics.reconciliations.inc();
     // Start a timer
     let start = Instant::now();
 
@@ -201,11 +201,10 @@ async fn reconcile(foo: Arc<Foo>, ctx: Context<Data>) -> Result<Action, Error> {
 
     // Measure time taken at the end and update counter
     let duration = start.elapsed().as_millis() as f64 / 1000.0;
-    ctx.get_ref()
-        .metrics
-        .reconcile_duration
-        .with_label_values(&[])
-        .observe(duration);
+    ctx.metrics
+       .reconcile_duration
+       .with_label_values(&[])
+       .observe(duration);
     Ok(...) // end of fn
 }
 ```
@@ -213,9 +212,9 @@ async fn reconcile(foo: Arc<Foo>, ctx: Context<Data>) -> Result<Action, Error> {
 and you can increment your `failures` metric inside the `error_policy`:
 
 ```rust
-fn error_policy(error: &Error, ctx: Context<Data>) -> Action {
+fn error_policy(error: &Error, ctx: Arc<Data>) -> Action {
     warn!("reconcile failed: {:?}", error);
-    ctx.get_ref().metrics.failures.inc();
+    ctx.metrics.failures.inc();
     Action::requeue(Duration::from_secs(5 * 60))
 }
 ```

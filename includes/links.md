@@ -3,7 +3,6 @@
 [Controller::watches]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.watches
 [Controller::reconcile_all_on]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.reconcile_all_on
 [Controller::run]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.run
-[Context]: https://docs.rs/kube/latest/kube/runtime/controller/struct.Context.html
 [ObjectRef]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.ObjectRef.html
 [applier]: https://docs.rs/kube/latest/kube/runtime/fn.applier.html
 [Api]: https://docs.rs/kube/latest/kube/struct.Api.html

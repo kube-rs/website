@@ -106,8 +106,8 @@ Note that headers should link to PRs/important documents, but it is not necessar
 For breaking changes; consider including migration code samples for users if it provides an easier way to understand the changes. Fenced code blocks with `diff` language are easy to scan:
 
 ```diff
--async fn reconcile(myobj: MyK, ctx: Context<Data>) -> Result<ReconcilerAction>
-+async fn reconcile(myobj: Arc<MyK>, ctx: Context<Data>) -> Result<ReconcilerAction>
+-async fn reconcile(myobj: MyK, ctx: Arc<Data>) -> Result<ReconcilerAction>
++async fn reconcile(myobj: Arc<MyK>, ctx: Arc<Data>) -> Result<ReconcilerAction>
 ```
 
 New features should link to the new additions under docs.rs/kube once the documentation build completes.
