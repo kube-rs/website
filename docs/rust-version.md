@@ -17,7 +17,7 @@ Bumping the MSRV is done either as:
 - a response to a PR that brings in a dependency with a higher MSRV
 - an explicit choice to get new rust features
 
-Performing the change requires developer [[tools]], and is done by running `just bump-msrv 1.60.0 to bump the all the `Cargo.toml` files:
+Performing the change requires developer [[tools]], and is done by running `just bump-msrv 1.60.0` to bump the all the `Cargo.toml` files:
 
 ```diff
 -rust-version = "1.56.0"
