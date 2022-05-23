@@ -6,8 +6,8 @@ Select a version of `kube` along with the generated [k8s-openapi](https://github
 
 ```toml
 [dependencies]
-kube = { version = "0.72.0", features = ["runtime", "derive"] }
-k8s-openapi = { version = "0.14.0", features = ["v1_23"] }
+kube = { version = "0.73.0", features = ["runtime", "derive"] }
+k8s-openapi = { version = "0.15.0", features = ["v1_24"] }
 ```
 
 [Features are available](https://github.com/kube-rs/kube-rs/blob/master/kube/Cargo.toml#L18).
@@ -91,7 +91,7 @@ A low level streaming interface (similar to informers) that presents `Applied`, 
 
 ```rust
 let api = Api::<Pod>::default_namespaced(client);
-let mut stream = watcher(api, ListParams::default()).applied_objects();
+let stream = watcher(api, ListParams::default()).applied_objects();
 ```
 
 This now gives a continual stream of events and you do not need to care about the watch having to restart, or connections dropping.
@@ -109,7 +109,7 @@ NB: the plain items in a `watcher` stream are different from `WatchEvent`. If yo
 A `reflector` is a `watcher` with `Store` on `K`. It acts on all the `Event<K>` exposed by `watcher` to ensure that the state in the `Store` is as accurate as possible.
 
 ```rust
-let nodes: Api<Node> = Api::default_namespaced(client);
+let nodes: Api<Node> = Api::all(client);
 let lp = ListParams::default().labels("kubernetes.io/arch=amd64");
 let (reader, writer) = reflector::store();
 let rf = reflector(writer, watcher(nodes, lp));
@@ -142,8 +142,8 @@ Kube has basic support ([with caveats](https://github.com/kube-rs/kube-rs/issues
 
 ```toml
 [dependencies]
-kube = { version = "0.72.0", default-features = false, features = ["client", "rustls-tls"] }
-k8s-openapi = { version = "0.14.0", features = ["v1_23"] }
+kube = { version = "0.73.0", default-features = false, features = ["client", "rustls-tls"] }
+k8s-openapi = { version = "0.15.0", features = ["v1_24"] }
 ```
 
 This will pull in `rustls` and `hyper-rustls`.
