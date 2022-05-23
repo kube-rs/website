@@ -17,21 +17,14 @@ Bumping the MSRV is done either as:
 - a response to a PR that brings in a dependency with a higher MSRV
 - an explicit choice to get new rust features
 
-Performing the change requires developer [[tools]], and is done manually by changing the `rust-version` key for all main `Cargo.toml` files of the `kube*` crates:
+Performing the change requires developer [[tools]], and is done by running `just bump-msrv 1.60.0 to bump the all the `Cargo.toml` files:
 
 ```diff
--rust-version = "1.56"
-+rust-version = "1.58"
+-rust-version = "1.56.0"
++rust-version = "1.60.0"
 ```
 
-after running this, we run the sanity + propagation script:
-
-```sh
-./scripts/msrv.sh
-```
-
-which should cause a change to `README.md`. Commit this change and push it to a branch.
-CI will verify that the specified MSRV works with the current dependencies and feature usage before it can be merged.
+as well as the badge plus devcontainer. If the bump is sufficient, CI will verify that the specified MSRV works with the current dependencies and feature usage before it can be merged.
 
 **NB**: An MSRV change **must have** the `changelog-change` label so that it is sufficiently highlighted in our [[changelog]].
 
