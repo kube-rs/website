@@ -12,7 +12,7 @@ Our MSRV policy is to **try** to let our MSRV **trail 2 stable versions behind t
 
 !!! note "Best Effort Policy"
 
-    Note that this policy, while sometimes more lenient than 2 version, it is also **not guaranteed to hold** due to dependencies we have to upgrade. The version shown should be taken as __best effort__ and __descriptive__, and it is verified as buildable by CI.
+    Note that this policy, while sometimes more lenient than 2 versions, it is also **not guaranteed to hold** due to dependencies we have to upgrade. The version shown should be taken as __best effort__ and __descriptive__, and it is verified as buildable by CI.
 
 ## For maintainers: Bumping the MSRV
 
