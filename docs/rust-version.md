@@ -4,7 +4,7 @@ Builds on CI always run against the most stable rust version, but we also suppor
 
 ## Minimum Supported Rust Version
 
-The MSRV is shown in the main [Cargo.toml.rust-version key](https://github.com/kube-rs/kube-rs/blob/80272c04ae0036983bb0de4d522003cfd1f5c189/kube/Cargo.toml#L15) plus as a [**readme badge**](https://github.com/kube-rs/kube-rs#kube-rs):
+The MSRV is shown in the main [Cargo.toml](https://github.com/kube-rs/kube-rs/blob/master/kube/Cargo.toml#L1-L16) and as a [**readme badge**](https://github.com/kube-rs/kube-rs#kube-rs):
 
 > [![Rust 1.XX](https://img.shields.io/badge/MSRV-1.XX-dea584.svg)](https://github.com/rust-lang/rust/releases/)
 
