@@ -7,3 +7,4 @@
 *[RBAC]: Role-based access control
 *[GHA]: GitHub Actions
 *[SBOM]: Software Bill of Materials
+*[LTS]: Long Term Support
