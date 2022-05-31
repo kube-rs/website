@@ -1,20 +1,20 @@
 ## Compatibility
 
-Our Kubernetes version compatibility is similar to the strategy employed by [client-go](https://github.com/kubernetes/client-go#compatibility-matrix) and can interoperate well under a wide range of target Kubernetes versions defined by a **soft minimum** (MINK8SV) and a **soft maximum** (MAXK8SV):
+Our Kubernetes version compatibility is similar to the strategy employed by [client-go](https://github.com/kubernetes/client-go#compatibility-matrix) and can interoperate well under a wide range of target Kubernetes versions defined by a **soft minimum** (MK8SV) and  the current **latest** available Kubernetes feature version.
 
-| kube version   | MINK8SV   | MAXK8SV  | Generated Source  |
-| -------------- | --------- | -------- | ----------------- |
-| `0.48.0`       |  `1.15`   | `1.20`   | [k8s-openapi@0.11.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0110-2021-01-23) |
-| `0.57.0`       |  `1.16`   | `1.21`   | [k8s-openapi@0.12.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0120-2021-06-15) |
-| `0.66.0`       |  `1.17`   | `1.22`   | [k8s-openapi@0.13.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0131-2021-10-08) |
-| `0.67.0`       |  `1.18`   | `1.23`   | [k8s-openapi@0.14.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0140-2022-01-23) |
-| `0.73.0`       |  `1.19`   | `1.24`   | [k8s-openapi@0.15.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0150-2022-05-22) |
+| kube version   | MINK8SV   | Latest  | Generated Source  |
+| -------------- | --------- | ------- | ----------------- |
+| `0.48.0`       |  `1.15`   | `1.20`  | [k8s-openapi@0.11.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0110-2021-01-23) |
+| `0.57.0`       |  `1.16`   | `1.21`  | [k8s-openapi@0.12.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0120-2021-06-15) |
+| `0.66.0`       |  `1.17`   | `1.22`  | [k8s-openapi@0.13.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0131-2021-10-08) |
+| `0.67.0`       |  `1.18`   | `1.23`  | [k8s-openapi@0.14.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0140-2022-01-23) |
+| `0.73.0`       |  `1.19`   | `1.24`  | [k8s-openapi@0.15.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0150-2022-05-22) |
 
-The MINK8SV is listed in our README as a badge:
+The MK8SV is listed in our README as a badge:
 
 > [![Tested against Kubernetes 1.19 and above](https://img.shields.io/badge/MINK8SV-1.19-326ce5.svg)](https://kube.rs/kubernetes-version)
 
-The **minimum** indicates the lower bound of our testing range, and the **maximum** indicates how much of the latest api surface we support, and this range covers **5 Kubernetes releases**.
+The **minimum** indicates the lower bound of our testing range, and the **latest** indicates how much of the latest api surface we support, and this range covers **5 Kubernetes releases**.
 
 This policy is intended to match **stable channel support** within **major cloud providers**.
 Compare with: [EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html), [AKS](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar), [GKE](https://cloud.google.com/kubernetes-engine/docs/release-notes-stable), [upstream Kubernetes](https://endoflife.date/google-kubernetes-engine).
@@ -25,9 +25,9 @@ Given a `kube` versions, you must pick a **target Kubernetes version** from the 
 
 E.g. if using [`kube@0.73.0`](https://docs.rs/kube/0.73.0/kube/), we see its generated source is [`k8s-openapi@0.15.0`](https://docs.rs/k8s-openapi/0.15.0/k8s_openapi/), which exports the [following version features](https://docs.rs/crate/k8s-openapi/0.15.0/features).
 
-You can find the MAXK8SV from this feature list and pick this as your target. In this case the maximally supported version feature is `v1_24`.
+You can find the latest supported from this feature list and pick this as your target. In this case the latest supported version feature is `v1_24`.
 
-By default; you **SHOULD** pick the MAXK8SV as your target version even when running against older clusters. The **exception** is if you are programming explicitly against apis that have been removed in newer versions.
+By default; you **SHOULD** pick the latest as your target version even when running against older clusters. The **exception** is if you are programming explicitly against apis that have been removed in newer versions.
 
 With [k8s-pb], we plan on [doing this automatically](https://github.com/kube-rs/k8s-pb/issues/10).
 
