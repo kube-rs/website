@@ -4,18 +4,21 @@ Our Kubernetes version compatibility is similar to the strategy employed by [cli
 
 | kube version   | MINK8SV   | MAXK8SV  | Generated Source  |
 | -------------- | --------- | -------- | ----------------- |
-| `0.48.0`       |  `1.16`   | `1.20`   | [k8s-openapi@0.11.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0110-2021-01-23) |
-| `0.57.0`       |  `1.17`   | `1.21`   | [k8s-openapi@0.12.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0120-2021-06-15) |
-| `0.66.0`       |  `1.18`   | `1.22`   | [k8s-openapi@0.13.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0131-2021-10-08) |
-| `0.67.0`       |  `1.19`   | `1.23`   | [k8s-openapi@0.14.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0140-2022-01-23) |
-| `0.73.0`       |  `1.20`   | `1.24`   | [k8s-openapi@0.15.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0150-2022-05-22) |
+| `0.48.0`       |  `1.15`   | `1.20`   | [k8s-openapi@0.11.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0110-2021-01-23) |
+| `0.57.0`       |  `1.16`   | `1.21`   | [k8s-openapi@0.12.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0120-2021-06-15) |
+| `0.66.0`       |  `1.17`   | `1.22`   | [k8s-openapi@0.13.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0131-2021-10-08) |
+| `0.67.0`       |  `1.18`   | `1.23`   | [k8s-openapi@0.14.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0140-2022-01-23) |
+| `0.73.0`       |  `1.19`   | `1.24`   | [k8s-openapi@0.15.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0150-2022-05-22) |
 
+The MINK8SV is listed in our README as a badge:
 
- The **maximum** indicates how much of the latest api surface we support, and can be in general be exceeded. The **minimum** indicates the lower bound of our testing range (4 versions from the maximu - matching [Kubernetes support range](https://endoflife.date/kubernetes).
+> [![Tested against Kubernetes 1.19 and above](https://img.shields.io/badge/MINK8SV-1.19-326ce5.svg)](https://kube.rs/kubernetes-version)
 
- The MAXK8SV is shown as a readme badge:
+The **minimum** indicates the lower bound of our testing range, and the **maximum** indicates how much of the latest api surface we support, and this range covers **5 Kubernetes releases**.
 
- > [![Kubernetes 1.24](https://img.shields.io/badge/K8s-1.24-326ce5.svg)](https://kube.rs/kubernetes-version)
+This policy is intended to match **stable channel support** within **major cloud providers**.
+Compare with: [EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html), [AKS](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar), [GKE](https://cloud.google.com/kubernetes-engine/docs/release-notes-stable), [upstream Kubernetes](https://endoflife.date/google-kubernetes-engine).
+
 ## Picking Versions
 
 Given a `kube` versions, you must pick a **target Kubernetes version** from the available ones in the generated source that is used by that kube version.
@@ -62,10 +65,9 @@ We recommend developers stay within the supported version range for the best exp
 
 !!! warning "Untested Version Combinations"
 
-    While exceeding the supported version range **can** work: **we do not test** kube's functionality **outside this version range**.
+    While exceeding the supported version range is likely to work for most api resources: **we do not test** kube's functionality **outside this version range**.
 
 In minor skews, both kube and Kubernetes will share a large functioning API surface, while relying on deprecated apis to fill the gap. However, the **further you stray** from the range you are **increasingly likely** to encounter rust structs that doesn't work against your cluster, or miss support for resources entirely.
-
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
