@@ -53,6 +53,7 @@ nav:
   - security.md
   - release-process.md
   - rust-version.md
+  - kubernetes-version.md
   - architecture.md
   - adopters.md
 
