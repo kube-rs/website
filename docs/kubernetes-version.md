@@ -2,19 +2,23 @@
 
 Our Kubernetes version compatibility is similar to the strategy employed by [client-go](https://github.com/kubernetes/client-go#compatibility-matrix) and can interoperate well under a wide range of target Kubernetes versions defined by a **soft minimum** (MK8SV) and  the current **latest** available Kubernetes feature version.
 
-| kube version   | MINK8SV   | Latest  | Generated Source  |
-| -------------- | --------- | ------- | ----------------- |
-| `0.48.0`       |  `1.15`   | `1.20`  | [k8s-openapi@0.11.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0110-2021-01-23) |
-| `0.57.0`       |  `1.16`   | `1.21`  | [k8s-openapi@0.12.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0120-2021-06-15) |
-| `0.66.0`       |  `1.17`   | `1.22`  | [k8s-openapi@0.13.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0131-2021-10-08) |
-| `0.67.0`       |  `1.18`   | `1.23`  | [k8s-openapi@0.14.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0140-2022-01-23) |
-| `0.73.0`       |  `1.19`   | `1.24`  | [k8s-openapi@0.15.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0150-2022-05-22) |
+| kube version   | MK8SV   | Latest  | Generated Source  |
+| -------------- | ------- | ------- | ----------------- |
+| `0.48.0`       |  `1.15` | [`1.20`](https://kubernetes.io/blog/2020/12/08/kubernetes-1-20-release-announcement/) | [k8s-openapi@0.11.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0110-2021-01-23) |
+| `0.57.0`       |  `1.16` | [`1.21`](https://kubernetes.io/blog/2021/04/08/kubernetes-1-21-release-announcement/) | [k8s-openapi@0.12.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0120-2021-06-15) |
+| `0.66.0`       |  `1.17` | [`1.22`](https://kubernetes.io/blog/2021/08/04/kubernetes-1-22-release-announcement/) | [k8s-openapi@0.13.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0131-2021-10-08) |
+| `0.67.0`       |  `1.18` | [`1.23`](https://kubernetes.io/blog/2021/12/07/kubernetes-1-23-release-announcement/) | [k8s-openapi@0.14.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0140-2022-01-23) |
+| `0.73.0`       |  `1.19` | [`1.24`](https://kubernetes.io/blog/2022/05/03/kubernetes-1-24-release-announcement/) | [k8s-openapi@0.15.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0150-2022-05-22) |
 
 The MK8SV is listed in our README as a badge:
 
-> [![Tested against Kubernetes 1.19 and above](https://img.shields.io/badge/MINK8SV-1.19-326ce5.svg)](https://kube.rs/kubernetes-version)
+> [![Tested against Kubernetes 1.19 and above](https://img.shields.io/badge/MK8SV-1.19-326ce5.svg)](https://kube.rs/kubernetes-version)
 
-The **minimum** indicates the lower bound of our testing range, and the **latest** indicates how much of the latest api surface we support, and this range covers **5 Kubernetes releases**.
+The **minimum** indicates the lower bound of our testing range, and the **latest** is the Kubernetes version selectable as a target version, indicating how much of the latest api surface we support.
+
+!!! note "Minimum Kubernetes Version Policy"
+
+    The Minimum Supported Kubernetes Version (MK8SV) is set as **5 releases below** the **latest** Kubernetes version.
 
 This policy is intended to match **stable channel support** within **major cloud providers**.
 Compare with: [EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html), [AKS](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar), [GKE](https://cloud.google.com/kubernetes-engine/docs/release-notes-stable), [upstream Kubernetes](https://endoflife.date/google-kubernetes-engine).
