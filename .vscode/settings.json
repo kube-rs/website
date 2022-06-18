@@ -5,7 +5,11 @@
   "editor.lineHeight": 24,
   "workbench.colorTheme": "Seti Modified",
   "[markdown]": {
-    "editor.quickSuggestions": true
+    "editor.quickSuggestions": {
+      "comments": "on",
+      "strings": "on",
+      "other": "on"
+    }
   },
   "foam.openDailyNote.directory": "./docs/proposals",
   "foam.openDailyNote.fileExtension": "md",

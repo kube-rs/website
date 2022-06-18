@@ -63,7 +63,7 @@ In particular, when using your own **custom** or **stable official** api resourc
 
 As a result; relying on alpha apis will make the amount of **upgrades required** to an application **more frequent**. To alleviate this; consider using api [discovery] to **match on available api versions** rather than writing code against each Kubernetes version.
 
-## Exceeding The Range
+## Outside The Range
 
 We recommend developers stay within the supported version range for the best experience, but it is **technically possible** to operate outside the bounds of this range (by picking older `k8s-openapi` features, or by running against older clusters).
 
@@ -72,6 +72,24 @@ We recommend developers stay within the supported version range for the best exp
     While exceeding the supported version range is likely to work for most api resources: **we do not test** kube's functionality **outside this version range**.
 
 In minor skews, both kube and Kubernetes will share a large functioning API surface, while relying on deprecated apis to fill the gap. However, the **further you stray** from the range you are **increasingly likely** to encounter rust structs that doesn't work against your cluster, or miss support for resources entirely.
+
+## Special Abstractions
+
+In a small number of cases, kube provides abstractions on top of certain api resources that are not managed along with the generated sources. For these cases we currently __track the source__ and remove when Kubernetes removes them.
+
+This only affects a small number of special resources such as `CustomResourceDefinition`, `Event`, `Lease`, `AdmissionReview`.
+
+### Example
+
+The `CustomResourceDefinition` resource at `v1beta1` was [removed](https://kubernetes.io/docs/reference/using-api/deprecation-guide/) in Kubernetes `1.22`:
+
+> The apiextensions.k8s.io/v1beta1 API version of CustomResourceDefinition is no longer served as of v1.22.
+
+Their replacement; in `v1` was released in Kubernetes `1.16`.
+
+Kube had special support for both versions of `CustomResourceDefinition` from `0.26.0` up until [`0.72.0`](https://github.com/kube-rs/kube-rs/releases/tag/0.72.0) when kube supported structs from Kubernetes >= 1.22.
+
+This special support took the form of the proc macro [CustomResource] and [associated helpers](https://docs.rs/kube/latest/kube/core/crd/index.html) that allowing pinning the crd version to `v1beta1` up until its removal. It is now `v1` only.
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
