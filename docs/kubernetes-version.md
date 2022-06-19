@@ -14,7 +14,7 @@ The MK8SV is listed in our README as a badge:
 
 > [![Tested against Kubernetes 1.19 and above](https://img.shields.io/badge/MK8SV-1.19-326ce5.svg)](https://kube.rs/kubernetes-version)
 
-The **minimum** indicates the lower bound of our testing range, and the **latest** is the Kubernetes version selectable as a target version, indicating how much of the latest api surface we support.
+The **minimum** indicates the lower bound of our testing range, and the **latest** is the maximum Kubernetes version selectable as a target version.
 
 !!! note "Minimum Kubernetes Version Policy"
 
@@ -49,13 +49,13 @@ Consider the following outcomes when picking **target versions** based on your *
 2. if `target version > cluster version` (cluster behind kube), then:
     * kube has more recent api features than the cluster supports
     * recent Rust api structs might not work with the cluster version yet
-    * [deprecated](https://kubernetes.io/docs/reference/using-api/deprecation-policy/)/alpha apis might have been removed from Rust structs ⚡
+    * deprecated/alpha apis might have been removed from Rust structs ⚡
 3. if `target version < cluster version` (cluster ahead of kube), then:
     * kube has less recent api features than the cluster supports
     * recent Kubernetes resources might not have Rust struct counterparts
-    * [deprecated](https://kubernetes.io/docs/reference/using-api/deprecation-policy/)/alpha apis might have been removed from the cluster ⚡
+    * deprecated/alpha apis might have been removed from the cluster ⚡
 
-Kubernetes takes a long time to remove deprecated apis (unless they alpha or beta apis), so the **acceptable distance** from your **cluster** version actually **depends** on what **apis you target**.
+[Kubernetes takes a long time to remove deprecated apis](https://kubernetes.io/docs/reference/using-api/deprecation-policy/) (unless they alpha or beta apis), so the **acceptable distance** from your **cluster** version actually **depends** on what **apis you target**.
 
 In particular, when using your own **custom** or **stable official** api resources - where exceeding the range will have **little impact**.
 
@@ -65,17 +65,17 @@ As a result; relying on alpha apis will make the amount of **upgrades required**
 
 ## Outside The Range
 
-We recommend developers stay within the supported version range for the best experience, but it is **technically possible** to operate outside the bounds of this range (by picking older `k8s-openapi` features, or by running against older clusters).
+We recommend developers stay within the supported version range for the best experience, but it is **technically possible** to operate outside the bounds of this range (by picking older features from `k8s-openapi`, or by running against older clusters).
 
 !!! warning "Untested Version Combinations"
 
     While exceeding the supported version range is likely to work for most api resources: **we do not test** kube's functionality **outside this version range**.
 
-In minor skews, both kube and Kubernetes will share a large functioning API surface, while relying on deprecated apis to fill the gap. However, the **further you stray** from the range you are **increasingly likely** to encounter Rust structs that doesn't work against your cluster, or miss support for resources entirely.
+In minor skews, kube and Kubernetes will share a large functioning API surface, while relying on deprecated apis to fill the gap. However, the **further you stray** from the range you are **increasingly likely** to encounter Rust structs that doesn't work against your cluster, or miss support for resources entirely.
 
 ## Special Abstractions
 
-In a small number of cases, kube provides abstractions on top of certain api resources that are not managed along with the generated sources. For these cases we currently __track the source__ and remove when Kubernetes removes them.
+For a small number of api resources, kube provides abstractions that are not managed along with the generated sources. For these cases we currently __track the source__ and remove when Kubernetes removes them.
 
 This only affects a small number of special resources such as `CustomResourceDefinition`, `Event`, `Lease`, `AdmissionReview`.
 
