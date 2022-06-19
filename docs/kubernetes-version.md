@@ -49,7 +49,7 @@ Consider the following outcomes when picking **target versions** based on your *
 2. if `target version > cluster version` (cluster behind kube), then:
     * kube has more recent api features than the cluster supports
     * recent Rust api structs might not work with the cluster version yet
-    * [deprecated](https://kubernetes.io/docs/reference/using-api/deprecation-policy/)/alpha apis might have been removed from rust structs ⚡
+    * [deprecated](https://kubernetes.io/docs/reference/using-api/deprecation-policy/)/alpha apis might have been removed from Rust structs ⚡
 3. if `target version < cluster version` (cluster ahead of kube), then:
     * kube has less recent api features than the cluster supports
     * recent kubernetes resources might not have rust struct counterparts
