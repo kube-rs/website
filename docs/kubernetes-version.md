@@ -45,7 +45,7 @@ Consider the following outcomes when picking **target versions** based on your *
 
 1. if `target version == cluster version` (cluster in sync with kube), then:
     * kube has api parity with cluster
-    * rust structs are all queryable via kube
+    * Rust structs are all queryable via kube
 2. if `target version > cluster version` (cluster behind kube), then:
     * kube has more recent api features than the cluster supports
     * recent rust api structs might not work with the cluster version yet
