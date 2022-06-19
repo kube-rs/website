@@ -52,7 +52,7 @@ Consider the following outcomes when picking **target versions** based on your *
     * [deprecated](https://kubernetes.io/docs/reference/using-api/deprecation-policy/)/alpha apis might have been removed from Rust structs ⚡
 3. if `target version < cluster version` (cluster ahead of kube), then:
     * kube has less recent api features than the cluster supports
-    * recent kubernetes resources might not have rust struct counterparts
+    * recent Kubernetes resources might not have Rust struct counterparts
     * [deprecated](https://kubernetes.io/docs/reference/using-api/deprecation-policy/)/alpha apis might have been removed from the cluster ⚡
 
 Kubernetes takes a long time to remove deprecated apis (unless they alpha or beta apis), so the **acceptable distance** from your **cluster** version actually **depends** on what **apis you target**.
