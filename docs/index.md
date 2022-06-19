@@ -1,3 +1,8 @@
+---
+hide:
+  - navigation
+  - toc
+---
 
 <figure markdown>
 ![kube-rs logo](https://user-images.githubusercontent.com/639336/155115602-cb5f4c64-24a3-4921-b5e9-0e4d5a656c6b.svg#only-dark){ width="600px" } ![kube-rs logo](https://user-images.githubusercontent.com/639336/155115130-758a8ba9-e209-42de-bf6d-cde7be3ed86f.svg#only-light){ width="600px" }
