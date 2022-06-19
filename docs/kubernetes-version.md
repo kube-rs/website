@@ -71,7 +71,7 @@ We recommend developers stay within the supported version range for the best exp
 
     While exceeding the supported version range is likely to work for most api resources: **we do not test** kube's functionality **outside this version range**.
 
-In minor skews, both kube and Kubernetes will share a large functioning API surface, while relying on deprecated apis to fill the gap. However, the **further you stray** from the range you are **increasingly likely** to encounter rust structs that doesn't work against your cluster, or miss support for resources entirely.
+In minor skews, both kube and Kubernetes will share a large functioning API surface, while relying on deprecated apis to fill the gap. However, the **further you stray** from the range you are **increasingly likely** to encounter Rust structs that doesn't work against your cluster, or miss support for resources entirely.
 
 ## Special Abstractions
 
