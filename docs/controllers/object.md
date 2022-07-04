@@ -59,7 +59,7 @@ This will generate a `pub struct Document` in this scope which implements [Resou
 
 ```rs
 let docs = Api::<Document>::all(client);
-Controller::new(pods, ListParams::default())
+Controller::new(docs, ListParams::default())
 ```
 
 !!! note "Custom resources require schemas"
