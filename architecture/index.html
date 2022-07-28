@@ -1,0 +1,1409 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.3">
+    
+    
+      
+        <title>Architecture - kube</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e8d9bf0c.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="kube" class="md-header__button md-logo" aria-label="kube" data-md-component="logo">
+      
+  <img src="../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            kube
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kube-rs/kube-rs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kube-rs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link md-tabs__link--active">
+        Information
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../controllers/intro/" class="md-tabs__link">
+        Controllers
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../crates/kube/" class="md-tabs__link">
+        Crates
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../governance/" class="md-tabs__link">
+        Contributing
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="kube" class="md-nav__button md-logo" aria-label="kube" data-md-component="logo">
+      
+  <img src="../favicon.png" alt="logo">
+
+    </a>
+    kube
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kube-rs/kube-rs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kube-rs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          Information
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Information" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          Information
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        Getting started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        Changelog
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/" class="md-nav__link">
+        Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-process/" class="md-nav__link">
+        Release Process
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust-version/" class="md-nav__link">
+        Rust Version
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kubernetes-version/" class="md-nav__link">
+        Kubernetes version
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Architecture
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Architecture
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    Overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kubernetes-ecosystem-considerations" class="md-nav__link">
+    Kubernetes Ecosystem Considerations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generated-structs" class="md-nav__link">
+    Generated Structs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crate-overviews" class="md-nav__link">
+    Crate Overviews
+  </a>
+  
+    <nav class="md-nav" aria-label="Crate Overviews">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kube-core" class="md-nav__link">
+    kube-core
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube-client" class="md-nav__link">
+    kube-client
+  </a>
+  
+    <nav class="md-nav" aria-label="kube-client">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config" class="md-nav__link">
+    config
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#client" class="md-nav__link">
+    client
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    api
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discovery" class="md-nav__link">
+    discovery
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube-derive" class="md-nav__link">
+    kube-derive
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube-runtime" class="md-nav__link">
+    kube-runtime
+  </a>
+  
+    <nav class="md-nav" aria-label="kube-runtime">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#watcher" class="md-nav__link">
+    watcher
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reflector" class="md-nav__link">
+    reflector
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controller" class="md-nav__link">
+    controller
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#finalizer" class="md-nav__link">
+    finalizer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wait" class="md-nav__link">
+    wait
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events" class="md-nav__link">
+    events
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crate-delineation-and-overlaps" class="md-nav__link">
+    Crate Delineation and Overlaps
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adopters/" class="md-nav__link">
+        Adopters
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Controllers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Controllers" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Controllers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controllers/intro/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controllers/object/" class="md-nav__link">
+        The Object
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controllers/reconciler/" class="md-nav__link">
+        The Reconciler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controllers/application/" class="md-nav__link">
+        The Application
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controllers/observability/" class="md-nav__link">
+        Observability
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controllers/relations/" class="md-nav__link">
+        Related Objects
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Crates
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Crates" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Crates
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crates/kube/" class="md-nav__link">
+        kube
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crates/kube-core/" class="md-nav__link">
+        kube-core
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crates/kube-client/" class="md-nav__link">
+        kube-client
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crates/kube-derive/" class="md-nav__link">
+        kube-derive
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crates/kube-runtime/" class="md-nav__link">
+        kube-runtime
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Contributing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contributing" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Contributing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../governance/" class="md-nav__link">
+        Governance
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../maintainers/" class="md-nav__link">
+        Maintainers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        Contributing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../website/" class="md-nav__link">
+        Website
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/" class="md-nav__link">
+        Tools
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    Overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kubernetes-ecosystem-considerations" class="md-nav__link">
+    Kubernetes Ecosystem Considerations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generated-structs" class="md-nav__link">
+    Generated Structs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crate-overviews" class="md-nav__link">
+    Crate Overviews
+  </a>
+  
+    <nav class="md-nav" aria-label="Crate Overviews">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kube-core" class="md-nav__link">
+    kube-core
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube-client" class="md-nav__link">
+    kube-client
+  </a>
+  
+    <nav class="md-nav" aria-label="kube-client">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config" class="md-nav__link">
+    config
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#client" class="md-nav__link">
+    client
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    api
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discovery" class="md-nav__link">
+    discovery
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube-derive" class="md-nav__link">
+    kube-derive
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube-runtime" class="md-nav__link">
+    kube-runtime
+  </a>
+  
+    <nav class="md-nav" aria-label="kube-runtime">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#watcher" class="md-nav__link">
+    watcher
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reflector" class="md-nav__link">
+    reflector
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controller" class="md-nav__link">
+    controller
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#finalizer" class="md-nav__link">
+    finalizer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wait" class="md-nav__link">
+    wait
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events" class="md-nav__link">
+    events
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crate-delineation-and-overlaps" class="md-nav__link">
+    Crate Delineation and Overlaps
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">#</a></h1>
+<p>This document describes the high-level architecture of kube-rs.</p>
+<p>This is intended for contributors or people interested in architecture.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">#</a></h2>
+<p>The kube-rs repository contains 5 main crates, examples and tests.</p>
+<p>The main crate that users generally import is <code>kube</code>, and it's a straight facade crate that re-exports from the four other crates:</p>
+<ul>
+<li><code>kube_core</code> -&gt; re-exported as <code>core</code></li>
+<li><code>kube_client</code> -&gt; re-exported as <code>api</code> + <code>client</code> + <code>config</code> + <code>discovery</code></li>
+<li><code>kube_derive</code> -&gt; re-exported as <code>CustomResource</code></li>
+<li><code>kube_runtime</code> -&gt; re-exported as <code>runtime</code></li>
+</ul>
+<p>In terms of dependencies between these 4:</p>
+<ul>
+<li><code>kube_core</code> is used by <code>kube_runtime</code>, <code>kube_derive</code> and <code>kube_client</code></li>
+<li><code>kube_client</code> is used by <code>kube_runtime</code></li>
+<li><code>kube_runtime</code> is the highest level abstraction</li>
+</ul>
+<p>The extra indirection crate <code>kube</code> is there to avoid cyclic dependencies between the client and the runtime (if the client re-exported the runtime then the two crates would be cyclically dependent).</p>
+<p><strong>NB</strong>: We refer to these crates by their <code>crates.io</code> name using underscores for separators, but the folders have dashes as separators.</p>
+<p>When working on features/issues with <code>kube-rs</code> you will <strong>generally</strong> work inside one of these crates at a time, so we will focus on these in isolation, but talk about possible overlaps at the end.</p>
+<h2 id="kubernetes-ecosystem-considerations">Kubernetes Ecosystem Considerations<a class="headerlink" href="#kubernetes-ecosystem-considerations" title="Permanent link">#</a></h2>
+<p>The Rust ecosystem does not exist in a vaccum as we take heavy inspirations from the popular Go ecosystem. In particular:</p>
+<ul>
+<li><code>core</code> module contains invariants from <a href="https://github.com/kubernetes/apimachinery">apimachinery</a> that is preseved across individual apis</li>
+<li><code>client::Client</code> is a re-envisioning of a generic <a href="https://github.com/kubernetes/client-go">client-go</a></li>
+<li><code>runtime::Controller</code> abstraction follows conventions in <a href="https://github.com/kubernetes-sigs/controller-runtime">controller-runtime</a></li>
+<li><code>derive::CustomResource</code> derive macro for <a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/">CRDs</a> is loosely inspired by <a href="https://book.kubebuilder.io/reference/generating-crd.html">kubebuilder's annotations</a></li>
+</ul>
+<p>We do occasionally diverge on matters where following the go side is worse for the rust language, but when it comes to choosing names and finding out where some modules / functionality should reside; a precedent in <code>client-go</code>, <code>apimachinery</code>, <code>controller-runtime</code> and <code>kubebuilder</code> goes a long way.</p>
+<h2 id="generated-structs">Generated Structs<a class="headerlink" href="#generated-structs" title="Permanent link">#</a></h2>
+<p>We do not maintain the kubernetes types generated from the <code>swagger.json</code> or the protos at present moment, and we do not handle client-side validation of fields relating to these types (that's left to the api-server).</p>
+<p>We generally use k8s-openapi's Rust bindings for Kubernetes' builtin types types, see:</p>
+<ul>
+<li><a href="https://github.com/Arnavion/k8s-openapi/">github.com:k8s-openapi</a></li>
+<li><a href="https://docs.rs/k8s-openapi/*/k8s_openapi/">docs.rs:k8s-openapi</a></li>
+</ul>
+<p>We also maintain an experimental set of Protobuf bindings, see <a href="https://github.com/kazk/k8s-pb">k8s-pb</a>.</p>
+<h2 id="crate-overviews">Crate Overviews<a class="headerlink" href="#crate-overviews" title="Permanent link">#</a></h2>
+<h3 id="kube-core">kube-core<a class="headerlink" href="#kube-core" title="Permanent link">#</a></h3>
+<p>This crate only contains types relevant to the <a href="https://kubernetes.io/docs/concepts/overview/kubernetes-api/">Kubernetes API</a>, abstractions analogous to what you'll find inside <a href="https://github.com/kubernetes/apimachinery/tree/master/pkg">apimachinery</a>, and extra Rust traits that help us with generics further down in <code>kube-client</code>.</p>
+<p>Starting out with the basic type modules first:</p>
+<ul>
+<li><code>metadata</code>: the various metadata types; <code>ObjectMeta</code>, <code>ListMeta</code>, <code>TypeMeta</code></li>
+<li><code>request</code> + <code>response</code> + <code>subresource</code>: a <a href="https://sans-io.readthedocs.io/">sans-IO</a> style http interface for the API</li>
+<li><code>watch</code>: a generic enum and behaviour for the <a href="https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes">watch api</a></li>
+<li><code>params</code>: generic parameters passed to sans-IO request interface (<code>ListParams</code> etc, called <code>ListOptions</code> in apimachinery)</li>
+</ul>
+<p>Then there are traits</p>
+<ul>
+<li><code>crd</code>: a versioned <code>CustomResourceExt</code> trait for <code>kube-derive</code></li>
+<li><code>object</code> generic conveniences for iterating over typed lists of objects, and objects following spec/status conventions</li>
+<li><code>resource</code>: a <code>Resource</code> trait for <code>kube-client</code>'s <code>Api</code> + a convenience <code>ResourceExt</code> trait for users</li>
+</ul>
+<p>The most important export here is the <code>Resource</code> trait and its impls. It is a pretty complex trait, with an associated type called <code>DynamicType</code> (that is default empty). Every <code>ObjectMeta</code>-using type that comes from <code>k8s-openapi</code> gets a blanket impl of <code>Resource</code> so we can use them generically (in <code>kube_client::Api</code>).</p>
+<p>Finally, there are two modules used by the higher level <code>discovery</code> module (in <code>kube-client</code>) and they have similar counterparts in <a href="https://github.com/kubernetes/apimachinery/blob/master/pkg/api/meta/restmapper.go">apimachinery/restmapper</a> + <a href="https://github.com/kubernetes/apimachinery/blob/master/pkg/runtime/schema/group_version.go">apimachinery/group_version</a>:</p>
+<ul>
+<li><code>discovery</code>: types returned by the discovery api; capabilities, verbs, scopes, key info</li>
+<li><code>gvk</code>: partial type information to infer api types</li>
+</ul>
+<p>The main type here from these two modules is <code>ApiResource</code> because it can also be used to construct a <code>kube_client::Api</code> instance without compile-time type information (both <code>DynamicObject</code> and <code>Object</code> has <code>Resource</code> impls where <code>DynamicType = ApiResource</code>).</p>
+<h3 id="kube-client">kube-client<a class="headerlink" href="#kube-client" title="Permanent link">#</a></h3>
+<h4 id="config">config<a class="headerlink" href="#config" title="Permanent link">#</a></h4>
+<p>Contains logic for determining the runtime environment (local <a href="https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/">kubeconfigs</a> or <a href="https://kubernetes.io/docs/tasks/access-application-cluster/access-cluster/#accessing-the-api-from-a-pod">in-cluster</a>) so that we can construct our <code>Config</code> from either source.</p>
+<ul>
+<li><code>Config</code> is the source-agnostic type (with all the information needed by our <code>Client</code>)</li>
+<li><code>Kubeconfig</code> is for loading from <code>~/.kube/config</code> or from any number of kubeconfig like files set by <code>KUBECONFIG</code> evar.</li>
+<li><code>Config::from_cluster_env</code> reads environment variables that are injected when running inside a pod</li>
+</ul>
+<p>In general this module has similar functionality to the upstream <a href="https://github.com/kubernetes/client-go/tree/7697067af71046b18e03dbda04e01a5bb17f9809/tools/clientcmd">client-go/clientcmd</a> module.</p>
+<h4 id="client">client<a class="headerlink" href="#client" title="Permanent link">#</a></h4>
+<p>The <code>Client</code> is one of the most complicated parts of <code>kube-rs</code>, because it has the most generic interface. People can mock the <code>Client</code>, people can replace individual components and force inject headers, people can choose their own tls stack, and - in theory - use whatever http clients they want.</p>
+<p>Generally, the <code>Client</code> is created from the properties of a <code>Config</code> to create a particular <code>hyper::Client</code> with a pre-configured amount of <a href="https://docs.rs/tower/*/tower/layer/trait.Layer.html">tower::Layer</a>s (see <code>TryFrom&lt;Config&gt; for Client</code>), but users can also pass in an arbitrary <code>tower::Service</code> (to fully customise or to mock). The signature restrictions on <code>Client::new</code> is commensurately large.</p>
+<p>The <code>tls</code> module contains the <code>openssl</code> or <code>rustls</code> interfaces to let users pick their tls stacks. The connectors created in that module is passed to <code>hyper::Client</code> based on feature selection.</p>
+<p>The <code>Client</code> can be created from a particular type of using the properties in the <code>Config</code> to configure its layers. Some of our layers come straight from <a href="https://docs.rs/tower-http">tower-http</a>:</p>
+<ul>
+<li><code>tower_http::DecompressionLayer</code> to deal with gzip compression</li>
+<li><code>tower_http::TraceLayer</code> to propagate http request information onto <a href="https://docs.rs/tracing">tracing</a> spans.</li>
+<li><code>tower_http::AddAuthorizationLayer</code> to set bearer tokens / basic auth (when needed)</li>
+</ul>
+<p>but we also have our own layers in the <code>middleware</code> module:</p>
+<ul>
+<li><code>BaseUriLayer</code> prefixes <code>Config::base_url</code> to requests</li>
+<li><code>AuthLayer</code> configures either <code>AddAuthorizationLayer</code> or <code>AsyncFilterLayer&lt;RefreshableToken&gt;</code> depending on authentication method in the kubeconfig. <code>AsyncFilterLayer&lt;RefreshableToken&gt;</code> is like <code>AddAuthorizationLayer</code>, but with a token that's refreshed when necessary.</li>
+</ul>
+<p>(The <code>middleware</code> module is kept small to avoid mixing the business logic (<code>client::auth</code> openid connect oauth provider logic) with the tower layering glue.)</p>
+<p>The exported layers and tls connectors are mainly exposed through the <code>config_ext</code> module's <code>ConfigExt</code> trait which is only implemented by <code>Config</code> (because the config has all the properties needed for this in general, and it helps minimise our api surface).</p>
+<p>Finally, the <code>Client</code> manages other key aspects of IO the protocol such as:</p>
+<ul>
+<li><code>Client::connect</code> performs an <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Upgrade">HTTP Upgrade</a> for specialised verbs</li>
+<li><code>Client::request</code> handles 90% of all requests</li>
+<li><code>Client::request_events</code> handles streaming <code>watch</code> eventss using <code>tokio_utils</code>'s <code>FramedRead</code> codec</li>
+<li><code>Client::request_status</code> handles <code>Either&lt;T, Status&gt;</code> responses from kubernetes</li>
+</ul>
+<h4 id="api">api<a class="headerlink" href="#api" title="Permanent link">#</a></h4>
+<p>The generic <code>Api</code> type and its methods.</p>
+<p>Builds on top of the <code>Request</code> / <code>Response</code> interface in <code>kube_core</code> by parametrising over a generic type <code>K</code> that implement <code>Resource</code> (plus whatever else is needed).</p>
+<p>The <code>Api</code> absorbs a <code>Client</code> on construction and is then configured with its <code>Scope</code> (through its <code>::namespaced</code> / <code>::default_namespaced</code> or <code>::all</code> constructors).</p>
+<p>For dynamic types (<code>Object</code> and <code>DynamicObject</code>) it has slightly more complicated constructors which have the <code>_with</code> suffix.</p>
+<p>The <code>core_methods</code> and most <code>subresource</code> methods generally follow this recipe:</p>
+<ul>
+<li>create <code>Request</code></li>
+<li>store the kubernetes verb in the [<code>http::Extensions</code>] object</li>
+<li>call the request with the <code>Client</code> and tell it what type(s) to deserialize into</li>
+</ul>
+<p>Some subresource methods (behind the <code>ws</code> feature) use the <code>remote_command</code> module's <code>AttachedProcess</code> interface expecting a duplex stream to deal with specialised websocket verbs (<code>exec</code> and <code>attach</code>) and is calling <code>Client::connect</code> first to get that stream.</p>
+<h4 id="discovery">discovery<a class="headerlink" href="#discovery" title="Permanent link">#</a></h4>
+<p>Deals with dynamic discovery of what apis are available on the api-server.<br />
+Normally this can be used to discover custom resources, but also certain standard resources that vary between providers.</p>
+<p>The <code>Discovery</code> client can be used to do a full recursive sweep of api-groups into all api resources (through <code>filter</code>/<code>exclude</code> -&gt; <code>run</code>) and then the users can periodically re-<code>run</code> to keep the cache up to date (as kubernetes is being upgraded behind the scenes).</p>
+<p>The <code>discovery</code> module also contains a way to run smaller queries through the <code>oneshot</code> module; e.g. resolving resource name when having group version kind, resolving every resource within one specific group, or even one group at a pinned version.</p>
+<p>The equivalent Go logic is found in <a href="https://github.com/kubernetes/client-go/blob/master/discovery/discovery_client.go">client-go/discovery</a></p>
+<h3 id="kube-derive">kube-derive<a class="headerlink" href="#kube-derive" title="Permanent link">#</a></h3>
+<p>The smallest crate. A simple <a href="https://doc.rust-lang.org/reference/procedural-macros.html">derive proc_macro</a> to generate Kubernetes wrapper structs and trait impls around a data struct.</p>
+<p>Uses <code>darling</code> to parse <code>#[kube(attrs...)]</code> then uses <code>syn</code> and <code>quote</code> to produce a suitable syntax tree based on the attributes requested.</p>
+<p>It ultimately contains a lot of ugly json coercing from attributes into serialization code, but this is code that everyone working with custom resources need.</p>
+<p>It has hooks into <code>schemars</code> when using <code>JsonSchema</code> to ensure the correct type of <a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#specifying-a-structural-schema">CRD schema</a> is attached to the right part of the generated custom resource definition.</p>
+<h3 id="kube-runtime">kube-runtime<a class="headerlink" href="#kube-runtime" title="Permanent link">#</a></h3>
+<p>The highest level crate that deals with the highest level abstractions (such as controllers/watchers/reflectors) and specific Kubernetes apis that need common care (finalisers, waiting for conditions, event publishing).</p>
+<h4 id="watcher">watcher<a class="headerlink" href="#watcher" title="Permanent link">#</a></h4>
+<p>The <code>watcher</code> module contains state machine wrappers around <code>Api::watch</code> that will watch and auto-recover on allowable failures.<br />
+The <code>watcher</code> fn is the general purpose one that is similar to informers in Go land, and will watch a collection of objects. The <code>watch_object</code> is a specialised version of this that watches a single object.</p>
+<h4 id="reflector">reflector<a class="headerlink" href="#reflector" title="Permanent link">#</a></h4>
+<p>The <code>reflector</code> module contains wrappers around <code>watcher</code> that will cache objects in memory.<br />
+The <code>reflector</code> fn wraps a <code>watcher</code> and a state <code>Store</code> that is updated on every event emitted by the <code>watcher</code>.</p>
+<p>The reason for the difference between <code>watcher::Event</code> (created by <code>watcher</code>) and <code>kube::api::WatchEvent</code> (created by <code>Api::watch</code>) is that <code>watcher</code> will deals with desync errors and do a full relist whose result is then propagated as a single event, ensuring the <code>reflector</code> can do a single, atomic update to its state <code>Store</code>.</p>
+<h4 id="controller">controller<a class="headerlink" href="#controller" title="Permanent link">#</a></h4>
+<p>The <code>controller</code> module contains the <code>Controller</code> type and its associated definitions.</p>
+<p>The <code>Controller</code> is configured to watch one root object (configured via <code>::new</code>), and several owned objects (via <code>::owns</code>), and - once <code>::run</code> - it will hit a users <code>reconcile</code> function for every change to the root object or any of its child objects (and internally it will traverse up the object tree - usually through owner references - to find the affected root object).</p>
+<p>The user is then meant to provide an idempotent <code>reconcile</code> fn, that does not know what underlying object was changed, to ensure the state configured in its crd, is what can be seen in the world.</p>
+<p>To manage this, a vector of watchers is converted into a <a href="https://docs.rs/futures/0.3.17/futures/stream/struct.SelectAll.html">set of streams</a> of the same type by mapping the watchers so they have the same output type. This is why <code>watches</code> and <code>owns</code> differ: <code>owns</code> looks up <code>OwnerReferences</code>, but <code>watches</code> need you to define the relation yourself with a <code>mapper</code>. The mappers we support are <code>trigger_owners</code>, <code>trigger_self</code>, and the custom <code>trigger_with</code>.</p>
+<p>Once we have combined the stream of streams we essentially have a flattened super stream with events from multiple watchers that will act as our input events. With this, the <code>applier</code> can start running its fairly complex machinery:</p>
+<ol>
+<li>new input events get sent to the <code>scheduler</code></li>
+<li>scheduled events are then passed them through a <code>Runner</code> preventing duplicate parallel requests for the same object</li>
+<li>when running, we send the affected object to the users <code>reconciler</code> fn and await that future</li>
+<li>a) on success, prepare the users <code>Action</code> (generally a slow requeue several minutes from now)</li>
+<li>b) on failure, prepare a <code>Action</code> based on the users error policy (generally a backoff'd requeue with shorter initial delay)</li>
+<li>Map resulting <code>Action</code>s through an ad-hoc <code>scheduler</code> channel</li>
+<li>Resulting requeue requests through the channel are picked up at the top of <code>applier</code> and merged with input events in step 1.</li>
+</ol>
+<p>Ideally, the process runs forever, and it minimises unnecessary reconcile calls (like users changing more than one related object while one reconcile is already happening).</p>
+<p>See controller <a href="../controllers/internals/">internals</a> for some more information on this.</p>
+<h4 id="finalizer">finalizer<a class="headerlink" href="#finalizer" title="Permanent link">#</a></h4>
+<p>Contains a helper wrapper <code>finalizer</code> for a <code>reconcile</code> fn used by a <code>Controller</code> when a user is using <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/">finalizers</a> to handle garbage collection.</p>
+<p>This lets the user focus on simply selecting the type of behaviour they would like to exhibit based on whether the object is being deleted or it's just being regularly reconciled (through enum matching on <code>finalizer::Event</code>). This lets the user elide checking for potential deletion timestamps and manage the state machinery of <code>metadata.finalizers</code> through jsonpatching.</p>
+<h4 id="wait">wait<a class="headerlink" href="#wait" title="Permanent link">#</a></h4>
+<p>Contains helpers for waiting for <code>conditions</code>, or objects to be fully removed (i.e. waiting for finalizers post delete).</p>
+<p>These build upon <code>watch_object</code> with specific mappers.</p>
+<h4 id="events">events<a class="headerlink" href="#events" title="Permanent link">#</a></h4>
+<p>Contains an event <code>Recorder</code> ala <a href="https://github.com/kubernetes/client-go/tree/master/tools/events">client-go/events</a> that controllers can hook into, to publish events related to their reconciliations.</p>
+<h2 id="crate-delineation-and-overlaps">Crate Delineation and Overlaps<a class="headerlink" href="#crate-delineation-and-overlaps" title="Permanent link">#</a></h2>
+<p>When working on the the client machinery, it's important to realise that there are effectively 5 layers involved:</p>
+<ol>
+<li>Sans-IO request builder (in <code>kube_core::Request</code>)</li>
+<li>IO (in <code>kube_client::Client</code>)</li>
+<li>Typing (in <code>kube_client::Api</code>)</li>
+<li>Helpers for using the API correctly (e.g.<code>kube_runtime::watcher</code>)</li>
+<li>High-level abstractions for specific tasks (e.g. <code>kube_runtime::controller</code>)</li>
+</ol>
+<p>At level 3, we we essentially have what the K8s team calls a basic client. As a consequence, new methods/subresources typically cross 2 crate boundaries (<code>kube_core</code>, <code>kube_client</code>), and needs to touch 3 main modules.</p>
+<p>Similarly, there are also the traits and types that define what an api means in <code>kube_core</code> like <code>Resource</code> and <code>ApiResource</code>.<br />
+If modifying these, then changes to <code>kube-derive</code> are likely necessary, as it needs to directly implement this for users.</p>
+<p>These types of cross-crate dependencies are why we expose <code>kube</code> as a single versioned facade crate that users can upgrade atomically (without being caught in the middle of a publish cycle). This also gives us better compatibility with <code>dependabot</code>.</p>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../kubernetes-version/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Kubernetes version" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Kubernetes version
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../adopters/" class="md-footer__link md-footer__link--next" aria-label="Next: Adopters" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Adopters
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://kube.rs" target="_blank" rel="noopener" title="kube.rs" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M336 0H48C21.49 0 0 21.49 0 48v431.9c0 24.7 26.79 40.08 48.12 27.64L192 423.6l143.9 83.93c21.3 11.57 48.1-2.93 48.1-27.63V48c0-26.51-21.5-48-48-48zm0 452-144-84-144 84V54c0-3.37 2.63-6 5.1-6h276c4.3 0 6.9 2.63 6.9 6v398z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/kube-rs/website" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/kube_rs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.b88e97c5.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1293 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.3">
+    
+    
+      
+        <title>Observability - kube</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e8d9bf0c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#observability" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="kube" class="md-header__button md-logo" aria-label="kube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            kube
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Observability
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kube-rs/kube-rs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kube-rs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../getting-started/" class="md-tabs__link">
+        Information
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../intro/" class="md-tabs__link md-tabs__link--active">
+        Controllers
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../crates/kube/" class="md-tabs__link">
+        Crates
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../governance/" class="md-tabs__link">
+        Contributing
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="kube" class="md-nav__button md-logo" aria-label="kube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    kube
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kube-rs/kube-rs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kube-rs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          Information
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Information" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          Information
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        Getting started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        Changelog
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/" class="md-nav__link">
+        Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-process/" class="md-nav__link">
+        Release Process
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust-version/" class="md-nav__link">
+        Rust Version
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-version/" class="md-nav__link">
+        Kubernetes version
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        Architecture
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adopters/" class="md-nav__link">
+        Adopters
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Controllers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Controllers" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Controllers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intro/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../object/" class="md-nav__link">
+        The Object
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reconciler/" class="md-nav__link">
+        The Reconciler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../application/" class="md-nav__link">
+        The Application
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Observability
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Observability
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adding-logs" class="md-nav__link">
+    Adding Logs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-traces" class="md-nav__link">
+    Adding Traces
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Traces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instrumenting" class="md-nav__link">
+    Instrumenting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linking-logs-and-traces" class="md-nav__link">
+    Linking Logs and Traces
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-metrics" class="md-nav__link">
+    Adding Metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registering" class="md-nav__link">
+    Registering
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#meauring" class="md-nav__link">
+    Meauring
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exposing" class="md-nav__link">
+    Exposing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-metrics" class="md-nav__link">
+    What Metrics
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../relations/" class="md-nav__link">
+        Related Objects
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Crates
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Crates" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Crates
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crates/kube/" class="md-nav__link">
+        kube
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crates/kube-core/" class="md-nav__link">
+        kube-core
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crates/kube-client/" class="md-nav__link">
+        kube-client
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crates/kube-derive/" class="md-nav__link">
+        kube-derive
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crates/kube-runtime/" class="md-nav__link">
+        kube-runtime
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Contributing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contributing" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Contributing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../governance/" class="md-nav__link">
+        Governance
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../maintainers/" class="md-nav__link">
+        Maintainers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        Contributing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../website/" class="md-nav__link">
+        Website
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/" class="md-nav__link">
+        Tools
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adding-logs" class="md-nav__link">
+    Adding Logs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-traces" class="md-nav__link">
+    Adding Traces
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Traces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instrumenting" class="md-nav__link">
+    Instrumenting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linking-logs-and-traces" class="md-nav__link">
+    Linking Logs and Traces
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-metrics" class="md-nav__link">
+    Adding Metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registering" class="md-nav__link">
+    Registering
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#meauring" class="md-nav__link">
+    Meauring
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exposing" class="md-nav__link">
+    Exposing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-metrics" class="md-nav__link">
+    What Metrics
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h1 id="observability">Observability<a class="headerlink" href="#observability" title="Permanent link">#</a></h1>
+<p>This document showcases common techniques for instrumentation:</p>
+<ul>
+<li><strong>logs</strong> (via <a href="https://crates.io/crates/tracing">tracing</a> + <a href="https://crates.io/crates/tracing-subscriber">tracing-subscriber</a> + <a href="https://docs.rs/tracing-subscriber/latest/tracing_subscriber/struct.EnvFilter.html">EnvFilter</a>)</li>
+<li><strong>traces</strong> (via <a href="https://crates.io/crates/tracing">tracing</a> + <a href="https://crates.io/crates/tracing-subscriber">tracing-subscriber</a> + <a href="https://crates.io/crates/opentelemetry-otlp">opentelemetry-otlp</a> + <a href="https://crates.io/crates/tonic">tonic</a>)</li>
+<li><strong>metrics</strong> (via <a href="https://github.com/tikv/rust-prometheus">tikv/prometheus</a> exposed via <a href="https://crates.io/crates/actix-web">actix-web</a>)</li>
+</ul>
+<p>and follows the approach of <a href="https://github.com/kube-rs/controller-rs">controller-rs</a>.</p>
+<p>Most of this logic happens in <code>main</code>, before any machinery starts, so it will liberally <code>.unwrap()</code>.</p>
+<h2 id="adding-logs">Adding Logs<a class="headerlink" href="#adding-logs" title="Permanent link">#</a></h2>
+<p>We will use the <a href="https://crates.io/crates/tracing">tracing</a> library for logging because it allows us reusing the same system for tracing later.</p>
+<div class="highlight"><pre><span></span><code>cargo add tracing
+cargo add tracing-subscriber --features<span class="o">=</span>json,env-filter
+</code></pre></div>
+<p>We will configure this in <code>main</code> by creating a <code>json</code> log layer with an <a href="https://docs.rs/tracing-subscriber/latest/tracing_subscriber/struct.EnvFilter.html">EnvFilter</a> picking up on the common <code>RUST_LOG</code> environment variable:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">logger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tracing_subscriber</span>::<span class="n">fmt</span>::<span class="n">layer</span><span class="p">().</span><span class="n">json</span><span class="p">();</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">env_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EnvFilter</span>::<span class="n">try_from_default_env</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">or_else</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="n">EnvFilter</span>::<span class="n">try_new</span><span class="p">(</span><span class="s">&quot;info&quot;</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span><span class="w"></span>
+</code></pre></div>
+<p>This can be set as the global collector using:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">collector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Registry</span>::<span class="n">default</span><span class="p">().</span><span class="n">with</span><span class="p">(</span><span class="n">logger</span><span class="p">).</span><span class="n">with</span><span class="p">(</span><span class="n">env_filter</span><span class="p">);</span><span class="w"></span>
+<span class="n">tracing</span>::<span class="n">subscriber</span>::<span class="n">set_global_default</span><span class="p">(</span><span class="n">collector</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w"></span>
+</code></pre></div>
+<p>We will change how the <code>collector</code> is built if using <strong>tracing</strong>, but for now, this is sufficient for adding logging.</p>
+<h2 id="adding-traces">Adding Traces<a class="headerlink" href="#adding-traces" title="Permanent link">#</a></h2>
+<p>Following on from logging section, we add extra dependencies to let us push traces to an <strong>opentelemetry</strong> collector (sending over <abbr title="Google Remote Procedure Call">gRPC</abbr> with <a href="https://crates.io/crates/tonic">tonic</a>):</p>
+<div class="highlight"><pre><span></span><code>cargo add opentelemetry --features<span class="o">=</span>trace,rt-tokio
+cargo add opentelemetry-otlp --features<span class="o">=</span>tokio
+cargo add tonic
+</code></pre></div>
+<p>Setting up the layer and configuring the <code>collector</code> follows fundamentally the same process:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">telemetry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tracing_opentelemetry</span>::<span class="n">layer</span><span class="p">().</span><span class="n">with_tracer</span><span class="p">(</span><span class="n">init_tracer</span><span class="p">().</span><span class="k">await</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+<p>Note 3 layers now:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">collector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Registry</span>::<span class="n">default</span><span class="p">().</span><span class="n">with</span><span class="p">(</span><span class="n">telemetry</span><span class="p">).</span><span class="n">with</span><span class="p">(</span><span class="n">logger</span><span class="p">).</span><span class="n">with</span><span class="p">(</span><span class="n">env_filter</span><span class="p">);</span><span class="w"></span>
+<span class="n">tracing</span>::<span class="n">subscriber</span>::<span class="n">set_global_default</span><span class="p">(</span><span class="n">collector</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w"></span>
+</code></pre></div>
+<p>However, tracing requires us to have a configurable location of <strong>where to send spans</strong>, so creating the actual <code>tracer</code> requires a bit more work:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span><span class="w"> </span><span class="k">fn</span> <span class="nf">init_tracer</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nc">opentelemetry</span>::<span class="n">sdk</span>::<span class="n">trace</span>::<span class="n">Tracer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">otlp_endpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span>::<span class="n">env</span>::<span class="n">var</span><span class="p">(</span><span class="s">&quot;OPENTELEMETRY_ENDPOINT_URL&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;Need a otel tracing collector configured&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tonic</span>::<span class="n">transport</span>::<span class="n">Channel</span>::<span class="n">from_shared</span><span class="p">(</span><span class="n">otlp_endpoint</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">connect</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="k">await</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">opentelemetry_otlp</span>::<span class="n">new_pipeline</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">tracing</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">with_exporter</span><span class="p">(</span><span class="n">opentelemetry_otlp</span>::<span class="n">new_exporter</span><span class="p">().</span><span class="n">tonic</span><span class="p">().</span><span class="n">with_channel</span><span class="p">(</span><span class="n">channel</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">with_trace_config</span><span class="p">(</span><span class="n">opentelemetry</span>::<span class="n">sdk</span>::<span class="n">trace</span>::<span class="n">config</span><span class="p">().</span><span class="n">with_resource</span><span class="p">(</span><span class="w"></span>
+<span class="w">            </span><span class="n">opentelemetry</span>::<span class="n">sdk</span>::<span class="n">Resource</span>::<span class="n">new</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span><span class="n">opentelemetry</span>::<span class="n">KeyValue</span>::<span class="n">new</span><span class="p">(</span><span class="w"></span>
+<span class="w">                </span><span class="s">&quot;service.name&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="s">&quot;ctlr&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// TODO: change to controller name</span>
+<span class="w">            </span><span class="p">)]),</span><span class="w"></span>
+<span class="w">        </span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">install_batch</span><span class="p">(</span><span class="n">opentelemetry</span>::<span class="n">runtime</span>::<span class="n">Tokio</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>Note the <abbr title="Google Remote Procedure Call">gRPC</abbr> address (e.g. <code>OPENTELEMETRY_ENDPOINT_URL=https://0.0.0.0:55680</code>) must be explicitly wrapped in a <code>tonic::Channel</code>, and this forces an explicit dependency on <a href="https://crates.io/crates/tonic">tonic</a>.</p>
+<h3 id="instrumenting">Instrumenting<a class="headerlink" href="#instrumenting" title="Permanent link">#</a></h3>
+<p>At this point, you can start adding <code>#[instrument]</code> attributes onto functions you want, in particular <code>reconcile</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#[instrument(skip(ctx))]</span><span class="w"></span>
+<span class="k">async</span><span class="w"> </span><span class="k">fn</span> <span class="nf">reconcile</span><span class="p">(</span><span class="n">foo</span>: <span class="nc">Arc</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span>: <span class="nc">Arc</span><span class="o">&lt;</span><span class="n">Data</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">Result</span><span class="o">&lt;</span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">Error</span><span class="o">&gt;</span><span class="w"></span>
+</code></pre></div>
+<p>Note that the <code>reconcile</code> span should be <strong>the root span</strong> in the context of a controller. A reconciliation starting is the root of the chain: nothing called into the controller to reconcile an object, this happens regularly automatically.</p>
+<div class="admonition warning">
+<p class="admonition-title">Higher levels spans</p>
+<p>Do not <code>#[instrument]</code> any function that creates a <a href="https://docs.rs/kube/latest/kube/runtime/struct.Controller.html">Controller</a> as this would create an unintentionally wide (<a href="https://github.com/kube-rs/kube-rs/pull/741#issuecomment-991163664">application lifecycle wide</a>) span being a parent to all <code>reconcile</code> spans. Such a span will be <strong>problematic</strong> to manage.</p>
+</div>
+<h3 id="linking-logs-and-traces">Linking Logs and Traces<a class="headerlink" href="#linking-logs-and-traces" title="Permanent link">#</a></h3>
+<p>To link logs and traces we take advantage that tracing data is being outputted to both logs and our tracing collector, and attach the <code>trace_id</code> onto our root span:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#[instrument(skip(ctx), fields(trace_id))]</span><span class="w"></span>
+<span class="k">async</span><span class="w"> </span><span class="k">fn</span> <span class="nf">reconcile</span><span class="p">(</span><span class="n">foo</span>: <span class="nc">Arc</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span>: <span class="nc">Arc</span><span class="o">&lt;</span><span class="n">Data</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">Result</span><span class="o">&lt;</span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">Error</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">trace_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_trace_id</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">Span</span>::<span class="n">current</span><span class="p">().</span><span class="n">record</span><span class="p">(</span><span class="s">&quot;trace_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">field</span>::<span class="n">display</span><span class="p">(</span><span class="o">&amp;</span><span class="n">trace_id</span><span class="p">));</span><span class="w"></span>
+<span class="w">    </span><span class="fm">todo!</span><span class="p">(</span><span class="s">&quot;reconcile implementation&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>This part is useful for <a href="https://grafana.com/oss/loki/">Loki</a> or other logging systems as a way to cross-link from logs to traces.</p>
+<p>Extracting the <code>trace_id</code> requires a helper function atm:</p>
+<div class="highlight"><pre><span></span><code><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">get_trace_id</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nc">opentelemetry</span>::<span class="n">trace</span>::<span class="n">TraceId</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// opentelemetry::Context -&gt; opentelemetry::trace::Span</span>
+<span class="w">    </span><span class="k">use</span><span class="w"> </span><span class="n">opentelemetry</span>::<span class="n">trace</span>::<span class="n">TraceContextExt</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">_</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// tracing::Span -&gt; opentelemetry::Context</span>
+<span class="w">    </span><span class="k">use</span><span class="w"> </span><span class="n">tracing_opentelemetry</span>::<span class="n">OpenTelemetrySpanExt</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">_</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">tracing</span>::<span class="n">Span</span>::<span class="n">current</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">context</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">span</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">span_context</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">trace_id</span><span class="p">()</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>and it is the only reason for needing to directly add <a href="https://crates.io/crates/opentelemetry">opentelemetry</a> as a dependency.</p>
+<h2 id="adding-metrics">Adding Metrics<a class="headerlink" href="#adding-metrics" title="Permanent link">#</a></h2>
+<p>This is the hardest part of the instrumentation because it introduces the need for a <a href="../webserver/">webserver</a>, along with additional complexity of choice.</p>
+<p>We will use <a href="https://github.com/tikv/rust-prometheus">tikv's prometheus library</a> as its the most battle tested library available:</p>
+<div class="highlight"><pre><span></span><code>cargo add prometheus
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Limitations</p>
+<p>The <code>prometheus</code> crate outlined herein does not support exemplars nor the openmetrics standard, at current writing. For newer features we will likely look toward the <a href="https://github.com/prometheus/client_rust">new official client</a>, or the <a href="https://github.com/metrics-rs/metrics">metrics crate suite</a>.</p>
+</div>
+<h3 id="registering">Registering<a class="headerlink" href="#registering" title="Permanent link">#</a></h3>
+<p>We will start creating a basic <code>Metrics</code> struct to house two metrics, a histogram and a counter:</p>
+<div class="highlight"><pre><span></span><code><span class="sd">/// Metrics exposed on /metrics</span>
+<span class="cp">#[derive(Clone)]</span><span class="w"></span>
+<span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">Metrics</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">reconciliations</span>: <span class="nc">IntCounter</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">failures</span>: <span class="nc">IntCounter</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">reconcile_duration</span>: <span class="nc">HistogramVec</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="k">impl</span><span class="w"> </span><span class="n">Metrics</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">fn</span> <span class="nf">new</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nc">Self</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">reconcile_histogram</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">register_histogram_vec</span><span class="o">!</span><span class="p">(</span><span class="w"></span>
+<span class="w">            </span><span class="s">&quot;foo_controller_reconcile_duration_seconds&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="s">&quot;The duration of reconcile to complete in seconds&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="o">&amp;</span><span class="p">[],</span><span class="w"></span>
+<span class="w">            </span><span class="fm">vec!</span><span class="p">[</span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="mf">0.25</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="mf">1.</span><span class="p">,</span><span class="w"> </span><span class="mf">5.</span><span class="p">,</span><span class="w"> </span><span class="mf">15.</span><span class="p">,</span><span class="w"> </span><span class="mf">60.</span><span class="p">]</span><span class="w"></span>
+<span class="w">        </span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">Metrics</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">reconciliations</span>: <span class="nc">register_int_counter</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;foo_controller_reconciliations_total&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;reconciliations&quot;</span><span class="p">).</span><span class="n">unwrap</span><span class="p">(),</span><span class="w"></span>
+<span class="w">            </span><span class="n">failures</span>: <span class="nc">register_int_counter</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;foo_controller_reconciliation_errors_total&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;reconciliation errors&quot;</span><span class="p">).</span><span class="n">unwrap</span><span class="p">(),</span><span class="w"></span>
+<span class="w">            </span><span class="n">reconcile_duration</span>: <span class="nc">reconcile_histogram</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>and as these metrics are measurable entirely from within <strong><code>reconcile</code> or <code>error_policy</code></strong> we can attach the struct to the context passed to the <a href="../reconciler/#using-context">reconciler##using-context</a>.</p>
+<h3 id="meauring">Meauring<a class="headerlink" href="#meauring" title="Permanent link">#</a></h3>
+<p>Measuring our metric values can then be done by extracting the <code>metrics</code> struct from the context and doing the necessary computation inside <code>reconcile</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span><span class="w"> </span><span class="k">fn</span> <span class="nf">reconcile</span><span class="p">(</span><span class="n">foo</span>: <span class="nc">Arc</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span>: <span class="nc">Arc</span><span class="o">&lt;</span><span class="n">Data</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">Result</span><span class="o">&lt;</span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">Error</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">ctx</span><span class="p">.</span><span class="n">metrics</span><span class="p">.</span><span class="n">reconciliations</span><span class="p">.</span><span class="n">inc</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Start a timer</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Instant</span>::<span class="n">now</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="w">    </span><span class="c1">// DO RECONCILE WORK HERE</span>
+<span class="w">    </span><span class="c1">// ...</span>
+
+<span class="w">    </span><span class="c1">// Measure time taken at the end and update counter</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">duration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">start</span><span class="p">.</span><span class="n">elapsed</span><span class="p">().</span><span class="n">as_millis</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1000.0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">ctx</span><span class="p">.</span><span class="n">metrics</span><span class="w"></span>
+<span class="w">       </span><span class="p">.</span><span class="n">reconcile_duration</span><span class="w"></span>
+<span class="w">       </span><span class="p">.</span><span class="n">with_label_values</span><span class="p">(</span><span class="o">&amp;</span><span class="p">[])</span><span class="w"></span>
+<span class="w">       </span><span class="p">.</span><span class="n">observe</span><span class="p">(</span><span class="n">duration</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(</span><span class="o">..</span><span class="p">.)</span><span class="w"> </span><span class="c1">// end of fn</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>and you can increment your <code>failures</code> metric inside the <code>error_policy</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">fn</span> <span class="nf">error_policy</span><span class="p">(</span><span class="n">error</span>: <span class="kp">&amp;</span><span class="nc">Error</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span>: <span class="nc">Arc</span><span class="o">&lt;</span><span class="n">Data</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Action</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">warn</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;reconcile failed: {:?}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">ctx</span><span class="p">.</span><span class="n">metrics</span><span class="p">.</span><span class="n">failures</span><span class="p">.</span><span class="n">inc</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">Action</span>::<span class="n">requeue</span><span class="p">(</span><span class="n">Duration</span>::<span class="n">from_secs</span><span class="p">(</span><span class="mi">5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="p">))</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Future exemplar work</p>
+<p>If we had exemplar support here, we could have attached our <code>trace_id</code> to the histogram metric to be able to cross-browse from grafana metric panels into a trace-viewer.</p>
+</div>
+<h3 id="exposing">Exposing<a class="headerlink" href="#exposing" title="Permanent link">#</a></h3>
+<p>For prometheus to obtain our metrics, we require a web server. As per the <a href="../webserver/">webserver</a> guide, we will assume <a href="https://crates.io/crates/actix-web">actix-web</a>.</p>
+<p>In our case, we will pass a <code>Manager</code> struct that contains the <code>Metrics</code> struct and attach it to the <code>HttpServer</code> in <code>main</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">HttpServer</span>::<span class="n">new</span><span class="p">(</span><span class="k">move</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">App</span>::<span class="n">new</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">app_data</span><span class="p">(</span><span class="n">Data</span>::<span class="n">new</span><span class="p">(</span><span class="n">manager</span><span class="p">.</span><span class="n">clone</span><span class="p">()))</span><span class="w"> </span><span class="c1">// new state</span>
+<span class="w">        </span><span class="p">.</span><span class="n">service</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span><span class="w"> </span><span class="c1">// new endpoint</span>
+<span class="w">    </span><span class="p">})</span><span class="w"></span>
+</code></pre></div>
+<p>the <code>metrics</code> service is the important one here, and its implementation is able to extract the <code>Metrics</code> struct from actix's <code>web::Data</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#[get(</span><span class="s">&quot;/metrics&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="k">async</span><span class="w"> </span><span class="k">fn</span> <span class="nf">metrics</span><span class="p">(</span><span class="n">c</span>: <span class="nc">web</span>::<span class="n">Data</span><span class="o">&lt;</span><span class="n">Manager</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_req</span>: <span class="nc">HttpRequest</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">impl</span><span class="w"> </span><span class="n">Responder</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">metrics</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">metrics</span><span class="p">();</span><span class="w"> </span><span class="c1">// grab out of actix data</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">encoder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TextEncoder</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">vec!</span><span class="p">[];</span><span class="w"></span>
+<span class="w">    </span><span class="n">encoder</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="o">&amp;</span><span class="n">metrics</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">buffer</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">HttpResponse</span>::<span class="nb">Ok</span><span class="p">().</span><span class="n">body</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<h3 id="what-metrics">What Metrics<a class="headerlink" href="#what-metrics" title="Permanent link">#</a></h3>
+<p>The included metrics <code>failures</code>, <code>reconciliations</code> and a <code>reconcile_duration</code> histogram will be sufficient to have prometheus compute a wide array of details:</p>
+<ul>
+<li>reconcile amounts in last hour - <code>sum(increase(reconciliations[1h]))</code></li>
+<li>hourly error rates - <code>sum(rate(failures[1h]) / sum(rate(reconciliations[1h]))</code></li>
+<li>success rates - same rate setup but <code>reconciliations / (reconciliations + failures)</code></li>
+<li>p90 reconcile duration - <code>histogram_quantile(0.9, sum(rate(reconciliations[1h])))</code></li>
+</ul>
+<p>and you could then create alerts on aberrant values (e.g. say 10% error rate, zero reconciliation rate, and maybe p90 durations &gt;30s).</p>
+<p>The above metric setup should comprise the core need of a <strong>standard</strong> controller (although you may have <a href="https://sirupsen.com/metrics">more things to care about</a> than our simple example).</p>
+<p>You will also want resource utilization metrics, but this is typically handled upstream. E.g. cpu/memory utilization metrics are generally available via kubelet's metrics and other utilization metrics can be gathered from <a href="https://github.com/prometheus/node_exporter">node_exporter</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">tokio-metrics</p>
+<p>New <strong>experimental</strong> runtime metrics are also availble for the tokio runtime via <a href="https://github.com/tokio-rs/tokio-metrics">tokio-metrics</a>.</p>
+</div>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../application/" class="md-footer__link md-footer__link--prev" aria-label="Previous: The Application" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              The Application
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../relations/" class="md-footer__link md-footer__link--next" aria-label="Next: Related Objects" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Related Objects
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://kube.rs" target="_blank" rel="noopener" title="kube.rs" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M336 0H48C21.49 0 0 21.49 0 48v431.9c0 24.7 26.79 40.08 48.12 27.64L192 423.6l143.9 83.93c21.3 11.57 48.1-2.93 48.1-27.63V48c0-26.51-21.5-48-48-48zm0 452-144-84-144 84V54c0-3.37 2.63-6 5.1-6h276c4.3 0 6.9 2.63 6.9 6v398z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/kube-rs/website" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/kube_rs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.b88e97c5.min.js"></script>
+      
+    
+  </body>
+</html>

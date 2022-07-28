@@ -1,0 +1,1352 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.3">
+    
+    
+      
+        <title>The Object - kube</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e8d9bf0c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-object" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="kube" class="md-header__button md-logo" aria-label="kube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            kube
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The Object
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kube-rs/kube-rs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kube-rs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../getting-started/" class="md-tabs__link">
+        Information
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../intro/" class="md-tabs__link md-tabs__link--active">
+        Controllers
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../crates/kube/" class="md-tabs__link">
+        Crates
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../governance/" class="md-tabs__link">
+        Contributing
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="kube" class="md-nav__button md-logo" aria-label="kube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    kube
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kube-rs/kube-rs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kube-rs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          Information
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Information" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          Information
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        Getting started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        Changelog
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/" class="md-nav__link">
+        Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-process/" class="md-nav__link">
+        Release Process
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust-version/" class="md-nav__link">
+        Rust Version
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-version/" class="md-nav__link">
+        Kubernetes version
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        Architecture
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adopters/" class="md-nav__link">
+        Adopters
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Controllers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Controllers" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Controllers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intro/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          The Object
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        The Object
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#typed-resource" class="md-nav__link">
+    Typed Resource
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-resources" class="md-nav__link">
+    Custom Resources
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#derived-custom-resource" class="md-nav__link">
+    Derived Custom Resource
+  </a>
+  
+    <nav class="md-nav" aria-label="Derived Custom Resource">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#imported-custom-resource" class="md-nav__link">
+    Imported Custom Resource
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dynamic-typing" class="md-nav__link">
+    Dynamic Typing
+  </a>
+  
+    <nav class="md-nav" aria-label="Dynamic Typing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#untyped-resources" class="md-nav__link">
+    Untyped Resources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partially-typed-resource" class="md-nav__link">
+    Partially-typed Resource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dynamic-new_with-constructors" class="md-nav__link">
+    Dynamic new_with constructors
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reconciler/" class="md-nav__link">
+        The Reconciler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../application/" class="md-nav__link">
+        The Application
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability/" class="md-nav__link">
+        Observability
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../relations/" class="md-nav__link">
+        Related Objects
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Crates
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Crates" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Crates
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crates/kube/" class="md-nav__link">
+        kube
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crates/kube-core/" class="md-nav__link">
+        kube-core
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crates/kube-client/" class="md-nav__link">
+        kube-client
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crates/kube-derive/" class="md-nav__link">
+        kube-derive
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../crates/kube-runtime/" class="md-nav__link">
+        kube-runtime
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Contributing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contributing" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Contributing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../governance/" class="md-nav__link">
+        Governance
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../maintainers/" class="md-nav__link">
+        Maintainers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        Contributing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../website/" class="md-nav__link">
+        Website
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/" class="md-nav__link">
+        Tools
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#typed-resource" class="md-nav__link">
+    Typed Resource
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-resources" class="md-nav__link">
+    Custom Resources
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#derived-custom-resource" class="md-nav__link">
+    Derived Custom Resource
+  </a>
+  
+    <nav class="md-nav" aria-label="Derived Custom Resource">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#imported-custom-resource" class="md-nav__link">
+    Imported Custom Resource
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dynamic-typing" class="md-nav__link">
+    Dynamic Typing
+  </a>
+  
+    <nav class="md-nav" aria-label="Dynamic Typing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#untyped-resources" class="md-nav__link">
+    Untyped Resources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partially-typed-resource" class="md-nav__link">
+    Partially-typed Resource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dynamic-new_with-constructors" class="md-nav__link">
+    Dynamic new_with constructors
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h1 id="the-object">The Object<a class="headerlink" href="#the-object" title="Permanent link">#</a></h1>
+<p>A controller always needs a <strong>source of truth</strong> for <strong>what the world should look like</strong>, and this object <strong>always lives inside kubernetes</strong>.</p>
+<p>Depending on how the object was created/imported or performance optimization reasons, you can pick one of the following object archetypes:</p>
+<ul>
+<li>typed Kubernetes native resource</li>
+<li>Derived Custom Resource for Kubernetes</li>
+<li>Imported Custom Resource already in Kubernetes</li>
+<li>untyped Kubernetes resource</li>
+<li>partially typed Kubernetes resource</li>
+</ul>
+<p>We will outline how they interact with controllers and the basics of how to set them up.</p>
+<h2 id="typed-resource">Typed Resource<a class="headerlink" href="#typed-resource" title="Permanent link">#</a></h2>
+<p>This is the most common, and simplest case. Your source of truth is an existing <a href="https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/trait.Resource.html#implementors">Kubernetes object found in the openapi spec</a>.</p>
+<p>To use a typed Kubernetes resource as a source of truth in a <a href="https://docs.rs/kube/latest/kube/runtime/struct.Controller.html">Controller</a>, import it from <a href="https://crates.io/crates/k8s-openapi">k8s-openapi</a>, and create an <a href="https://docs.rs/kube/latest/kube/struct.Api.html">Api</a> from it, then pass it to the <a href="https://docs.rs/kube/latest/kube/runtime/struct.Controller.html">Controller</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">k8s_openapi</span>::<span class="n">api</span>::<span class="n">core</span>::<span class="n">v1</span>::<span class="n">Pod</span><span class="p">;</span><span class="w"></span>
+
+<span class="kd">let</span><span class="w"> </span><span class="n">pods</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Api</span>::<span class="o">&lt;</span><span class="n">Pod</span><span class="o">&gt;</span>::<span class="n">all</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
+<span class="n">Controller</span>::<span class="n">new</span><span class="p">(</span><span class="n">pods</span><span class="p">,</span><span class="w"> </span><span class="n">ListParams</span>::<span class="n">default</span><span class="p">())</span><span class="w"></span>
+</code></pre></div>
+<p>This is the simplest flow and works right out of the box because the openapi implementation ensures we have all the api information via the <a href="https://docs.rs/kube/latest/kube/trait.Resource.html">Resource</a> traits.</p>
+<p>If you have a native Kubernetes type, <strong>you generally want to start with <a href="https://crates.io/crates/k8s-openapi">k8s-openapi</a></strong>. If will likely do exactly what you want without further issues. <strong>That said</strong>, if both your clusters and your chosen object are large, then you can <strong>consider optimizing</strong> further by changing to a <a href="#partially-typed-resource">partially typed resource</a> for smaller memory profile.</p>
+<p>A separate <a href="https://github.com/kube-rs/k8s-pb">k8s-pb</a> repository for our <a href="https://github.com/kube-rs/kube-rs/issues/725">future protobuf serialization structs</a> also exists, and while it will slot into this category and should hotswappable with <a href="https://crates.io/crates/k8s-openapi">k8s-openapi</a>, it is <strong>not yet usable</strong> here.</p>
+<h2 id="custom-resources">Custom Resources<a class="headerlink" href="#custom-resources" title="Permanent link">#</a></h2>
+<h3 id="derived-custom-resource">Derived Custom Resource<a class="headerlink" href="#derived-custom-resource" title="Permanent link">#</a></h3>
+<p>The operator use case is heavily based on you writing your own struct, and a schema, and <a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/">extending the kuberntes api</a> with it.</p>
+<p>This <strong>has</strong> historically required a lot of boilerplate for both the api information and the (now required) <a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#validation-rules">schema</a>, but this is a lot simpler with kube thanks to the <a href="https://docs.rs/kube/latest/kube/derive.CustomResource.html">CustomResource</a> derive <a href="https://doc.rust-lang.org/reference/procedural-macros.html">proc_macro</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="sd">/// Our Document custom resource spec</span>
+<span class="cp">#[derive(CustomResource, Deserialize, Serialize, Clone, Debug, JsonSchema)]</span><span class="w"></span>
+<span class="cp">#[kube(kind = </span><span class="s">&quot;Document&quot;</span><span class="cp">, group = </span><span class="s">&quot;kube.rs&quot;</span><span class="cp">, version = </span><span class="s">&quot;v1&quot;</span><span class="cp">, namespaced)]</span><span class="w"></span>
+<span class="cp">#[kube(status = </span><span class="s">&quot;DocumentStatus&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">DocumentSpec</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">name</span>: <span class="nb">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">author</span>: <span class="nb">String</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="cp">#[derive(Deserialize, Serialize, Clone, Debug, JsonSchema)]</span><span class="w"></span>
+<span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">DocumentStatus</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">checksum</span>: <span class="nb">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">last_updated</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="n">DateTime</span><span class="o">&lt;</span><span class="n">Utc</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>This will generate a <code>pub struct Document</code> in this scope which implements <a href="https://docs.rs/kube/latest/kube/trait.Resource.html">Resource</a>. In other words, to use it with the a controller is at this point analogous to a fully typed resource:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">docs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Api</span>::<span class="o">&lt;</span><span class="n">Document</span><span class="o">&gt;</span>::<span class="n">all</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
+<span class="n">Controller</span>::<span class="n">new</span><span class="p">(</span><span class="n">docs</span><span class="p">,</span><span class="w"> </span><span class="n">ListParams</span>::<span class="n">default</span><span class="p">())</span><span class="w"></span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Custom resources require schemas</p>
+<p>Since <strong>v1</strong> of <a href="https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html">CustomResourceDefinition</a> became the main variant (<a href="https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.22.md#removal-of-several-beta-kubernetes-apis"><code>v1beta1</code> was removed in Kubernetes 1.22</a>), a schema is <strong>required</strong>. These schemas are generated using <a href="https://graham.cool/schemars/">schemars</a> by specifying the <code>JsonSchema</code> derive. See the schemas section (TODO) for further information on advanced usage.</p>
+</div>
+<h4 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">#</a></h4>
+<p>Before Kubernetes accepts api calls for a custom resource, we need to install it. This is the usual pattern for creating the yaml definition:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Cargo.toml</span><span class="w"></span>
+<span class="k">[[bin]]</span><span class="w"></span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;crdgen&quot;</span><span class="w"></span>
+<span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;src/crdgen.rs&quot;</span><span class="w"></span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1">// crdgen.rs</span>
+<span class="k">use</span><span class="w"> </span><span class="n">kube</span>::<span class="n">CustomResourceExt</span><span class="p">;</span><span class="w"></span>
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="fm">print!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">serde_yaml</span>::<span class="n">to_string</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mylib</span>::<span class="n">Document</span>::<span class="n">crd</span><span class="p">()).</span><span class="n">unwrap</span><span class="p">())</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>Here, a separate <code>crdgen</code> bin entry would install your custom resource using <code>cargo run --bin crdgen | kubectl -f -</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Installation outside the controller</p>
+<p>While it is tempting to install a custom resource within your controller at startup, this is not advisable. The permissions needed to write to the cluster-level <code>customresourcedefinition</code> resource is almost always much higher than what your controller needs to run. It is thus advisable to generate the yaml out-of-band, and bundle it with the rest of the controller's installation yaml.</p>
+</div>
+<h3 id="imported-custom-resource">Imported Custom Resource<a class="headerlink" href="#imported-custom-resource" title="Permanent link">#</a></h3>
+<p>In the case that a <code>customresourcedefinition</code> <strong>already exists</strong> in your cluster, but it was <strong>implemented in another language</strong>, then we can <strong>generate structs from the schema</strong> using <a href="https://github.com/kube-rs/kopium">kopium</a>.</p>
+<p>Suppose you want to write some extra controller or replace the native controller for <code>PrometheusRule</code>:</p>
+<div class="highlight"><pre><span></span><code>curl -sSL https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml <span class="se">\</span>
+    <span class="p">|</span> kopium -Af - &gt; prometheusrule.rs
+</code></pre></div>
+<p>this will read the crd from the cluster, and generate rust-optimized structs for it:</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">kube</span>::<span class="n">CustomResource</span><span class="p">;</span><span class="w"></span>
+<span class="k">use</span><span class="w"> </span><span class="n">schemars</span>::<span class="n">JsonSchema</span><span class="p">;</span><span class="w"></span>
+<span class="k">use</span><span class="w"> </span><span class="n">serde</span>::<span class="p">{</span><span class="n">Serialize</span><span class="p">,</span><span class="w"> </span><span class="n">Deserialize</span><span class="p">};</span><span class="w"></span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">collections</span>::<span class="n">BTreeMap</span><span class="p">;</span><span class="w"></span>
+<span class="k">use</span><span class="w"> </span><span class="n">k8s_openapi</span>::<span class="n">apimachinery</span>::<span class="n">pkg</span>::<span class="n">util</span>::<span class="n">intstr</span>::<span class="n">IntOrString</span><span class="p">;</span><span class="w"></span>
+
+<span class="sd">/// Specification of desired alerting rule definitions for Prometheus.</span>
+<span class="cp">#[derive(CustomResource, Serialize, Deserialize, Clone, Debug, JsonSchema)]</span><span class="w"></span>
+<span class="cp">#[kube(group = </span><span class="s">&quot;monitoring.coreos.com&quot;</span><span class="cp">, version = </span><span class="s">&quot;v1&quot;</span><span class="cp">, kind = </span><span class="s">&quot;PrometheusRule&quot;</span><span class="cp">, plural = </span><span class="s">&quot;prometheusrules&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="cp">#[kube(namespaced)]</span><span class="w"></span>
+<span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">PrometheusRuleSpec</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="sd">/// Content of Prometheus rule file</span>
+<span class="w">    </span><span class="cp">#[serde(default, skip_serializing_if = </span><span class="s">&quot;Option::is_none&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">groups</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">PrometheusRuleGroups</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="sd">/// RuleGroup is a list of sequentially evaluated recording and alerting rules.</span>
+<span class="cp">#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema)]</span><span class="w"></span>
+<span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">PrometheusRuleGroups</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="cp">#[serde(default, skip_serializing_if = </span><span class="s">&quot;Option::is_none&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">interval</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">name</span>: <span class="nb">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="cp">#[serde(default, skip_serializing_if = </span><span class="s">&quot;Option::is_none&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">partial_response_strategy</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">rules</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">PrometheusRuleGroupsRules</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="sd">/// Rule describes an alerting or recording rule</span>
+<span class="cp">#[derive(Serialize, Deserialize, Clone, Debug, JsonSchema)]</span><span class="w"></span>
+<span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">PrometheusRuleGroupsRules</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="cp">#[serde(default, skip_serializing_if = </span><span class="s">&quot;Option::is_none&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">alert</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="cp">#[serde(default, skip_serializing_if = </span><span class="s">&quot;Option::is_none&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">annotations</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="n">BTreeMap</span><span class="o">&lt;</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="nb">String</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">expr</span>: <span class="nc">IntOrString</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="cp">#[serde(default, skip_serializing_if = </span><span class="s">&quot;Option::is_none&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">r</span>#<span class="k">for</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="cp">#[serde(default, skip_serializing_if = </span><span class="s">&quot;Option::is_none&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">labels</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="n">BTreeMap</span><span class="o">&lt;</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="nb">String</span><span class="o">&gt;&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="cp">#[serde(default, skip_serializing_if = </span><span class="s">&quot;Option::is_none&quot;</span><span class="cp">)]</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">record</span>: <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>you typically would then import this file as a module and use it as follows:</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">prometheusrule</span>::<span class="n">PrometheusRule</span><span class="p">;</span><span class="w"></span>
+
+<span class="kd">let</span><span class="w"> </span><span class="n">prs</span>: <span class="nc">Api</span><span class="o">&lt;</span><span class="n">PrometheusRule</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Api</span>::<span class="n">default_namespaced</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
+<span class="n">Controller</span>::<span class="n">new</span><span class="p">(</span><span class="n">prs</span><span class="p">,</span><span class="w"> </span><span class="n">ListParams</span>::<span class="n">default</span><span class="p">())</span><span class="w"></span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Kopium is unstable</p>
+<p>Kopium is a relatively new project and it is <a href="https://github.com/kube-rs/kopium/issues">neither feature complete nor bug free at the moment</a>. While feedback has been very positive, and people have so far contributed fixes for several major customresources; <strong>expect some snags</strong>.</p>
+</div>
+<h2 id="dynamic-typing">Dynamic Typing<a class="headerlink" href="#dynamic-typing" title="Permanent link">#</a></h2>
+<h3 id="untyped-resources">Untyped Resources<a class="headerlink" href="#untyped-resources" title="Permanent link">#</a></h3>
+<p>Untyped resources are using <a href="https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html">DynamicObject</a>; an umbrella container for arbitrary Kubernetes resources.</p>
+<div class="admonition warning">
+<p class="admonition-title">Hard to use with controllers</p>
+<p>This type is the most unergonomic variant available. You will have to operate on <a href="https://docs.serde.rs/serde_json/#operating-on-untyped-json-values">untyped json</a> to grab data out of specifications and is best suited for general (non-controller) cases where you need to look at common metadata properties from <a href="https://docs.rs/kube/latest/kube/core/struct.ObjectMeta.html">ObjectMeta</a> like <code>labels</code> and <code>annotations</code> across different object types.</p>
+</div>
+<p>The <a href="https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html">DynamicObject</a> consists of <strong>just the unavoidable properties</strong> like <code>apiVersion</code>, <code>kind</code>, and <code>metadata</code>, whereas the entire spec is loaded onto an arbitrary <a href="https://docs.serde.rs/serde_json/enum.Value.html">serde_json::Value</a> via <a href="https://serde.rs/attr-flatten.html">flattening</a>.</p>
+<p>The benefits you get is that:</p>
+<ul>
+<li>you avoid having to write out fields manually</li>
+<li>you <strong>can</strong> achieve tolerance against multiple versions of your object</li>
+<li>it is compatible with api <a href="https://docs.rs/kube/latest/kube/discovery/index.html">discovery</a></li>
+</ul>
+<p>but you do have to find out where the object lives on the api (its <a href="https://docs.rs/kube/latest/kube/core/struct.ApiResource.html">ApiResource</a>) manually:</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">kube</span>::<span class="p">{</span><span class="n">api</span>::<span class="p">{</span><span class="n">Api</span><span class="p">,</span><span class="w"> </span><span class="n">DynamicObject</span><span class="p">},</span><span class="w"> </span><span class="n">discovery</span><span class="p">};</span><span class="w"></span>
+
+<span class="c1">// Discover most stable version variant of `documents.kube.rs`</span>
+<span class="kd">let</span><span class="w"> </span><span class="n">apigroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discovery</span>::<span class="n">group</span><span class="p">(</span><span class="o">&amp;</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;kube.rs&quot;</span><span class="p">).</span><span class="k">await</span><span class="o">?</span><span class="p">;</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">ar</span><span class="p">,</span><span class="w"> </span><span class="n">caps</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">apigroup</span><span class="p">.</span><span class="n">recommended_kind</span><span class="p">(</span><span class="s">&quot;Document&quot;</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w"></span>
+
+<span class="c1">// Use the discovered kind in an Api, and Controller with the ApiResource as its DynamicType</span>
+<span class="kd">let</span><span class="w"> </span><span class="n">api</span>: <span class="nc">Api</span><span class="o">&lt;</span><span class="n">DynamicObject</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Api</span>::<span class="n">all_with</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ar</span><span class="p">);</span><span class="w"></span>
+<span class="n">Controller</span>::<span class="n">new_with</span><span class="p">(</span><span class="n">api</span><span class="p">,</span><span class="w"> </span><span class="n">ListParams</span>::<span class="n">default</span><span class="p">(),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ar</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Other ways of doing <a href="https://docs.rs/kube/latest/kube/discovery/index.html">discovery</a> are also available. We are highlighting <a href="https://docs.rs/kube/latest/kube/discovery/struct.ApiGroup.html#method.recommended_kind">recommended_kind</a> in particular here because it can be used to achieve version agnosticity.</p>
+<div class="admonition note">
+<p class="admonition-title">Multiple versions of an object</p>
+<p>Kubernetes supports specifying <a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/">multiple versions of a specification</a>, and using <a href="https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html">DynamicObject</a> above can help solve that. There are <a href="https://github.com/kube-rs/kube-rs/issues/569">other potential ways</a> of achieving similar results, but it does require some work.</p>
+</div>
+<h3 id="partially-typed-resource">Partially-typed Resource<a class="headerlink" href="#partially-typed-resource" title="Permanent link">#</a></h3>
+<p>A very special-case setup where we specify a subset of the normal typed information, and allows tighter control over memory characterstics, and deserialization cost of the program, but at the cost of more <code>struct</code> code.</p>
+<div class="admonition warning">
+<p class="admonition-title">Better methods available for improving memory characteristics</p>
+<p>Because almost all methods on Kubernetes objects such as <a href="https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.PodSpec.html">PodSpec</a> are wrapped in <code>Option</code>s, as long as unnecessary properties are unset before passing them to a <a href="https://docs.rs/kube/latest/kube/runtime/fn.reflector.html">reflector</a>, similar memory reductions can be achieved. One method is to use <a href="https://docs.rs/kube/latest/kube/runtime/watcher/enum.Event.html#method.modify">Event::modify</a> chained onto the watcher stream. See the <a href="https://github.com/kube-rs/kube-rs/blob/05b48cf61a4b55948274d4cfadd26255e026cec4/examples/pod_reflector.rs#L31-L38">pod_reflector</a> for details.</p>
+<p>Because of these advances, the partially-typed resource pattern is not recommended.</p>
+</div>
+<p>It is similar to <a href="https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html">DynamicObject</a> (above) in that <a href="https://docs.rs/kube/latest/kube/core/struct.Object.html">Object</a> is another umbrella container for arbitrary Kubernetes resources, and also requires you to discover or hard-code an <a href="https://docs.rs/kube/latest/kube/core/struct.ApiResource.html">ApiResource</a> for extra type information to be queriable.</p>
+<p>Here is an example of handwriting a new implementation of <a href="https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.Pod.html">Pod</a> by overriding its <strong>spec</strong> and <strong>status</strong> and placing it inside <a href="https://docs.rs/kube/latest/kube/core/struct.Object.html">Object</a>, then <strong>stealing</strong> its type information:</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">kube</span>::<span class="n">api</span>::<span class="p">{</span><span class="n">Api</span><span class="p">,</span><span class="w"> </span><span class="n">ApiResource</span><span class="p">,</span><span class="w"> </span><span class="n">NotUsed</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="p">};</span><span class="w"></span>
+
+<span class="c1">// Here we replace heavy type k8s_openapi::api::core::v1::PodSpec with</span>
+<span class="cp">#[derive(Clone, Deserialize, Debug)]</span><span class="w"></span>
+<span class="k">struct</span> <span class="nc">PodSpecSimple</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">containers</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">ContainerSimple</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="cp">#[derive(Clone, Deserialize, Debug)]</span><span class="w"></span>
+<span class="k">struct</span> <span class="nc">ContainerSimple</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="cp">#[allow(dead_code)]</span><span class="w"></span>
+<span class="w">    </span><span class="n">image</span>: <span class="nb">String</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="c1">// Pod replacement</span>
+<span class="k">type</span> <span class="nc">PodSimple</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Object</span><span class="o">&lt;</span><span class="n">PodSpecSimple</span><span class="p">,</span><span class="w"> </span><span class="n">NotUsed</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+
+<span class="c1">// steal api resource information from k8s-openapi</span>
+<span class="kd">let</span><span class="w"> </span><span class="n">ar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ApiResource</span>::<span class="n">erase</span>::<span class="o">&lt;</span><span class="n">k8s_openapi</span>::<span class="n">api</span>::<span class="n">core</span>::<span class="n">v1</span>::<span class="n">Pod</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="p">());</span><span class="w"></span>
+
+<span class="n">Controller</span>::<span class="n">new_with</span><span class="p">(</span><span class="n">api</span><span class="p">,</span><span class="w"> </span><span class="n">ListParams</span>::<span class="n">default</span><span class="p">(),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ar</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>In the end, we end up with some extra lines to define our <a href="https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.Pod.html">Pod</a>, but we also drop every field inside spec + status except <code>spec.container.image</code>. If your cluster has thousands of pods and you want to do some kind of common operation on a small subset of fields, then this can give a very quick win in terms of memory use (a Controller will usually maintain a <code>Store</code> of all owned objects).</p>
+<!-- TODO: mention that it's possible to drop managedFields from this cache as well? it's a lot harder though.. -->
+
+<h3 id="dynamic-new_with-constructors">Dynamic new_with constructors<a class="headerlink" href="#dynamic-new_with-constructors" title="Permanent link">#</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Partial or dynamic typing always needs additional type information</p>
+<p>All usage of <code>DynamicObject</code> or <code>Object</code> require the use of alternate constructors for multiple interfaces such as <a href="https://docs.rs/kube/latest/kube/struct.Api.html">Api</a> and <a href="https://docs.rs/kube/latest/kube/runtime/struct.Controller.html">Controller</a>. These constructors have an additional <code>_with</code> suffix to carry an associated type for the <a href="https://docs.rs/kube/latest/kube/trait.Resource.html">Resource</a> trait.</p>
+</div>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">#</a></h2>
+<p>All the fully typed methods all have a <strong>consistent usage pattern</strong> once the types have been generated. The dynamic and partial objects have more niche use cases and require a little more work such as alternate constructors.</p>
+<table>
+<thead>
+<tr>
+<th>typing</th>
+<th>Source</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.41 13.41 6 19l1.41-1.42L1.83 12m20.41-6.42L11.66 16.17 7.5 12l-1.43 1.41L11.66 19l12-12M18 7l-1.41-1.42-6.35 6.35 1.42 1.41L18 7z"/></svg></span> full</td>
+<td><a href="https://crates.io/crates/k8s-openapi">k8s-openapi</a></td>
+<td><code>use k8s-openapi::X</code></td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.41 13.41 6 19l1.41-1.42L1.83 12m20.41-6.42L11.66 16.17 7.5 12l-1.43 1.41L11.66 19l12-12M18 7l-1.41-1.42-6.35 6.35 1.42 1.41L18 7z"/></svg></span> full</td>
+<td>kube::<a href="https://docs.rs/kube/latest/kube/derive.CustomResource.html">CustomResource</a></td>
+<td><code>#[derive(CustomResource)]</code></td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.41 13.41 6 19l1.41-1.42L1.83 12m20.41-6.42L11.66 16.17 7.5 12l-1.43 1.41L11.66 19l12-12M18 7l-1.41-1.42-6.35 6.35 1.42 1.41L18 7z"/></svg></span> full</td>
+<td><a href="https://github.com/kube-rs/kopium">kopium</a></td>
+<td><code>kopium &gt; gen.rs</code></td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg></span> partial</td>
+<td>kube::core::<a href="https://docs.rs/kube/latest/kube/core/struct.Object.html">Object</a></td>
+<td>partial copy-paste</td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></span> none</td>
+<td>kube::core::<a href="https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html">DynamicObject</a></td>
+<td>write nothing</td>
+</tr>
+</tbody>
+</table>
+<!-- TODO: mention somewhere that you can do partial typing with CustomResource deriving as well? -->
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../intro/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Introduction" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Introduction
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../reconciler/" class="md-footer__link md-footer__link--next" aria-label="Next: The Reconciler" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              The Reconciler
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://kube.rs" target="_blank" rel="noopener" title="kube.rs" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M336 0H48C21.49 0 0 21.49 0 48v431.9c0 24.7 26.79 40.08 48.12 27.64L192 423.6l143.9 83.93c21.3 11.57 48.1-2.93 48.1-27.63V48c0-26.51-21.5-48-48-48zm0 452-144-84-144 84V54c0-3.37 2.63-6 5.1-6h276c4.3 0 6.9 2.63 6.9 6v398z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/kube-rs/website" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/kube_rs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.instant", "navigation.tracking"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.b88e97c5.min.js"></script>
+      
+    
+  </body>
+</html>
