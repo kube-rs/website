@@ -30,3 +30,7 @@
 - [nais](https://nais.io)
 
 If you're using `kube-rs` in production and are not on this list, please [submit a pull request](https://github.com/kube-rs/website/edit/main/docs/adopters.md)!
+
+## Reverse Dependencies
+
+Open source users of `kube` are additionally viewable through reverse dependency listings on both [github](https://github.com/kube-rs/kube-rs/network/dependents?package_id=UGFja2FnZS0zMjE5MTQ5OTc0) and [crates.io](https://crates.io/crates/kube/reverse_dependencies) (for published resources). These will contain a more comprehensive/up-to-date list of adopters, with the caveat that many of them are likely just public experiments.
