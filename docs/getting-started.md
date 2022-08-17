@@ -6,7 +6,7 @@ Select a version of `kube` along with the generated [k8s-openapi](https://github
 
 ```toml
 [dependencies]
-kube = { version = "0.73.0", features = ["runtime", "derive"] }
+kube = { version = "0.74.0", features = ["runtime", "derive"] }
 k8s-openapi = { version = "0.15.0", features = ["v1_24"] }
 ```
 
@@ -138,11 +138,11 @@ Here `reconcile` and `error_policy` refer to functions you define. The first wil
 
 ## Rustls
 
-Kube has basic support ([with caveats](https://github.com/kube-rs/kube-rs/issues?q=is%3Aissue+is%3Aopen+rustls)) for [rustls](https://github.com/ctz/rustls) as a replacement for the `openssl` dependency. To use this, turn off default features, and enable `rustls-tls`:
+Kube has basic support ([with caveats](https://github.com/kube-rs/kube-rs/issues?q=is%3Aopen+is%3Aissue+label%3Arustls)) for [rustls](https://github.com/ctz/rustls) as a replacement for the `openssl` dependency. To use this, turn off default features, and enable `rustls-tls`:
 
 ```toml
 [dependencies]
-kube = { version = "0.73.0", default-features = false, features = ["client", "rustls-tls"] }
+kube = { version = "0.74.0", default-features = false, features = ["client", "rustls-tls"] }
 k8s-openapi = { version = "0.15.0", features = ["v1_24"] }
 ```
 
