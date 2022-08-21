@@ -185,7 +185,7 @@ impl Metrics {
 
 and as these metrics are measurable entirely from within **`reconcile` or `error_policy`** we can attach the struct to the context passed to the [[reconciler##using-context]].
 
-### Meauring
+### Measuring
 
 Measuring our metric values can then be done by extracting the `metrics` struct from the context and doing the necessary computation inside `reconcile`:
 
