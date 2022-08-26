@@ -58,7 +58,7 @@ async fn reconcile(object: Arc<MyObject>, data: Arc<Data>) -> Result<Action, Err
 As a controller writer, your job is to complete the logic that align the world with what is inside the `object`.
 The core reconciler must at **minimum** contain **mutating api calls** to what your `object` is meant to manage, and in some situations, handle annotations management for [ownership](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/) or [garbage collection](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/).
 
-Writing a goood **idempotent reconciler** is the most difficult part of the whole affair, and its difficulty is the reason we generally provide diagnostics and observability:
+Writing a good **idempotent reconciler** is the most difficult part of the whole affair, and its difficulty is the reason we generally provide diagnostics and observability:
 
 See the [[reconciler]] document for more information.
 
@@ -110,7 +110,7 @@ Our goal is that with this guide, you will learn how to use and apply the variou
 
 We will focus on all the patterns as to not betray the versatility of the Kubernetes API, because components found within complex controllers can generally be mixed and matched as you see fit.
 
-We will focus on how the variour element **composes** so you can take advantage of any controller archetypes - operators included.
+We will focus on how the various element **composes** so you can take advantage of any controller archetypes - operators included.
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"

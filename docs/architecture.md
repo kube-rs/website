@@ -205,7 +205,7 @@ When working on the the client machinery, it's important to realise that there a
 4. Helpers for using the API correctly (e.g.`kube_runtime::watcher`)
 5. High-level abstractions for specific tasks (e.g. `kube_runtime::controller`)
 
-At level 3, we we essentially have what the K8s team calls a basic client. As a consequence, new methods/subresources typically cross 2 crate boundaries (`kube_core`, `kube_client`), and needs to touch 3 main modules.
+At level 3, we essentially have what the K8s team calls a basic client. As a consequence, new methods/subresources typically cross 2 crate boundaries (`kube_core`, `kube_client`), and needs to touch 3 main modules.
 
 Similarly, there are also the traits and types that define what an api means in `kube_core` like `Resource` and `ApiResource`.
 If modifying these, then changes to `kube-derive` are likely necessary, as it needs to directly implement this for users.

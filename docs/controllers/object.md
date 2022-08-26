@@ -202,7 +202,7 @@ Other ways of doing [discovery] are also available. We are highlighting [recomme
 
 ### Partially-typed Resource
 
-A very special-case setup where we specify a subset of the normal typed information, and allows tighter control over memory characterstics, and deserialization cost of the program, but at the cost of more `struct` code.
+A very special-case setup where we specify a subset of the normal typed information, and allows tighter control over memory characteristics, and deserialization cost of the program, but at the cost of more `struct` code.
 
 !!! warning "Better methods available for improving memory characteristics"
 
