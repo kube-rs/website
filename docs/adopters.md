@@ -13,6 +13,7 @@
 - [kubectl-view-allocations](https://github.com/davidB/kubectl-view-allocations) - kubectl plugin to list resource allocations
 - [krator](https://github.com/krator-rs/krator) - kubernetes operators using state machines
 - [hahaha](https://github.com/nais/hahaha) - an operator that cleans up sidecars after Jobs
+- [kubectl-watch](https://github.com/imuxin/kubectl-watch) - a kubectl plugin to provide a pretty delta change view of being watched kubernetes resources
 
 ## Companies
 
