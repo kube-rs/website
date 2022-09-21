@@ -13,7 +13,7 @@ Our Kubernetes version compatibility is similar to the strategy employed by [cli
 
 The MK8SV is listed in our README as a badge:
 
-> [![Tested against Kubernetes 1.19 and above](https://img.shields.io/badge/MK8SV-1.19-326ce5.svg)](https://kube.rs/kubernetes-version)
+> [![Tested against Kubernetes 1.20 and above](https://img.shields.io/badge/MK8SV-1.20-326ce5.svg)](https://kube.rs/kubernetes-version)
 
 The **minimum** indicates the lower bound of our testing range, and the **latest** is the maximum Kubernetes version selectable as a target version.
 
