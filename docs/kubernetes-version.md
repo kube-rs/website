@@ -9,6 +9,7 @@ Our Kubernetes version compatibility is similar to the strategy employed by [cli
 | `0.66.0`       |  `1.17` | [`1.22`](https://kubernetes.io/blog/2021/08/04/kubernetes-1-22-release-announcement/) | [k8s-openapi@0.13.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0131-2021-10-08) |
 | `0.67.0`       |  `1.18` | [`1.23`](https://kubernetes.io/blog/2021/12/07/kubernetes-1-23-release-announcement/) | [k8s-openapi@0.14.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0140-2022-01-23) |
 | `0.73.0`       |  `1.19` | [`1.24`](https://kubernetes.io/blog/2022/05/03/kubernetes-1-24-release-announcement/) | [k8s-openapi@0.15.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0150-2022-05-22) |
+| `0.74.0`       |  `1.20` | [`1.25`](https://kubernetes.io/blog/2022/08/23/kubernetes-v1-25-release/) | [k8s-openapi@0.15.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0160-2022-09-15) |
 
 The MK8SV is listed in our README as a badge:
 
