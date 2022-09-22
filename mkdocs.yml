@@ -3,8 +3,8 @@
 # mkdocs: https://www.mkdocs.org/user-guide/configuration/
 
 site_name: kube
-repo_url: https://github.com/kube-rs/kube-rs
-repo_name: kube-rs
+repo_url: https://github.com/kube-rs/kube
+repo_name: kube
 # NB: edit uri won't work well with sync system if we don't have canonical docs in the same repo as the site
 #edit_uri: edit/main/docs
 edit_uri: ''

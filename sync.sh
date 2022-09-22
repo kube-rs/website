@@ -21,7 +21,7 @@ sync() {
 }
 
 main() {
-    sync kube-rs/kube-rs/master/CONTRIBUTING.md docs/contributing.md
+    sync kube-rs/kube/main/CONTRIBUTING.md docs/contributing.md
     # wanted to inline COC, but it links to other documents relatively so won't work
     # for now left out since it is linked through from the contributing guide
     #sync kube-rs/.github/main/code-of-conduct.md docs/code-of-conduct.md
@@ -29,12 +29,12 @@ main() {
     sync kube-rs/.github/main/SECURITY.md docs/security.md
 
     # main readme requires some re-formatting to be used as getting-started
-    sync kube-rs/kube-rs/master/README.md docs/getting-started.md
+    sync kube-rs/kube/main/README.md docs/getting-started.md
     # drop the first paragraph
     sd "# kube-rs[\w\W]*## Installation" "# Getting Started\n## Installation" docs/getting-started.md
 
     # changelog requires some re-formatting (don't want to change all automation scripts in kube-rs repo)
-    sync kube-rs/kube-rs/master/CHANGELOG.md docs/changelog.md "# Changelog"
+    sync kube-rs/kube/main/CHANGELOG.md docs/changelog.md "# Changelog"
     sd "^(.+ / [\d-]+)\n===================" "## \$1" docs/changelog.md
     sd "UNRELEASED\n===================" "## Unreleased" docs/changelog.md
 }
