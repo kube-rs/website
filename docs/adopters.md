@@ -14,6 +14,8 @@
 - [krator](https://github.com/krator-rs/krator) - kubernetes operators using state machines
 - [hahaha](https://github.com/nais/hahaha) - an operator that cleans up sidecars after Jobs
 - [kubectl-watch](https://github.com/imuxin/kubectl-watch) - a kubectl plugin to provide a pretty delta change view of being watched kubernetes resources
+- [gateway-api](https://crates.io/crates/gateway-api) - API bindings for Kubernetes [Gateway API](https://gateway-api.sigs.k8s.io)
+- [blixt](https://github.com/kong/blixt) - A Kubernetes [Gateway API](https://gateway-api.sigs.k8s.io)-based Layer 4 Load-Balancer for ingress
 
 ## Companies
 
@@ -29,6 +31,7 @@
 - [TrueLayer](https://truelayer.com)
 - [ViacomCBS](https://viacomcbs.com)
 - [nais](https://nais.io)
+- [Kong](https://konghq.com)
 
 If you're using `kube-rs` in production and are not on this list, please [submit a pull request](https://github.com/kube-rs/website/edit/main/docs/adopters.md)!
 
