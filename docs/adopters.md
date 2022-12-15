@@ -16,6 +16,7 @@
 - [kubectl-watch](https://github.com/imuxin/kubectl-watch) - a kubectl plugin to provide a pretty delta change view of being watched kubernetes resources
 - [gateway-api](https://crates.io/crates/gateway-api) - API bindings for Kubernetes [Gateway API](https://gateway-api.sigs.k8s.io)
 - [blixt](https://github.com/kong/blixt) - A Kubernetes [Gateway API](https://gateway-api.sigs.k8s.io)-based Layer 4 Load-Balancer for ingress
+- [databricks-kube-operator](https://github.com/mach-kernel/databricks-kube-operator) - GitOps/Helm style management of [Databricks](https://www.databricks.com/) jobs
 
 ## Companies
 
