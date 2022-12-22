@@ -127,6 +127,10 @@ This is satisfied because:
 
 Integration tests are easy to write, and lets you verify that the IO components of your controller is doing the right thing.
 
+!!! note "Integration tests"
+
+    It's easier to write an integration test than by using the mocking approach above, but the problem is that you need a cluster and all the problems it brings.
+
 Suppose you have a function that is publishing an event via an event [Recorder]:
 
 ```rust
@@ -145,26 +149,25 @@ async fn publish_event(client: Client, doc: &Document) -> Result<()> {
 }
 ```
 
-You can't really unit test this function without a working [Client]. But because `kube` let's you use `Client::try_default()` to get a working client no matter what environment you are in (local development with a kubeconfig vs. in-cluster via evar tokens), you can just create a `#[test]` that works against any cluster you have running in the background:
+To test this against a live cluster, you first need a working [Client]. Using `Client::try_default()` inside a `#[test]` you can actually run tests against whatever current-context you have set in your local kubeconfig, so the let's do this:
 
 ```rust
 #[tokio::test]
 #[ignore] // needs a cluster
-async fn get_doc_crd() -> Result<(), Box<dyn std::error::Error>> {
+async fn publish_event_publishes_event() -> Result<(), Box<dyn std::error::Error>> {
     let client = Client::try_default().await?;
-    let events: Api<Event> = Api::all(client);
     let doc = Document::test();
-    publish_event(client, &doc).await?;
+    publish_event(client.clone(), &doc).await?;
 
-    let doc_crd = crds.get("documents.kube.rs").await?; 
+    // verify event was found
+    let events: Api<Event> = Api::all(client.clone());
+    // TODO: test this properly
+    let opts = ListParams::default().fields(&format!("involvedObject.kind=Document,involvedObject.name={}", doc.name_any()));
+    let event = events.list(&opts).await?.into_iter().filter(|e| e.reason == "HiddenDoc").last().unwrap();
+    assert_eq!(event.action, "Reconciling");
     Ok(())
 }
 ```
-
-The problem is that you need a cluster and all the problems it brings.
-
-
-
 
 Setting up a cluster for integration tests is usually pretty straight forward. Here is a GitHub Actions setup:
 
@@ -176,7 +179,7 @@ Setting up a cluster for integration tests is usually pretty straight forward. H
       fail-fast: false
       matrix:
         # Run these tests against older clusters as well
-        k8s: [v1.20, latest]
+        k8s: [v1.22, latest]
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -206,8 +209,9 @@ Setting up a cluster for integration tests is usually pretty straight forward. H
         run: cargo test --lib --all -- --ignored
 ```
 
+As you can see, not too bad. All your tests marked with `#[ignore]` (a good convention to prevent tests from mutating a developer's cluster that happened to be on their `current-context`) now run against the same `k3d` test cluster spun up specifically for this test run.
 
-and in a CI environment setting one up and running one on every commit is slow, error-prone, and generally pushes your tests into reusing a single "shared environment".
+So these tests are easy to write, but you'll get cluster setup failures every so often, and you also can't (realistically) write too many of these because you have to keep in your head which tests is doing what to your environment and they may be competing for the same resource names (e.g. applying your test document in more than one place?).
 
 ## End to End Tests
 
@@ -237,6 +241,9 @@ We have separated the CRD installation and the controller installation into two 
 
 Note that it is possible to run a simplified variant of this type of test by doing a `cargo run` rather than container build followed by a `kubectl apply` of your deployment yaml, but this would leave your deployment artifact (and in-cluster specific code pathways) untested until deployment time. This often causes awkward hot fixes post-release when you screwed up an evar or something in your yaml. Granted, you can minimize some of these types of errors through other means (e.g. [schema tests](https://github.com/yannh/kubeconform)), this is not always foolproof. Therefore, it's usually good to have one complete end-to-end test just to cover these cases, along with any other unknown unknowns.
 
+## Conclusion
+
+TODO: diagram with tradeoffs
 
 
 --8<-- "includes/abbreviations.md"
