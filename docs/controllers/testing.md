@@ -1,56 +1,73 @@
 # Testing
 
-This chapter covers various types of tests you can write, and what each test type is most appropriate for.
+This chapter covers various types of tests you can write for controllers, and what each test type is most appropriate for.
 
 ## Terminology
 
-We will loosely follow [test definitions from kube](https://github.com/kube-rs/kube/blob/main/CONTRIBUTING.md#testing) and outline four types of tests:
+We will loosely re-use our existing [test conventions](https://github.com/kube-rs/kube/blob/main/CONTRIBUTING.md#testing) and outline four types of tests:
 
-- **End to End tests** (requires Kubernetes through an in-cluster Client)
+- **End to End tests** (requires Kubernetes through an **in-cluster** Client)
 - **Integration tests** (requires Kubernetes)
 - **Mocked unit tests** (requires mocking Kubernetes dependencies)
-- **Unit tests & Documentation Tests** (no Kubernetes calls)
+- **Unit tests** (no Kubernetes calls)
 
-These definitions provide a standard __test pyramid__ where the maintenance costs generally goes down - while the reliability goes down - the further up the list you go.
+These types should roughly match what you see in a standard __test pyramid__ where testing power and maintenance costs both increase as you go up the list.
+
+!!! note "Rust integration tests conventions"
+
+    [Rust defines integration tests](https://doc.rust-lang.org/book/ch11-03-test-organization.html) as tests that should live in their own `tests` directory only test public interfaces. We need more categories for tests here, and this pub/private distinction is a bit limiting/pointless for binaries.
 
 ## Unit Tests
 
-The simplest type of test, with the smallest amount of maintenance costs, but best when you separate non-IO logic from IO and [test your behavior sans-IO](https://sans-io.readthedocs.io/).
+The simplest type of test, used generally for small - often private - units of code, and comes with the smallest maintenance costs. This type of test tend to be best when you separate non-IO logic from IO and [test your behavior sans-IO](https://sans-io.readthedocs.io/).
 
-The usual caveats for unit tests applies:
+If you have some business logic sitting in a module disconnected from the Kubernetes interaction (e.g. state machinery, algorithms) then standard unit tests are a great choice.
 
-- don't test too deep (private interface tests have a maintenance cost)
-- don't blindly pursue 100% coverage from unit tests
+We will defer to various official guides on good unit test writing in rust:
 
-If you have some business logic sitting in a module disconnected from the Kubernetes interaction (like some state machinery) then standard unit tests are a great choice.
+- [rust by example - unit tests](https://doc.rust-lang.org/rust-by-example/testing/unit_testing.html)
+- [rust book - writing tests](https://doc.rust-lang.org/book/ch11-01-writing-tests.html)
 
-Controller testing is in general hard to do with plain unit tests though, as you usually end up with a sizable code chunk heavily intertwined with IO operations through Kubernetes object interactions. You **could** move up the test pyramid and do full-scale integration testing, but you could also stay in unit-test land by mocking out your network dependencies (sacrificing a bit of test code verbosity for test reliability).
+<!--
+!!! note "Blind unit testing caveats"
+
+    The regular caveats against writing excessive tests applies. Be sure you are getting some protection out of each test you are writing rather than blindly testing every single private interface / pursuing 100% code coverage.
+-->
+
+### Downsides
+
+How much of your controller you can test with unit tests is unfortunately limited. You usually end up with a sizable code chunk heavily intertwined with IO operations through Kubernetes api interactions, and this is **hard to do with plain unit tests**.
+
+For these (more complicated) bits of code, we will use our more advanced test approaches, then outline and compare the **3 most common strategies to test** interactions involving **Kubernetes-calling code**.
+
+We will start with the **two big ones**, arising from the answer of **whether or not to mock**. We can either:
+
+1. stay in unit-test land by mocking out your network dependencies (worse test code)
+2. move up the test pyramid and do full-scale integration testing (worse test reliability)
 
 ### Unit Tests with Mocks
 
-It is possible to to test your reconciler and IO logic while retain the speed and isolation of unit tests by using mocks. This is common practice to avoid having to bring in your all your dependencies and is typically done through crates such as [wiremock](https://crates.io/crates/wiremock), [mockito](https://crates.io/crates/mockito), [tower-test](https://crates.io/crates/tower-test), and [mockall](https://crates.io/crates/mockall).
+It is possible to to test your reconciler and IO logic while retain the speed and isolation of unit tests by using mocks. This is common practice to avoid having to bring in your all your dependencies and is typically done through crates such as [wiremock](https://crates.io/crates/wiremock), [mockito](https://crates.io/crates/mockito), [tower-test](https://crates.io/crates/tower-test), or [mockall](https://crates.io/crates/mockall).
 
-Out of these, [tower-test](https://crates.io/crates/tower-test) integrates into the [`Client`] out of the box without needing to hijack anything so it's the one we will focus on.
+Out of these, [tower-test](https://crates.io/crates/tower-test) integrates well with our [Client] out of the box, and is the one we will focus on here.
 
 <!-- TODO: links to other use cases with wiremock? -->
 
-To create a mocked [`Client`], it is sufficient to:
+To create a mocked [Client] with `tower-test` it is sufficient to instantiate one on a mock service:
 
 ```rust
-fn mock_client() -> Client {
-    let (mock_service, handle) = tower_test::mock::pair::<Request<Body>, Response<Body>>();
-    Client::new(mock_service, "default")
-}
+let (mocksvc, handle) = tower_test::mock::pair::<Request<Body>, Response<Body>>();
+let client = Client::new(mocksvc, "default");
 ```
 
-using the generic:
+This is using the generic:
 
-- [`hyper::Body`](https://docs.rs/hyper/latest/hyper/struct.Body.html)
-- [`http::Request`](https://docs.rs/http/latest/http/request/struct.Request.html) + [`http::Response`](https://docs.rs/http/latest/http/response/struct.Response.html)
+- [`http::Request`](https://docs.rs/http/latest/http/request/struct.Request.html) + [`http::Response`](https://docs.rs/http/latest/http/response/struct.Response.html) objects
+- [`hyper::Body`](https://docs.rs/hyper/latest/hyper/struct.Body.html) as request/response content
 
-This `Client` can then be passed into to the [reconciler##using-context] through its context argument and you can test this directly. However, this does require a bit of boilerplate because there is nothing equivalent to [`envtest`](https://book.kubebuilder.io/reference/envtest.html) in Rust ([so far](https://github.com/kube-rs/kube/issues/1108)).
+This `Client` can then be passed into to reconciler in the usual way through a context object ([[reconciler##using-context]]), allowing you to test `reconcile` directly.
 
-Thus to mock out calls to the apiserver you need some extra boilerplate:
+You do need to write a bit of code to make the test `handle` do the right thing though, and this does require a bit of boilerplate because there is nothing equivalent to [`envtest`](https://book.kubebuilder.io/reference/envtest.html) in Rust ([so far](https://github.com/kube-rs/kube/issues/1108)). Effectively, we need to mock bits of the [kube-apiserver](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/) and it can look something like this:
 
 ```rust
 // We wrap tower_test::mock::Handle
@@ -93,14 +110,13 @@ impl ApiServerVerifier {
 }
 ```
 
-Here we have made a some apiserver mock wrapper that will run certain scenarios.
-Each scenario calls a number of handler functions. Here we only have made one for `handle_status_patch`, but more are available in [controller-rs/fixtures.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs).
+Here we have made an apiserver mock wrapper that will run certain scenarios. Each scenario calls a number of handler functions. Here we only have made one for `handle_status_patch`, but more are used in [controller-rs/fixtures.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs).
 
-Running the tests themselves can after this get quite short and readable:
+Writing the actual tests (after setting up the above boilerplate), does thankfully get a lot shorter and more readable:
 
 ```rust
 #[tokio::test]
-async fn finalized_doc_causes_status_patch() {
+async fn doc_reconcile_causes_status_patch() {
     let (testctx, fakeserver) = Context::test();
     let doc = Document::test();
     let mocksrv = fakeserver.run(Scenario::StatusPatch(doc.clone()));
@@ -109,67 +125,70 @@ async fn finalized_doc_causes_status_patch() {
 }
 ```
 
-!!! note "Hiding some details"
+!!! note "Context and Document constructors omitted"
 
     Test functions to create the rest of the reconciler context and a test document used by a reconciler are not shown, see [controller-rs/fixtures.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs) for a relatively small `Context`. Note that the more things you pass in to your reconciler the larger your `Context` will be, and the more stuff you will want to mock. 
 
-Is this sufficient? We want to verify that:
+In this test we **want to verify** that:
 
-1. we responded to the all messages in the scenario
-2. we did not see any unexpected messages.
+1. reconcile ran successfully in the given scenario
+2. apiserver handler saw all expected messages
+3. apiserver handler saw no unexpected messages.
 
-This is satisfied because:
+This is **satisfied because**:
 
-1. Each scenario blocked on sequential api calls to happen (we await each message), so mockserver's joinhandle will not resolve until **every** expected message in the given scenario has happened (hence the timeout to avoid an infinite hang) 
-2. If the mock server is receiving more Kubernetes calls than expected the reconciler will error with a `KubeError(Service(Closed(())))` caught by the `expect`
+1. reconcile is unwrapped while handler is running through the scenario
+2. Each scenario blocked on sequential api calls to happen (we await each message), so mockserver's joinhandle will not resolve until **every** expected message in the given scenario has happened (hence the timeout) 
+3. If the mock server is receiving more Kubernetes calls than expected the reconciler will error with a `KubeError(Service(Closed(())))` caught by the reconcilers `expect`
+
+!!! note ""
+
+    Mocks are __comparable__ to using integration tests in power and versatility, but are often easier to deal with long term due to the test stability that comes with not having a real network boundary and a real cluster. We consider these tests more maintainable than integration tests, but harder to follow and write.
 
 ## Integration Tests
 
-Integration tests are easy to write, and lets you verify that the IO components of your controller is doing the right thing.
+Integration tests run against a real Kubernetes cluster, and lets you verify that the IO components of your controller is doing the right thing in a real environment. The big selling point is that they require little code to write and are easy to understand.
 
-!!! note "Integration tests"
+### Example
+Let us try to verify the same status patching scenario from above using an integration test.
 
-    It's easier to write an integration test than by using the mocking approach above, but the problem is that you need a cluster and all the problems it brings.
-
-Suppose you have a function that is publishing an event via an event [Recorder]:
-
-```rust
-async fn publish_event(client: Client, doc: &Document) -> Result<()> {
-    let recorder = Recorder::new(client, "my-controller".into(), doc.object_ref(&()))
-    recorder
-        .publish(Event {
-            type_: EventType::Normal,
-            reason: "HiddenDoc".into(),
-            note: Some(format!("Hiding `{name}`")),
-            action: "Reconciling".into(),
-            secondary: None,
-        })
-        .await?;
-    Ok(())
-}
-```
-
-To test this against a live cluster, you first need a working [Client]. Using `Client::try_default()` inside a `#[test]` you can actually run tests against whatever current-context you have set in your local kubeconfig, so the let's do this:
+First, we need a working [Client]. Using `Client::try_default()` inside an async-aware `#[test]` we end up using using the `current-context` set in your local [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/).
 
 ```rust
-#[tokio::test]
-#[ignore] // needs a cluster
-async fn publish_event_publishes_event() -> Result<(), Box<dyn std::error::Error>> {
-    let client = Client::try_default().await?;
-    let doc = Document::test();
-    publish_event(client.clone(), &doc).await?;
+    // Integration test without mocks
+    use kube::api::{Api, Client, ListParams, Patch, PatchParams};
+    #[tokio::test]
+    #[ignore = "uses k8s current-context"]
+    async fn integration_reconcile_should_set_status() {
+        let client = Client::try_default().await.unwrap();
+        let ctx = State::default().create_context(client.clone());
 
-    // verify event was found
-    let events: Api<Event> = Api::all(client.clone());
-    // TODO: test this properly
-    let opts = ListParams::default().fields(&format!("involvedObject.kind=Document,involvedObject.name={}", doc.name_any()));
-    let event = events.list(&opts).await?.into_iter().filter(|e| e.reason == "HiddenDoc").last().unwrap();
-    assert_eq!(event.action, "Reconciling");
-    Ok(())
-}
+        // create a test doc and run it through ~= kubectl apply --server-side
+        let doc = Document::test().finalized().needs_hide();
+        let docs: Api<Document> = Api::namespaced(client.clone(), "default");
+        let ssapply = PatchParams::apply("ctrltest");
+        let patch = Patch::Apply(doc.clone());
+        docs.patch("test", &ssapply, &patch).await.unwrap();
+
+        // reconcile it (as if it was just applied to the cluster like this)
+        reconcile(Arc::new(doc), ctx).await.unwrap();
+
+        // verify side-effects happened
+        let output = docs.get_status("test").await.unwrap();
+        assert!(output.status.is_some());
+    }
 ```
 
-Setting up a cluster for integration tests is usually pretty straight forward. Here is a GitHub Actions setup:
+this sets up a `Client`, a `Context` (to be passed to the reconciler), then applies an actual document into the cluster, and at the same time giving it to the reconciler.
+
+Feeding the apply result (usually seen by watching the api) is what the [Controller] internals does, and as a result you are not testing this part. However, by not testing this, we get a much simpler call around only `reconcile` that we can verify by querying the api after it has completed.
+
+!!! note ""
+    
+    The tests at the bottom of [controller-rs/controller.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs) go a little deeper and additionally test the status patch followed by the event posting scenario specific to that controller.
+
+
+We **need** a cluster for these tests though, so on CI we will spin up a [k3d] instance for each PR. Here is a GitHub Actions based setup:
 
 ```yaml
   integration:
@@ -209,44 +228,153 @@ Setting up a cluster for integration tests is usually pretty straight forward. H
         run: cargo test --lib --all -- --ignored
 ```
 
-As you can see, not too bad. All your tests marked with `#[ignore]` (a good convention to prevent tests from mutating a developer's cluster that happened to be on their `current-context`) now run against the same `k3d` test cluster spun up specifically for this test run.
+This creates a minimal k3d cluster (against **both** the latest k3d version and **our** last supported k8s version), and then runs `cargo test -- --ignored` to specifically **only** run the `#[ignore]` marked integration tests.
 
-So these tests are easy to write, but you'll get cluster setup failures every so often, and you also can't (realistically) write too many of these because you have to keep in your head which tests is doing what to your environment and they may be competing for the same resource names (e.g. applying your test document in more than one place?).
+!!! note "`#[ignore]` annotations on integration tests"
+
+    We advocate for using the `#[ignore]` attribute as a visible opt-in for developers. The `Client::try_default` will work against whatever arbitrary cluster a developer has set to their `current-context`, so makes it harder (than merely typing `cargo test`) to accidentally modify random clusters.
+
+### Benefits
+
+As you can see, this is a lot simpler than the mocking version on the Rust side; no request/response handling and task spawning.
+
+At the same time, these tests more powerful than mocks; we can test the major flow path of a controller in a cluster against different Kubernetes versions with very little code.
+
+### Downsides
+
+There are two main downsides.
+
+#### Low Reliability
+
+Setup problems are common, but will depend on the stability of your CI provider.
+
+As you now depend on both cluster specific actions to set up a cluster (e.g. [setup-k3d-k3s](https://github.com/nolar/setup-k3d-k3s)), and the underlying cluster interface (e.g. [k3d]), you have to deal with compatibility issues between these. Spurious cluster creation failures here are common (particularly on `latest`).
+
+It is **possible to reduce the reliability problems** a bit by using **dedicated clusters**, but that brings us onto the second pain point;
+
+#### No Isolation
+Tests from one file can cause **interactions and race conditions** with other tests, and re-using cluster for test runs makes this problem worse as tests now need to be idempotent.
+
+It is **possible** to achieve full test isolation for integration tests, but it often brings impractical costs (such as setting up a new cluster per test, or writing all tests to be idempotent and using disjoint resources).
+
+Thus, you can only (realistically) write so many of these tests because you have to keep in your head which tests is doing what to your environment and they may be competing for the same resource names.
+
+### Black Box Variant
+
+This setup is not a complete **black-box** integration test; we pull out internals to create state, and call `reconcile` almost like a unit test.
+
+We do this to avoid a lot of the `pub`/export logic required for full black-box testing, while still getting good verification in an integrated environment, but the tests do require code knowledge (white-box).
+
+This type of white-box integration testing **can be converted** to black-box integration testing / functional testing **if desired**;
+
+1. explicitly `cargo run &` the controller directly in the background
+2. `kubectl apply` the test document
+3. verify your conditions outside (e.g. `kubectl wait`)
+
+which is also reasonable. This does make the test much closer to what we define as __End to End Tests__, so we have chosen a white-box approach above.
 
 ## End to End Tests
 
-The most expensive type of test.
+End to End tests install your release unit (image + yaml) into a cluster, then runs verification against the cluster and the application.
 
-For a controller this would typically be deploying your controller into a cluster, and then checking that it performs the operations that is expected to perform.
+The most common use-case of this type of test is [smoke testing](https://en.wikipedia.org/wiki/Smoke_testing_(software)), but we **can** also test a multitude of integration scenarios using this approach.
 
-This type of test often do not even require any additional rust code because it is treating the whole controller as a large blackbox that you simply verify behavior of.
+### Example
+We will use this type of test as a basic sanity verification of our:
 
-It is useful to have one of these as a sanity verification of your:
+- packaging system (does the image work and install with the yaml pipeline?)
+- controller happy path (does it reconcile on cluster mutation?)
 
-- packaging process (yaml / docker / oci artifacts)
-- high level behaviour
+This lets us leave verification of lower level details to integration tests, mocked unit tests, or even linting tools (for yaml verification).
 
-and as such it functions as a high level smoke test that you can test usually with a small set of CI steps using `kubectl`
+As a result, we will not require any additional Rust code, as here we will treat the controller as a black box, and do all verification with `kubectl`.
+
+We will need access to the built container image to test this, so it can be a fairly lengthy test if you don't setup your CI caching right.
+
+An example setup for GitHub Actions:
 
 ```yaml
-- run: kubectl apply -f crd.yaml
-- run: kubectl wait --for=condition=established mycrd
-- run: helm template mychart | kubectl apply -f -
-- run: kubectl wait --for=condition=running deployment/??? mydeployment --timeout=60s
-- run: kubectl apply -f test_instance.yaml
-- run: kubectl wait --for=some-condition-expected-to-happen some-dependent-resource/with-name
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [docker]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: nolar/setup-k3d-k3s@v1
+        with:
+          version: v1.25
+          k3d-name: kube
+          k3d-args: "--no-lb --no-rollback --k3s-arg --disable=traefik,servicelb,metrics-server@server:*"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Download docker image artifact from docker job
+        uses: actions/download-artifact@v3
+        with:
+          name: controller-image
+          path: /tmp
+      - name: Load docker image from tarball
+        run: docker load --input /tmp/image.tar
+      # install crd + controller (via chart)
+      - run: kubectl apply -f yaml/crd.yaml
+      - run: helm template charts/doc-controller | kubectl apply -f -
+      - run: kubectl wait --for=condition=available deploy/doc-controller --timeout=20s
+      # add a test intance
+      - run: kubectl apply -f yaml/instance-samuel.yaml
+      - run: kubectl wait --for=condition=somecondition doc/samuel --timeout 2
+      # verify basic happy path outcomes have happened
+      - run: kubectl get event --field-selector "involvedObject.kind=Document,involvedObject.name=samuel" | grep "HideRequested"
+      - run: kubectl get doc -oyaml | grep -A1 finalizers | grep documents.kube.rs
 ```
 
-We have separated the CRD installation and the controller installation into two steps here (because CRD mutation is a stronger security requirement than deployment application and is usually more tightly controlled in a corporate environment), but you may wish to package these together.
+Here we are loading a built container via [docker buildx](https://docs.docker.com/engine/reference/commandline/buildx_build/) from a different test job (named `docker` here) stashed as a [build artifact](https://github.com/actions/upload-artifact). Building images will be covered elsewhere, but you can see the [CI configuration for controller-rs](https://github.com/kube-rs/controller-rs/blob/main/.github/workflows/ci.yml) as a reference.
 
-Note that it is possible to run a simplified variant of this type of test by doing a `cargo run` rather than container build followed by a `kubectl apply` of your deployment yaml, but this would leave your deployment artifact (and in-cluster specific code pathways) untested until deployment time. This often causes awkward hot fixes post-release when you screwed up an evar or something in your yaml. Granted, you can minimize some of these types of errors through other means (e.g. [schema tests](https://github.com/yannh/kubeconform)), this is not always foolproof. Therefore, it's usually good to have one complete end-to-end test just to cover these cases, along with any other unknown unknowns.
+Then, once the image and a cluster is available (same [k3d] setup as for integration tests), we can install the CRD, a test document, and the deployment yaml using whatever yaml pipeline we ~~want~~ have to deal with (here [helm](https://helm.sh/)).
 
-## Conclusion
+Once everything is installed and things are ready (using [kubectl wait](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#wait) or a simpler `sleep` if you do not have enough conditions), we can check that the **basic changes have occurred** in the cluster.
 
-TODO: diagram with tradeoffs
+<!-- TODO: link to docker / container / packaging doc here -->
+
+!!! note "CRD installation"
+
+    We separated the CRD installation and the deployment installation because CRD write access is generally a much stronger security requirement that is often controlled separately in a corporate environment.
+
+### Benefits
+
+It is very useful to have one test like this because it covers the interface between the yaml and the application along with most unknown-unknowns. E.g. do you read a new evar in the app now? Did you typo something in RBAC, or provide insufficient access?
+
+By having a single e2e test we can avoid most of those awkward hot fixes post-release.
+
+!!! note "Different approaches"
+
+    It is possible to detect __some__ of these failure modes in other ways. Schema testing via [kubeconform](https://github.com/yannh/kubeconform), or client-side admission policy verification via [conftest](https://www.conftest.dev/) for [OPA](https://www.openpolicyagent.org/), or [kwctl](https://github.com/kubewarden/kwctl) for [kubewarden](https://www.kubewarden.io/), or [polaris CLI](https://github.com/FairwindsOps/polaris#cli) for [polaris](https://www.fairwinds.com/polaris) to name a few. You should consider these, but note that they are not foolproof. Policy tests generally verify security constraints, and schema tests are limited by schema completeness and openapi.
+
+### Downsides
+
+In addition to requiring slightly more complicated CI, the main **new downside** of using e2e tests over integration tests is **error handling complexity**; all the possible failures can typically occur. On top of this, all the previous integration test downsides still apply.
+
+As a result, we only want a small number of e2e tests as the signal to noise ratio is going to be low, and errors are not going to be obvious from failures.
+
+## Summary
+
+All the fully typed methods all have a **consistent usage pattern** once the types have been generated. The dynamic and partial objects have more niche use cases and require a little more work such as alternate constructors.
+
+| Test         | Isolation             | Maintenance Cost               | Main Benefit      |
+| ------------ | --------------------- | ------------------------------ | ----------------- |
+| End-to-End   | :material-close: No   | Reliability + Isolation + CI   | IO + Smoke        |
+| Integration  | :material-close: No   | Reliability + Isolation        | IO Logic          | 
+| Unit w/mocks | :material-check: Yes  | Complexity + Readability       | IO Logic          |
+| Unit         | :material-check: Yes  | Over-specificity               | Non-IO invariants |
+
+
+The high cost of end-to-end and integration tests is almost entirely due to reliability issues with clusters on CI that ends up being a constant cost. The lack of test isolation in these environments also make them best suited to smoke style tests.
+
+    However, actually bringing up a functioning cluster does bring with it additional maintenance, isolation, and reliability issues in a CI environment, along with a small amount of CI configuration glue.
 
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
 
 
+
+[//begin]: # "Autogenerated link references for markdown compatibility"
+[reconciler##using-context]: reconciler "The Reconciler"
+[//end]: # "Autogenerated link references"
