@@ -1,10 +1,10 @@
 # Testing
 
-This chapter covers various types of tests you can write for controllers, and what each test type is most appropriate for.
+This chapter covers various types of tests you can write for controllers along with discussions of their tradeoffs.
 
 ## Terminology
 
-We will loosely re-use our existing [test conventions](https://github.com/kube-rs/kube/blob/main/CONTRIBUTING.md#testing) and outline four types of tests:
+We will loosely re-use the [kube test categories](https://github.com/kube-rs/kube/blob/main/CONTRIBUTING.md#testing) and outline four types of tests:
 
 - **End to End tests** (requires Kubernetes through an **in-cluster** Client)
 - **Integration tests** (requires Kubernetes)
@@ -13,39 +13,47 @@ We will loosely re-use our existing [test conventions](https://github.com/kube-r
 
 These types should roughly match what you see in a standard __test pyramid__ where testing power and maintenance costs both increase as you go up the list.
 
-!!! note "Rust integration tests conventions"
+!!! note "Classification Subjectivity"
 
-    [Rust defines integration tests](https://doc.rust-lang.org/book/ch11-03-test-organization.html) as tests that should live in their own `tests` directory only test public interfaces. We need more categories for tests here, and this pub/private distinction is a bit limiting/pointless for binaries.
-
+    The classification and re-use of these test terms is partially subjective. Variant approaches are discussed below.
 ## Unit Tests
 
-The simplest type of test, used generally for small - often private - units of code, and comes with the smallest maintenance costs. This type of test tend to be best when you separate non-IO logic from IO and [test your behavior sans-IO](https://sans-io.readthedocs.io/).
-
-If you have some business logic sitting in a module disconnected from the Kubernetes interaction (e.g. state machinery, algorithms) then standard unit tests are a great choice.
+The basic unit `#[test]`. Typically composed of individual test function in a __tests only__ module inlined in files containing what you want to test.
 
 We will defer to various official guides on good unit test writing in rust:
 
 - [rust by example - unit tests](https://doc.rust-lang.org/rust-by-example/testing/unit_testing.html)
 - [rust book - writing tests](https://doc.rust-lang.org/book/ch11-01-writing-tests.html)
 
-<!--
-!!! note "Blind unit testing caveats"
+### Benefits
 
-    The regular caveats against writing excessive tests applies. Be sure you are getting some protection out of each test you are writing rather than blindly testing every single private interface / pursuing 100% code coverage.
--->
+Very simple to setup, no extra interfaces needed for tests.
+
+Works extremely well for algorithms, state machinery, and business logic that has been separated out from network behavior (e.g. the [sans-IO](https://sans-io.readthedocs.io/) approach).
 
 ### Downsides
 
-How much of your controller you can test with unit tests is unfortunately limited. You usually end up with a sizable code chunk heavily intertwined with IO operations through Kubernetes api interactions, and this is **hard to do with plain unit tests**.
+While it is definitely possible to [go overboard with unit tests](https://verraes.net/2014/12/how-much-testing-is-too-much/), and test too deeply without protecting any real invariants, this is not what we will focus on here; when unit tests are appropriate, they are great.
 
-For these (more complicated) bits of code, we will use our more advanced test approaches, then outline and compare the **3 most common strategies to test** interactions involving **Kubernetes-calling code**.
+In this context, the main downside of plain unit tests is that they **cannot cover the IO component** of a controller without something else providing the Kubernetes part of the interaction (e.g. an apiserver mock or an actual cluster) making it, by definition, not a plain unit test anymore. 
 
-We will start with the **two big ones**, arising from the answer of **whether or not to mock**. We can either:
+The controller is fundamentally tied up in the [[reconciler]], so there is always going to be a sizable chunk of code that you **cannot do with plain unit tests**.
+
+## Kubernetes IO Strategies
+For the [[reconciler]] (and similar Kubernetes calling logic you may have), there are **3 major strategies to test** code that cannot be covered by plain unit tests.
+
+These strategies are essentially the remaining test categories. You have one basic choice:
 
 1. stay in unit-test land by mocking out your network dependencies (worse test code)
 2. move up the test pyramid and do full-scale integration testing (worse test reliability)
 
-### Unit Tests with Mocks
+and then you can also choose to do e2e testing either as an additional bonus, or as a substitute for integration testing. Larger projects **may wish to do everything**.
+
+!!! note "Idempotency reducing the need for tests"
+
+    The more you learn to lean on using [Server-Side Apply], the less if/else gates will end up with in your reconciler, and thus the less testing you will need.
+
+## Unit Tests with Mocks
 
 It is possible to to test your reconciler and IO logic while retain the speed and isolation of unit tests by using mocks. This is common practice to avoid having to bring in your all your dependencies and is typically done through crates such as [wiremock](https://crates.io/crates/wiremock), [mockito](https://crates.io/crates/mockito), [tower-test](https://crates.io/crates/tower-test), or [mockall](https://crates.io/crates/mockall).
 
@@ -53,6 +61,7 @@ Out of these, [tower-test](https://crates.io/crates/tower-test) integrates well 
 
 <!-- TODO: links to other use cases with wiremock? -->
 
+### Example
 To create a mocked [Client] with `tower-test` it is sufficient to instantiate one on a mock service:
 
 ```rust
@@ -110,9 +119,9 @@ impl ApiServerVerifier {
 }
 ```
 
-Here we have made an apiserver mock wrapper that will run certain scenarios. Each scenario calls a number of handler functions. Here we only have made one for `handle_status_patch`, but more are used in [controller-rs/fixtures.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs).
+Here we have made an apiserver mock wrapper that will run certain scenarios. Each scenario calls a number of handler functions that assert on certain basic expectations about the nature of the message we receive. Here we only have made one for `handle_status_patch`, but more are used in [controller-rs/fixtures.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs).
 
-Writing the actual tests (after setting up the above boilerplate), does thankfully get a lot shorter and more readable:
+An **actual tests** that uses the above wrapper can end up being quite readable:
 
 ```rust
 #[tokio::test]
@@ -125,11 +134,9 @@ async fn doc_reconcile_causes_status_patch() {
 }
 ```
 
-!!! note "Context and Document constructors omitted"
+Effectively, this is an exercise in running two futures together (one in a task), and one in the main test fn, then joining at the end.
 
-    Test functions to create the rest of the reconciler context and a test document used by a reconciler are not shown, see [controller-rs/fixtures.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs) for a relatively small `Context`. Note that the more things you pass in to your reconciler the larger your `Context` will be, and the more stuff you will want to mock. 
-
-In this test we **want to verify** that:
+In this test we are effectively **verifying** that:
 
 1. reconcile ran successfully in the given scenario
 2. apiserver handler saw all expected messages
@@ -141,13 +148,19 @@ This is **satisfied because**:
 2. Each scenario blocked on sequential api calls to happen (we await each message), so mockserver's joinhandle will not resolve until **every** expected message in the given scenario has happened (hence the timeout) 
 3. If the mock server is receiving more Kubernetes calls than expected the reconciler will error with a `KubeError(Service(Closed(())))` caught by the reconcilers `expect`
 
-!!! note ""
+!!! note "Context and Document constructors omitted"
 
-    Mocks are __comparable__ to using integration tests in power and versatility, but are often easier to deal with long term due to the test stability that comes with not having a real network boundary and a real cluster. We consider these tests more maintainable than integration tests, but harder to follow and write.
+    Test functions to create the rest of the reconciler context and a test document used by a reconciler are not shown, see [controller-rs/fixtures.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs) for a relatively small `Context`. Note that the more things you pass in to your reconciler the larger your `Context` will be, and the more stuff you will want to mock. 
+
+### Benefits
+Using mocks are __comparable__ to using integration tests in **power and versatility**. It lets us move up the pyramid in terms of testing power, but without needing an actual network boundary and a real cluster. As a result, we **maintain test reliability**.
+
+### Downsides
+Compared to using a real cluster, the amount of code we need to write - to compensate for a missing apiserver - is currently quite significant. This **verbosity** means a _higher initial cost_ of writing these tests, and also **more complexity** to keep in your head and maintain. We hope that some of this complexity can be reduced in the future with more [Kubernetes focused test helpers](https://github.com/kube-rs/kube/issues/1108).
 
 ## Integration Tests
 
-Integration tests run against a real Kubernetes cluster, and lets you verify that the IO components of your controller is doing the right thing in a real environment. The big selling point is that they require little code to write and are easy to understand.
+Integration tests run against a **real Kubernetes cluster**, and lets you verify that the IO components of your controller is doing the right thing in a real environment. The big selling point is that they require little code to write and are easy to understand.
 
 ### Example
 Let us try to verify the same status patching scenario from above using an integration test.
@@ -181,11 +194,11 @@ First, we need a working [Client]. Using `Client::try_default()` inside an async
 
 this sets up a `Client`, a `Context` (to be passed to the reconciler), then applies an actual document into the cluster, and at the same time giving it to the reconciler.
 
-Feeding the apply result (usually seen by watching the api) is what the [Controller] internals does, and as a result you are not testing this part. However, by not testing this, we get a much simpler call around only `reconcile` that we can verify by querying the api after it has completed.
+Feeding the apply result (usually seen by watching the api) is what the [Controller] internals does, and we are not testing this part. As a result, we get a much simpler test call around only `reconcile` that we can verify by querying the api after it has completed.
 
 !!! note ""
     
-    The tests at the bottom of [controller-rs/controller.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs) go a little deeper and additionally test the status patch followed by the event posting scenario specific to that controller.
+    The tests at the bottom of [controller-rs/controller.rs](https://github.com/kube-rs/controller-rs/blob/f084c15985b5de1b2cfee627613cd2b69c9530cd/src/controller.rs#L281-L315) go a little deeper, testing a larger scenario.
 
 
 We **need** a cluster for these tests though, so on CI we will spin up a [k3d] instance for each PR. Here is a GitHub Actions based setup:
@@ -250,6 +263,8 @@ Setup problems are common, but will depend on the stability of your CI provider.
 
 As you now depend on both cluster specific actions to set up a cluster (e.g. [setup-k3d-k3s](https://github.com/nolar/setup-k3d-k3s)), and the underlying cluster interface (e.g. [k3d]), you have to deal with compatibility issues between these. Spurious cluster creation failures here are common (particularly on `latest`).
 
+You also have to wait for things to be ready. Usually, this involves waiting for a [Condition](https://docs.rs/kube/latest/kube/runtime/wait/trait.Condition.html), but Kubernetes does not have conditions for everything[*](https://docs.rs/kube/latest/kube/runtime/wait/conditions/fn.is_crd_established.html), so you can still run into race conditions.
+
 It is **possible to reduce the reliability problems** a bit by using **dedicated clusters**, but that brings us onto the second pain point;
 
 #### No Isolation
@@ -261,18 +276,39 @@ Thus, you can only (realistically) write so many of these tests because you have
 
 ### Black Box Variant
 
-This setup is not a complete **black-box** integration test; we pull out internals to create state, and call `reconcile` almost like a unit test.
+The setup above is not a [black-box integration test](https://en.wikipedia.org/wiki/Black-box_testing), because we pull out internals to create state, and call `reconcile` almost like a unit test.
 
-We do this to avoid a lot of the `pub`/export logic required for full black-box testing, while still getting good verification in an integrated environment, but the tests do require code knowledge (white-box).
+!!! note "Rust conventions on integration tests"
 
-This type of white-box integration testing **can be converted** to black-box integration testing / functional testing **if desired**;
+    [Rust defines integration tests](https://doc.rust-lang.org/book/ch11-03-test-organization.html) as acting only on public interfaces and residing in a separate `tests` directory. 
 
-1. explicitly `cargo run &` the controller directly in the background
-2. `kubectl apply` the test document
-3. verify your conditions outside (e.g. `kubectl wait`)
+We effectively have a [white-box integration test](https://en.wikipedia.org/wiki/White-box_testing) instead.
 
-which is also reasonable. This does make the test much closer to what we define as __End to End Tests__, so we have chosen a white-box approach above.
+It is **possible to export** our `reconcile` plus associated `Context` types as a new public interface from a new controller library, and then black-box test that (per the Rust definition) from a separate `tests` directory.
 
+In the most basic cases, this is effectively a **definitional hack** as we;
+
+- introduce an arbitrary public boundary that's only used by tests and controller main
+- declare this boundary as public, and test that (in the exact same way)
+- re-plumb controller main to use this interface rather than the old private internals
+
+But this does also **separate the code** that we consider **important enough to test** from the rest, and that boundary has been **made explicit** via the (technically unnecessary) library (at the cost of having more files and boundaries).
+
+Doing so will make make your interfaces more explicit, and this can be valuable for more advanced controllers using multiple reconcilers.
+
+<!-- PRs welcome for examples -->
+
+### Functional Variant
+
+Rather than moving interfaces around to fit definitions of black-box tests, we can can also **remove all our assumptions about code layout** in the first place, and create a more [functional tests](https://en.wikipedia.org/wiki/Functional_testing) instead.
+
+In functional tests, we instead **run the controller directly**, and test against it:
+
+1. explicitly `cargo run &` the controller binary
+2. `kubectl apply` a test document
+3. verify your conditions outside (e.g. `kubectl wait` or a separate test suite)
+
+[CoreDB's operator follows this approach](https://github.com/CoreDB-io/coredb/tree/main/coredb-operator/tests), and it is definitely an important thing to test. In this guide, you can see functional testing done as part of __End to End Tests__.
 ## End to End Tests
 
 End to End tests install your release unit (image + yaml) into a cluster, then runs verification against the cluster and the application.
@@ -280,16 +316,20 @@ End to End tests install your release unit (image + yaml) into a cluster, then r
 The most common use-case of this type of test is [smoke testing](https://en.wikipedia.org/wiki/Smoke_testing_(software)), but we **can** also test a multitude of integration scenarios using this approach.
 
 ### Example
-We will use this type of test as a basic sanity verification of our:
+We will do e2e testing to get a **basic verification** of our:
 
-- packaging system (does the image work and install with the yaml pipeline?)
-- controller happy path (does it reconcile on cluster mutation?)
+- **packaging system** (does the image work and install with the yaml pipeline?)
+- **controller happy path** (does it reconcile on cluster mutation?)
 
-This lets us leave verification of lower level details to integration tests, mocked unit tests, or even linting tools (for yaml verification).
+This thus focuses entirely on the extreme **high-level details**, leaving lower-level specifics to integration tests, mocked unit tests, or even linting tools (for yaml verification).
 
-As a result, we will not require any additional Rust code, as here we will treat the controller as a black box, and do all verification with `kubectl`.
+As a result, we do not require any additional Rust code, as here we will treat the controller as a black box, and do all verification with `kubectl`.
 
-We will need access to the built container image to test this, so it can be a fairly lengthy test if you don't setup your CI caching right.
+!!! note "E2E Container Building"
+
+    An e2e test will require access to the built container image, so spending time on CI caching can be helpful.
+
+<!-- TODO: link to container doc-->
 
 An example setup for GitHub Actions:
 
@@ -327,7 +367,7 @@ An example setup for GitHub Actions:
 
 Here we are loading a built container via [docker buildx](https://docs.docker.com/engine/reference/commandline/buildx_build/) from a different test job (named `docker` here) stashed as a [build artifact](https://github.com/actions/upload-artifact). Building images will be covered elsewhere, but you can see the [CI configuration for controller-rs](https://github.com/kube-rs/controller-rs/blob/main/.github/workflows/ci.yml) as a reference.
 
-Then, once the image and a cluster is available (same [k3d] setup as for integration tests), we can install the CRD, a test document, and the deployment yaml using whatever yaml pipeline we ~~want~~ have to deal with (here [helm](https://helm.sh/)).
+Then, once the image and a cluster is available (same [k3d] setup as for integration tests), we can install the CRD, a test document, and the deployment yaml using whatever yaml pipeline we ~~want~~/_have_ to deal with (here [helm](https://helm.sh/)).
 
 Once everything is installed and things are ready (using [kubectl wait](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#wait) or a simpler `sleep` if you do not have enough conditions), we can check that the **basic changes have occurred** in the cluster.
 
@@ -339,9 +379,9 @@ Once everything is installed and things are ready (using [kubectl wait](https://
 
 ### Benefits
 
-It is very useful to have one test like this because it covers the interface between the yaml and the application along with most unknown-unknowns. E.g. do you read a new evar in the app now? Did you typo something in RBAC, or provide insufficient access?
+These tests are **useful** because they covers the interface between the yaml and the application along with most **unknown-unknowns**. E.g. do you read a new evar in the app now? Did you typo something in RBAC, or provide insufficient access?
 
-By having a single e2e test we can avoid most of those awkward hot fixes post-release.
+By having **a single e2e test** we can avoid most of those awkward post-release hot-fixes.
 
 !!! note "Different approaches"
 
@@ -349,25 +389,25 @@ By having a single e2e test we can avoid most of those awkward hot fixes post-re
 
 ### Downsides
 
-In addition to requiring slightly more complicated CI, the main **new downside** of using e2e tests over integration tests is **error handling complexity**; all the possible failures can typically occur. On top of this, all the previous integration test downsides still apply.
+In addition to requiring slightly more complicated CI, the main **new downside** of using e2e tests over integration tests is **error handling complexity**; all possible failures modes can occur - often with bad error messages. On top of this, all the previous integration test downsides still apply.
 
-As a result, we only want a small number of e2e tests as the signal to noise ratio is going to be low, and errors are not going to be obvious from failures.
+As a result, we only want a **small number of e2e tests** as the signal to noise ratio is going to be low, and errors may not be obvious from failures.
 
 ## Summary
 
-All the fully typed methods all have a **consistent usage pattern** once the types have been generated. The dynamic and partial objects have more niche use cases and require a little more work such as alternate constructors.
+Each test category comes with its own unique set of benefits and challenges:
 
-| Test         | Isolation             | Maintenance Cost               | Main Benefit      |
-| ------------ | --------------------- | ------------------------------ | ----------------- |
-| End-to-End   | :material-close: No   | Reliability + Isolation + CI   | IO + Smoke        |
-| Integration  | :material-close: No   | Reliability + Isolation        | IO Logic          | 
-| Unit w/mocks | :material-check: Yes  | Complexity + Readability       | IO Logic          |
-| Unit         | :material-check: Yes  | Over-specificity               | Non-IO invariants |
+| Test Type    | Isolation             | Maintenance Cost               | Main Test Case        |
+| ------------ | --------------------- | ------------------------------ | --------------------- |
+| End-to-End   | :material-close: No   | Reliability + Isolation + CI   | Real IO + Full Smoke  |
+| Integration  | :material-close: No   | Reliability + Isolation        | Real IO + Smoke       | 
+| Unit w/mocks | :material-check: Yes  | Complexity + Readability       | Substitute IO         |
+| Unit         | :material-check: Yes  | Unrealistic/Useless Scenarios  | Non-IO                |
 
 
-The high cost of end-to-end and integration tests is almost entirely due to reliability issues with clusters on CI that ends up being a constant cost. The lack of test isolation in these environments also make them best suited to smoke style tests.
+The end result is that it is most beneficial to focus on the lower end of the test pyramid, and only do light verification of IO. It is beneficial to do __some__ real IO verification (to avoid just testing a fabricated truth), and it it is also beneficial to do some e2e testing to ensure your build actually works.
 
-    However, actually bringing up a functioning cluster does bring with it additional maintenance, isolation, and reliability issues in a CI environment, along with a small amount of CI configuration glue.
+The high cost of end-to-end and integration tests is almost entirely due to reliability issues with clusters on CI that ends up being a constant cost. The lack of test isolation in these real environments also make them best suited as a form of **sanity verification**/smoke.
 
 
 --8<-- "includes/abbreviations.md"
@@ -376,5 +416,6 @@ The high cost of end-to-end and integration tests is almost entirely due to reli
 
 
 [//begin]: # "Autogenerated link references for markdown compatibility"
+[reconciler]: reconciler "The Reconciler"
 [reconciler##using-context]: reconciler "The Reconciler"
 [//end]: # "Autogenerated link references"
