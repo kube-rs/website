@@ -1,7 +1,6 @@
 # Testing
 
-This chapter covers various types of tests you can write for controllers along with discussions of their tradeoffs.
-
+This chapter covers **controller testing** and example Rust Kubernetes test patterns.
 ## Terminology
 
 We will loosely re-use the [kube test categories](https://github.com/kube-rs/kube/blob/main/CONTRIBUTING.md#testing) and outline four types of tests:
@@ -15,7 +14,7 @@ These types should roughly match what you see in a standard __test pyramid__ whe
 
 !!! note "Classification Subjectivity"
 
-    The classification and re-use of these test terms is partially subjective. Variant approaches are discussed below.
+    This classification and terminology re-use herein is partially subjective. Variant approaches are discussed.
 ## Unit Tests
 
 The basic unit `#[test]`. Typically composed of individual test function in a __tests only__ module inlined in files containing what you want to test.
@@ -27,22 +26,22 @@ We will defer to various official guides on good unit test writing in rust:
 
 ### Benefits
 
-Very simple to setup, no extra interfaces needed for tests.
+Very simple to setup, with generally no extra interfaces needed.
 
-Works extremely well for algorithms, state machinery, and business logic that has been separated out from network behavior (e.g. the [sans-IO](https://sans-io.readthedocs.io/) approach).
+Works extremely well for algorithms, state machinery, and business logic that has been separated out from network behavior (e.g. the [sans-IO](https://sans-io.readthedocs.io/) approach). Splitting out business logic from IO will reduce the need for more expensive tests below and should be favored where possible.
 
 ### Downsides
 
-While it is definitely possible to [go overboard with unit tests](https://verraes.net/2014/12/how-much-testing-is-too-much/), and test too deeply without protecting any real invariants, this is not what we will focus on here; when unit tests are appropriate, they are great.
+While it is definitely possible to [go overboard with unit tests](https://verraes.net/2014/12/how-much-testing-is-too-much/) and test too deeply (without protecting any real invariants), this is not what we will focus on here. When unit tests are appropriate, they are great.
 
-In this context, the main downside of plain unit tests is that they **cannot cover the IO component** of a controller without something else providing the Kubernetes part of the interaction (e.g. an apiserver mock or an actual cluster) making it, by definition, not a plain unit test anymore. 
+In the controller context, the **main unit test downside** is that we **cannot cover the IO component** without something standing in for Kubernetes - such as an apiserver mock or an actual cluster - making it, by definition, not a plain unit test anymore. 
 
 The controller is fundamentally tied up in the [[reconciler]], so there is always going to be a sizable chunk of code that you **cannot do with plain unit tests**.
 
 ## Kubernetes IO Strategies
-For the [[reconciler]] (and similar Kubernetes calling logic you may have), there are **3 major strategies to test** code that cannot be covered by plain unit tests.
+For the [[reconciler]] (and similar Kubernetes calling logic you may have), there are **3 major strategies to test** this code.
 
-These strategies are essentially the remaining test categories. You have one basic choice:
+You have one basic choice:
 
 1. stay in unit-test land by mocking out your network dependencies (worse test code)
 2. move up the test pyramid and do full-scale integration testing (worse test reliability)
@@ -55,7 +54,7 @@ and then you can also choose to do e2e testing either as an additional bonus, or
 
 ## Unit Tests with Mocks
 
-It is possible to to test your reconciler and IO logic while retain the speed and isolation of unit tests by using mocks. This is common practice to avoid having to bring in your all your dependencies and is typically done through crates such as [wiremock](https://crates.io/crates/wiremock), [mockito](https://crates.io/crates/mockito), [tower-test](https://crates.io/crates/tower-test), or [mockall](https://crates.io/crates/mockall).
+It is possible to to test your reconciler and IO logic and retain the speed and isolation of unit tests by using mocks. This is common practice to avoid having to bring in your all your dependencies and is typically done through crates such as [wiremock](https://crates.io/crates/wiremock), [mockito](https://crates.io/crates/mockito), [tower-test](https://crates.io/crates/tower-test), or [mockall](https://crates.io/crates/mockall).
 
 Out of these, [tower-test](https://crates.io/crates/tower-test) integrates well with our [Client] out of the box, and is the one we will focus on here.
 
@@ -101,6 +100,7 @@ impl ApiServerVerifier {
         })
     }
     
+    /// Respond to PATCH /status with passed doc + status from request body
     async fn handle_status_patch(mut self, doc: Document) -> Result<Self> {
         let (request, send) = self.0.next_request().await.expect("service not called");
         assert_eq!(request.method(), http::Method::PATCH);
@@ -194,7 +194,7 @@ First, we need a working [Client]. Using `Client::try_default()` inside an async
 
 this sets up a `Client`, a `Context` (to be passed to the reconciler), then applies an actual document into the cluster, and at the same time giving it to the reconciler.
 
-Feeding the apply result (usually seen by watching the api) is what the [Controller] internals does, and we are not testing this part. As a result, we get a much simpler test call around only `reconcile` that we can verify by querying the api after it has completed.
+Feeding the apply result (usually seen by watching the api) is what the [Controller] internals does, so we skip testing this part. As a result, we get a much simpler test call around only `reconcile` that we can verify by querying the api after it has completed.
 
 !!! note ""
     
@@ -251,24 +251,22 @@ This creates a minimal k3d cluster (against **both** the latest k3d version and 
 
 As you can see, this is a lot simpler than the mocking version on the Rust side; no request/response handling and task spawning.
 
-At the same time, these tests more powerful than mocks; we can test the major flow path of a controller in a cluster against different Kubernetes versions with very little code.
+At the same time, these tests are more powerful than mocks; we can test the major flow path of a controller in a cluster against different Kubernetes versions with very little code.
 
 ### Downsides
 
-There are two main downsides.
-
 #### Low Reliability
 
-Setup problems are common, but will depend on the stability of your CI provider.
+Setup problems are common, but will between CI provider.
 
-As you now depend on both cluster specific actions to set up a cluster (e.g. [setup-k3d-k3s](https://github.com/nolar/setup-k3d-k3s)), and the underlying cluster interface (e.g. [k3d]), you have to deal with compatibility issues between these. Spurious cluster creation failures here are common (particularly on `latest`).
+As you now depend on both cluster specific actions to set up a cluster (e.g. [setup-k3d-k3s](https://github.com/nolar/setup-k3d-k3s)), and the underlying cluster interface (e.g. [k3d]), you have to deal with compatibility issues between these. Spurious cluster creation failures on GHA are common (particularly on `latest`).
 
-You also have to wait for things to be ready. Usually, this involves waiting for a [Condition](https://docs.rs/kube/latest/kube/runtime/wait/trait.Condition.html), but Kubernetes does not have conditions for everything[*](https://docs.rs/kube/latest/kube/runtime/wait/conditions/fn.is_crd_established.html), so you can still run into race conditions.
+You also have to wait for resources to be ready. Usually, this involves waiting for a [Condition](https://docs.rs/kube/latest/kube/runtime/wait/trait.Condition.html), but Kubernetes does not have conditions for everything[*](https://docs.rs/kube/latest/kube/runtime/wait/conditions/fn.is_crd_established.html), so you can still run into race conditions.
 
 It is **possible to reduce the reliability problems** a bit by using **dedicated clusters**, but that brings us onto the second pain point;
 
 #### No Isolation
-Tests from one file can cause **interactions and race conditions** with other tests, and re-using cluster for test runs makes this problem worse as tests now need to be idempotent.
+Tests from one file can cause **interactions and race conditions** with other tests, and re-using a cluster across test runs makes this problem worse as tests now need to be idempotent.
 
 It is **possible** to achieve full test isolation for integration tests, but it often brings impractical costs (such as setting up a new cluster per test, or writing all tests to be idempotent and using disjoint resources).
 
@@ -300,9 +298,9 @@ Doing so will make make your interfaces more explicit, and this can be valuable 
 
 ### Functional Variant
 
-Rather than moving interfaces around to fit definitions of black-box tests, we can can also **remove all our assumptions about code layout** in the first place, and create a more [functional tests](https://en.wikipedia.org/wiki/Functional_testing) instead.
+Rather than moving interfaces around to fit definitions of black-box tests, we can can also **remove all our assumptions about code layout** in the first place, and create more [functional tests](https://en.wikipedia.org/wiki/Functional_testing).
 
-In functional tests, we instead **run the controller directly**, and test against it:
+In functional tests, we instead **run the controller directly**, and test against it, via something like:
 
 1. explicitly `cargo run &` the controller binary
 2. `kubectl apply` a test document
@@ -367,9 +365,9 @@ An example setup for GitHub Actions:
 
 Here we are loading a built container via [docker buildx](https://docs.docker.com/engine/reference/commandline/buildx_build/) from a different test job (named `docker` here) stashed as a [build artifact](https://github.com/actions/upload-artifact). Building images will be covered elsewhere, but you can see the [CI configuration for controller-rs](https://github.com/kube-rs/controller-rs/blob/main/.github/workflows/ci.yml) as a reference.
 
-Then, once the image and a cluster is available (same [k3d] setup as for integration tests), we can install the CRD, a test document, and the deployment yaml using whatever yaml pipeline we ~~want~~/_have_ to deal with (here [helm](https://helm.sh/)).
+Once the image and the cluster (same [k3d] setup) is available, we can install the CRD, a test document, and the deployment yaml using whatever yaml pipeline we ~~want~~/_have_ to deal with (here [helm](https://helm.sh/)).
 
-Once everything is installed and things are ready (using [kubectl wait](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#wait) or a simpler `sleep` if you do not have enough conditions), we can check that the **basic changes have occurred** in the cluster.
+After installations and resources are ready (checked by [kubectl wait](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#wait) or a simpler `sleep` if you do not have enough conditions), we can verify that **basic changes have occurred** in the cluster.
 
 <!-- TODO: link to docker / container / packaging doc here -->
 
@@ -377,9 +375,11 @@ Once everything is installed and things are ready (using [kubectl wait](https://
 
     We separated the CRD installation and the deployment installation because CRD write access is generally a much stronger security requirement that is often controlled separately in a corporate environment.
 
+<!-- TODO: move crd split note to packaging doc -->
+
 ### Benefits
 
-These tests are **useful** because they covers the interface between the yaml and the application along with most **unknown-unknowns**. E.g. do you read a new evar in the app now? Did you typo something in RBAC, or provide insufficient access?
+These tests are **useful** because they cover the interface between the yaml and the application along with most **unknown-unknowns**. E.g. do you read a new evar in the app now? Did you typo something in RBAC, or provide insufficient access?
 
 By having **a single e2e test** we can avoid most of those awkward post-release hot-fixes.
 
@@ -397,23 +397,19 @@ As a result, we only want a **small number of e2e tests** as the signal to noise
 
 Each test category comes with its own unique set of benefits and challenges:
 
-| Test Type    | Isolation             | Maintenance Cost               | Main Test Case        |
-| ------------ | --------------------- | ------------------------------ | --------------------- |
-| End-to-End   | :material-close: No   | Reliability + Isolation + CI   | Real IO + Full Smoke  |
-| Integration  | :material-close: No   | Reliability + Isolation        | Real IO + Smoke       | 
-| Unit w/mocks | :material-check: Yes  | Complexity + Readability       | Substitute IO         |
-| Unit         | :material-check: Yes  | Unrealistic/Useless Scenarios  | Non-IO                |
+| Test Type    | Isolation             | Maintenance Cost                | Main Test Case        |
+| ------------ | --------------------- | ------------------------------- | --------------------- |
+| End-to-End   | :material-close: No   | Reliability + Isolation + Debug | Real IO + Full Smoke  |
+| Integration  | :material-close: No   | Reliability + Isolation         | Real IO + Smoke       | 
+| Unit w/mocks | :material-check: Yes  | Complexity + Readability        | Substitute IO         |
+| Unit         | :material-check: Yes  | Unrealistic Scenarios           | Non-IO                |
 
+The high cost of end-to-end and integration tests is almost entirely due to reliability issues with clusters on CI that ends up being a constant cost. The lack of test isolation in these real environments also make them more attractive as a form of **sanity verification**/smoke.
 
-The end result is that it is most beneficial to focus on the lower end of the test pyramid, and only do light verification of IO. It is beneficial to do __some__ real IO verification (to avoid just testing a fabricated truth), and it it is also beneficial to do some e2e testing to ensure your build actually works.
-
-The high cost of end-to-end and integration tests is almost entirely due to reliability issues with clusters on CI that ends up being a constant cost. The lack of test isolation in these real environments also make them best suited as a form of **sanity verification**/smoke.
-
+Focusing on the **lower end** of the test pyramid (by separating the IO code from your business logic, or by mocking liberally), and proving a few specialized tests at the top end, is likely to to have the biggest **benefit-to-pain ratio**. As an exercise in redundancy, [controller-rs does everything](https://github.com/kube-rs/controller-rs/blob/main/.github/workflows/ci.yml), and can be inspected as __a__ reference.
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
-
-
 
 [//begin]: # "Autogenerated link references for markdown compatibility"
 [reconciler]: reconciler "The Reconciler"

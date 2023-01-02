@@ -5,3 +5,4 @@
 *[MK8SV]: Minimum Supported Kubernetes Version
 *[CRD]: Custom Resource Definition
 *[RBAC]: Role-based access control
+*[GHA]: GitHub Actions
