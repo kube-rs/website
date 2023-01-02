@@ -64,6 +64,7 @@ nav:
   - controllers/application.md
   - controllers/observability.md
   - controllers/relations.md
+  - controllers/testing.md
 
   #- comunity.md
   #- proposal-process.md

@@ -16,6 +16,7 @@
 [Store]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.Store.html
 [reflector]: https://docs.rs/kube/latest/kube/runtime/fn.reflector.html
 [watcher]: https://docs.rs/kube/latest/kube/runtime/fn.watcher.html
+[Recorder]: https://docs.rs/kube/latest/kube/runtime/events/struct.Recorder.html
 [Event::modify]: https://docs.rs/kube/latest/kube/runtime/watcher/enum.Event.html#method.modify
 [discovery]: https://docs.rs/kube/latest/kube/discovery/index.html
 [recommended_kind]: https://docs.rs/kube/latest/kube/discovery/struct.ApiGroup.html#method.recommended_kind
@@ -61,3 +62,4 @@
 [Loki]: https://grafana.com/oss/loki/
 [idempotent]: https://en.wikipedia.org/wiki/Idempotence
 [Server-Side Apply]: https://kubernetes.io/docs/reference/using-api/server-side-apply/
+[k3d]: https://k3d.io/
