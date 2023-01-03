@@ -109,7 +109,7 @@ You need to define at least a basic `reconcile` fn
 
 ```rust
 async fn reconcile(obj: Arc<Pod>, ctx: Arc<()>) -> Result<Action> {
-    println!("reconcile request: {}", obj.name());
+    println!("reconcile request: {}", obj.name_any());
     Ok(Action::requeue(Duration::from_secs(3600)))
 }
 ```
@@ -155,7 +155,7 @@ async fn main() -> Result<(), kube::Error> {
 }
 
 async fn reconcile(obj: Arc<Pod>, ctx: Arc<()>) -> Result<Action> {
-    println!("reconcile request: {}", obj.name());
+    println!("reconcile request: {}", obj.name_any());
     Ok(Action::requeue(Duration::from_secs(3600)))
 }
 

@@ -163,7 +163,7 @@ one approach of achieving idempotency is to check every property carefully::
 // {range .items[?(.metadata.ownerReferences.uid=262bab1a-1c79-11ea-8e23-42010a800016)]}{.metadata.name}{end}
 // make a helper for this?
 let podfilter = ListParams::default()
-    .labels(format!("owned-by/{}", obj.name()));
+    .labels(format!("owned-by/{}", obj.name_any()));
 
 // if owned pod is not created, do the work to create it
 let pod: Pod = match &pods.list(&podfilter).await?[..] {
@@ -179,7 +179,7 @@ if obj.status.pod_created.is_none() {
     let status = json!({
         "status": PodManagerStatus { pod_created: pod.meta().creation_timestamp }
     });
-    api.patch_status(&obj.name(), &PatchParams::default(), &Patch::Merge(&status))
+    api.patch_status(&obj.name_any(), &PatchParams::default(), &Patch::Merge(&status))
         .await?;
 }
 ```
@@ -189,13 +189,13 @@ but we can actually simplify this significantly by taking advantage of idempoten
 ```rust
 let pod_data = create_owned_pod(&obj);
 let serverside = PatchParams::apply("mycontroller");
-let pod = pods.patch(pod.name(), serverside, Patch::Apply(pod_data)).await?
+let pod = pods.patch(pod.name_any(), serverside, Patch::Apply(pod_data)).await?
 
 // update status object with the creation_timestamp of the owned Pod
 let status = json!({
     "status": PodManagerStatus { pod_created: pod.meta().creation_timestamp }
 });
-api.patch_status(&obj.name(), &PatchParams::default(), &Patch::Merge(&status))
+api.patch_status(&obj.name_any(), &PatchParams::default(), &Patch::Merge(&status))
     .await?;
 ```
 
