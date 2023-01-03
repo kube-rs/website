@@ -257,7 +257,7 @@ At the same time, these tests are more powerful than mocks; we can test the majo
 
 #### Low Reliability
 
-Setup problems are common, but will between CI provider.
+While this will vary between CI providers, cluster setup problems are common.
 
 As you now depend on both cluster specific actions to set up a cluster (e.g. [setup-k3d-k3s](https://github.com/nolar/setup-k3d-k3s)), and the underlying cluster interface (e.g. [k3d]), you have to deal with compatibility issues between these. Spurious cluster creation failures on GHA are common (particularly on `latest`).
 
