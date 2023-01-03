@@ -21,7 +21,7 @@ add then install `kube`, `k8s-openapi`, `thiserror`, `futures`, and `tokio` usin
 
 ```sh
 cargo add kube --features=runtime,client,derive
-cargo add k8s-openapi --features=v1_23
+cargo add k8s-openapi --features=v1_25
 cargo add thiserror
 cargo add tokio --features=macros,rt-multi-thread
 cargo add futures
@@ -32,7 +32,7 @@ This should give you a `[dependencies]` part in your `Cargo.toml` looking like:
 
 ```toml
 kube = { version = "LATESTKUBE", features = ["runtime", "client", "derive"] }
-k8s-openapi = { version = "LATESTK8SOPENAPI", features = ["v1_23"]}
+k8s-openapi = { version = "LATESTK8SOPENAPI", features = ["v1_25"]}
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 futures = "0.3"
 thiserror = "LATESTTHISERROR"
@@ -117,7 +117,7 @@ async fn reconcile(obj: Arc<Pod>, ctx: Arc<()>) -> Result<Action> {
 and a basic error handler (for what to do when `reconcile` returns an `Err`):
 
 ```rust
-fn error_policy(_error: &Error, _ctx: Arc<()>) -> Action {
+fn error_policy(_object: Arc<Pod>, _err: &Error, _ctx: Arc<()>) -> Action {
     Action::requeue(Duration::from_secs(5))
 }
 ```
@@ -159,7 +159,7 @@ async fn reconcile(obj: Arc<Pod>, ctx: Arc<()>) -> Result<Action> {
     Ok(Action::requeue(Duration::from_secs(3600)))
 }
 
-fn error_policy(_error: &Error, _ctx: Arc<()>) -> Action {
+fn error_policy(_object: Arc<Pod>, _err: &Error, _ctx: Arc<()>) -> Action {
     Action::requeue(Duration::from_secs(5))
 }
 ```
