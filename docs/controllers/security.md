@@ -85,7 +85,7 @@ The **installation namespace** can also easily be separated from the **controlle
 Follow the [standard guidelines](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for securing your controller pods.
 The following properties are recommended security context flags to constrain access:
 
-- `runAsNonRoot: false` or `runAsUser`
+- `runAsNonRoot: true` or `runAsUser`
 - `allowPrivilegeEscalation: false`
 - `readOnlyRootFilesystem: true`
 - `capabilities.drop: ["ALL"]`
