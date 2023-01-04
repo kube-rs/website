@@ -104,7 +104,7 @@ Minimizing the attack surface and amount extraneous code in your base image is a
 
 Instead, consider these security optimized base images:
 
-- :material-check: [distroless base images](https://github.com/GoogleContainerTools/distroless/tree/main/base) (e.g. `:cc` or `:base` for glibc / `:static` for musl)
+- :material-check: [distroless base images](https://github.com/GoogleContainerTools/distroless#distroless-container-images) (e.g. [`:cc`](https://github.com/GoogleContainerTools/distroless/tree/main/cc) for glibc / [`:static`](https://github.com/GoogleContainerTools/distroless/tree/main/base) for musl)
 - :material-check: [chainguard base images](https://github.com/chainguard-images/images#chainguard-images) (experimental)
 
 ## Supply Chain Security
