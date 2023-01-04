@@ -102,10 +102,10 @@ Minimizing the attack surface and amount extraneous code in your base image is a
 - :material-close: `busybox` or `alpine` for your shell/debug access (escalation attack surface)
 - :material-close: `scratch` (basically a blank default root user)
 
-Instead, consider specialized base images as better alternatives to `alpine` and `scratch`:
+Instead, consider these security optimized base images:
 
-- :material-check: [Distroless base images](https://github.com/GoogleContainerTools/distroless#why-should-i-use-distroless-images)
-- :material-check: [Chainguard base images](https://www.chainguard.dev/chainguard-images)
+- :material-check: [distroless base images](https://github.com/GoogleContainerTools/distroless#why-should-i-use-distroless-images)
+- :material-check: [chainguard base images](https://www.chainguard.dev/chainguard-images)
 
 ## Supply Chain Security
 
