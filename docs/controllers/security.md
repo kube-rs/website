@@ -10,9 +10,9 @@ While we can reap **some security benefits** from the Rust language itself (e.g.
 
 ### Potential Consequences of a Breach
 
-If an attacker can get onto your pod, or in some other ways get access to your controllers access the consequences could be severe.
+If an attacker can compromise your pod, or in some other ways piggy-back on a controller's access, the consequences could be severe.
 
-How severe exactly will **depend** on the **controller access** is. Some examples:
+The incident scenarios usually vary based on **what access attackers acquire**:
 
 - cluster wide secret access ⇒ secret oracle for attackers / data exfiltration
 - cluster wide write access to common objects ⇒ denial of service attacks / exfiltration
@@ -45,7 +45,7 @@ Kubernetes manifests with such rules can be kept up-to-date via [[testing#end-to
 ### CRD Access
 Installing a CRD into a cluster requires write access to `customresourcedefinitions`. This **can** be requested for the controller, but because this is such a heavy access requirement that is only really needed at the install/upgrade time, it is often **handled separately**. This also means that a controller often assumes the CRD is installed when running (and panicking if not).
 
-If you do need CRD write access, consider **scoping** this access non-delete access, and only for the `resourceNames` you expect:
+If you do need CRD write access, consider **scoping** this to _non-delete_ access, and only for the `resourceNames` you expect:
 
 ```yaml
 - apiVersion: rbac.authorization.k8s.io/v1
@@ -69,9 +69,9 @@ If you do need CRD write access, consider **scoping** this access non-delete acc
 ### Role vs. ClusterRole
 Use `Role` (access for a single namespace only) over `ClusterRole` unless absolutely necessary.
 
-Some common downgrade paths:
+Some common access downgrade paths:
 
-- if a controller is only working an enumerable list of namespaces, create a `Role` with the access `rules`, and a `RoleBinding` for each namespace
+- if a controller is only working on an enumerable list of namespaces, create a `Role` with the access `rules`, and a `RoleBinding` for each namespace
 - if a controller is always generating its dependent resources in a single namespace, you could expect the crd to also be installed in that same namespace.
 
 ### Namespace Separation
@@ -90,7 +90,7 @@ The following properties are recommended security context flags to constrain acc
 - `readOnlyRootFilesystem: true`
 - `capabilities.drop: ["ALL"]`
 
-See documentation of [Kubernetes Security Context Object](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#podsecuritycontext-v1-core).
+But they **might not be compatible** with your current container setup. See documentation of [Kubernetes Security Context Object](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#podsecuritycontext-v1-core).
 
 For cluster operators, the [Pod Security Standards](https://kubernetes.io/docs/concepts/security/pod-security-standards/) are also beneficial.
 
