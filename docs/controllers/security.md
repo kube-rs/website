@@ -117,6 +117,7 @@ We recommend the following selection of tools that play well with the Rust ecosy
 - [dependabot](https://github.blog/2020-06-01-keep-all-your-packages-up-to-date-with-dependabot/) or [renovate](https://github.com/renovatebot/renovate) for automatic dependency updates
 - [`cargo audit`](https://github.com/rustsec/rustsec/blob/main/cargo-audit/README.md) against [rustsec](https://rustsec.org/)
 - [`cargo deny`](https://embarkstudios.github.io/cargo-deny/)
+- [`cargo auditable`](https://github.com/rust-secure-code/cargo-auditable) embedding an "SBOM" for [trivy](https://github.com/aquasecurity/trivy) / [`cargo audit`](https://crates.io/crates/cargo-audit)
 
 ## References
 
