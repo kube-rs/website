@@ -38,9 +38,9 @@ Managing the RBAC rules requires a **declaration** somewhere (usually in your ya
 
 Kubernetes manifests with such rules can be kept up-to-date via [[testing#end-to-end-tests]] in terms of **sufficiency**, but one should also **document the intent** of your controller so that excessive permissions are not just "assumed to be needed" down the road.
 
-!!! note "RBAC Generation"
+!!! note "RBAC Rules Generation"
 
-    It is possible to generate rbac rules using [audit2rbac](https://github.com/liggitt/audit2rbac) (see [controller-rs/justfile](https://github.com/kube-rs/controller-rs/commit/3576a3f563b6b2164df0a95a04963238a1cf768e) for an example with `k3d`). While this is difficult to use in an automated fashion - as it needs a full e2e setup, then possible yaml conversion steps, and possibly further refinements - this method will let you **sanity check** that your rbac rules are **not scoped too broadly**.
+    It is possible to generate rbac rules using [audit2rbac](https://github.com/liggitt/audit2rbac) (see [controller-rs example](https://github.com/kube-rs/controller-rs/commit/3576a3f563b6b2164df0a95a04963238a1cf768e)). This approach has **limitations**: it needs a full e2e setup with an initial rbac config, and the output may need yaml conversion and refinement steps. However, you can use it to **sanity check** that your rbac rules are **not scoped too broadly**.
 
 ### CRD Access
 Installing a CRD into a cluster requires write access to `customresourcedefinitions`. This **can** be requested for the controller, but because this is such a heavy access requirement that is only really needed at the install/upgrade time, it is often **handled separately**. This also means that a controller often assumes the CRD is installed when running (and panicking if not).
