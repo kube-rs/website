@@ -38,9 +38,9 @@ Managing the RBAC rules requires a **declaration** somewhere (usually in your ya
 
 Kubernetes manifests with such rules can be kept up-to-date via [[testing#end-to-end-tests]] in terms of **sufficiency**, but one should also **document the intent** of your controller so that excessive permissions are not just "assumed to be needed" down the road.
 
-!!! note ""
+!!! note "RBAC Generation"
 
-    RBAC generation from [Client] usage [has been proposed](https://github.com/kube-rs/kube/issues/1115).
+    It is possible to generate rbac rules using [audit2rbac](https://github.com/liggitt/audit2rbac) (see [controller-rs/justfile](https://github.com/kube-rs/controller-rs/commit/3576a3f563b6b2164df0a95a04963238a1cf768e) for an example with `k3d`). While this is difficult to use in an automated fashion - as it needs a full e2e setup, then possible yaml conversion steps, and possibly further refinements - this method will let you **sanity check** that your rbac rules are **not scoped too broadly**.
 
 ### CRD Access
 Installing a CRD into a cluster requires write access to `customresourcedefinitions`. This **can** be requested for the controller, but because this is such a heavy access requirement that is only really needed at the install/upgrade time, it is often **handled separately**. This also means that a controller often assumes the CRD is installed when running (and panicking if not).
@@ -117,7 +117,7 @@ We recommend the following selection of tools that play well with the Rust ecosy
 - [dependabot](https://github.blog/2020-06-01-keep-all-your-packages-up-to-date-with-dependabot/) or [renovate](https://github.com/renovatebot/renovate) for automatic dependency updates
 - [`cargo audit`](https://github.com/rustsec/rustsec/blob/main/cargo-audit/README.md) against [rustsec](https://rustsec.org/)
 - [`cargo deny`](https://embarkstudios.github.io/cargo-deny/)
-- [`cargo auditable`](https://github.com/rust-secure-code/cargo-auditable) embedding an "SBOM" for [trivy](https://github.com/aquasecurity/trivy) / [`cargo audit`](https://crates.io/crates/cargo-audit)
+- [`cargo auditable`](https://github.com/rust-secure-code/cargo-auditable) embedding an SBOM for [trivy](https://github.com/aquasecurity/trivy) / [`cargo audit`](https://crates.io/crates/cargo-audit)
 
 ## References
 
