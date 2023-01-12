@@ -133,8 +133,8 @@ if is_timestamp_missing() {
 Let's suppose we have access to an `Api<Pod>` and an `Api<PodManager>` (via a <a href="#using-context">context</a>):
 
 ```rust
-let api: Api<PodManager> = ctx.get_ref().api.clone();
-let pods: Api<Pod> = Api::default_namespaced(ctx.get_ref().client.clone());
+let api: Api<PodManager> = ctx.api.clone();
+let pods: Api<Pod> = Api::default_namespaced(ctx.client.clone());
 ```
 
 and let's define the `Pod` we want to create as:

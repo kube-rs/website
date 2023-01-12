@@ -221,7 +221,7 @@ WIP. Showcase a basic `tilt` setup with `k3d`.
 
 ### Continuous Integration
 
-WIP. In separate document showcase a caching CI setup, and best practice builds; clippy/rustfmt/deny/audit.
+See [[testing]] and [[security]].
 
 ## Extras
 
