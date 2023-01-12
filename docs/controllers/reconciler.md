@@ -141,7 +141,7 @@ and let's define the `Pod` we want to create as:
 
 ```rust
 fn create_owned_pod(source: &PodManager) -> Pod {
-    let oref = source.controller_owner_ref(&());
+    let oref = source.controller_owner_ref(&()).unwrap();
     Pod {
         metadata: ObjectMeta {
             name: source.metadata.name.clone(),
