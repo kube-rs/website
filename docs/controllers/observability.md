@@ -140,7 +140,7 @@ and it is the only reason for needing to directly add [opentelemetry] as a depen
 
 ## Adding Metrics
 
-This is the hardest part of the instrumentation because it introduces the need for a [[webserver]], along with additional complexity of choice.
+This is the most verbose part of instrumentation because it introduces the need for a [[webserver]], along with data modelling choices and library choices.
 
 We will use [tikv's prometheus library](https://github.com/tikv/rust-prometheus) as its the most battle tested library available:
 
@@ -157,27 +157,38 @@ cargo add prometheus
 We will start creating a basic `Metrics` struct to house two metrics, a histogram and a counter:
 
 ```rust
-/// Metrics exposed on /metrics
 #[derive(Clone)]
 pub struct Metrics {
     pub reconciliations: IntCounter,
-    pub failures: IntCounter,
+    pub failures: IntCounterVec,
     pub reconcile_duration: HistogramVec,
 }
-impl Metrics {
-    fn new() -> Self {
-        let reconcile_histogram = register_histogram_vec!(
-            "foo_controller_reconcile_duration_seconds",
-            "The duration of reconcile to complete in seconds",
+
+impl Default for Metrics {
+    fn default() -> Self {
+        let reconcile_duration = HistogramVec::new(
+            histogram_opts!(
+                "doc_controller_reconcile_duration_seconds",
+                "The duration of reconcile to complete in seconds"
+            )
+            .buckets(vec![0.01, 0.1, 0.25, 0.5, 1., 5., 15., 60.]),
             &[],
-            vec![0.01, 0.1, 0.25, 0.5, 1., 5., 15., 60.]
         )
         .unwrap();
-
+        let failures = IntCounterVec::new(
+            opts!(
+                "doc_controller_reconciliation_errors_total",
+                "reconciliation errors",
+            ),
+            &["instance", "error"],
+        )
+        .unwrap();
+        let reconciliations =
+            IntCounter::new("doc_controller_reconciliations_total", "reconciliations").unwrap();
         Metrics {
-            reconciliations: register_int_counter!("foo_controller_reconciliations_total", "reconciliations").unwrap(),
-            failures: register_int_counter!("foo_controller_reconciliation_errors_total", "reconciliation errors").unwrap(),
-            reconcile_duration: reconcile_histogram,
+            reconciliations,
+            failures,
+            reconcile_duration,
         }
     }
 }
@@ -187,41 +198,78 @@ and as these metrics are measurable entirely from within **`reconcile` or `error
 
 ### Measuring
 
-Measuring our metric values can then be done by extracting the `metrics` struct from the context and doing the necessary computation inside `reconcile`:
+Measuring our metric values can then be done by doing by explicitly by taking a `Duration`  inside `reconcile`, but it is easier to wrap this in a struct that relies on `Drop` with a convenience constructor:
+
 
 ```rust
-async fn reconcile(foo: Arc<Foo>, ctx: Arc<Data>) -> Result<Action, Error> {
-    ctx.metrics.reconciliations.inc();
-    // Start a timer
-    let start = Instant::now();
+pub struct ReconcileMeasurer {
+    start: Instant,
+    metric: HistogramVec,
+}
 
-    // ...
-    // DO RECONCILE WORK HERE
-    // ...
+impl Drop for ReconcileMeasurer {
+    fn drop(&mut self) {
+        let duration = self.start.elapsed().as_millis() as f64 / 1000.0;
+        self.metric.with_label_values(&[]).observe(duration);
+    }
+}
 
-    // Measure time taken at the end and update counter
-    let duration = start.elapsed().as_millis() as f64 / 1000.0;
-    ctx.metrics
-       .reconcile_duration
-       .with_label_values(&[])
-       .observe(duration);
-    Ok(...) // end of fn
+impl Metrics {
+    pub fn count_and_measure(&self) -> ReconcileMeasurer {
+        self.reconciliations.inc();
+        ReconcileMeasurer {
+            start: Instant::now(),
+            metric: self.reconcile_duration.clone(),
+        }
+    }
 }
 ```
 
-and you can increment your `failures` metric inside the `error_policy`:
+and call this from `reconcile` with one line:
 
 ```rust
-fn error_policy(error: &Error, ctx: Arc<Data>) -> Action {
+async fn reconcile(foo: Arc<Foo>, ctx: Arc<Context>) -> Result<Action, Error> {
+    let _timer = ctx.metrics.count_and_measure(); // increments now
+
+    // main reconcile body here
+
+    Ok(...) // drop impl invoked, computes time taken
+}
+```
+
+and handle the `failures` metric inside your  `error_policy`:
+
+```rust
+fn error_policy(doc: Arc<Document>, error: &Error, ctx: Arc<Context>) -> Action {
     warn!("reconcile failed: {:?}", error);
-    ctx.metrics.failures.inc();
+    ctx.metrics.reconcile_failure(&doc, error);
     Action::requeue(Duration::from_secs(5 * 60))
+}
+
+impl Metrics {
+    pub fn reconcile_failure(&self, doc: &Document, e: &Error) {
+        self.failures
+            .with_label_values(&[doc.name_any().as_ref(), e.metric_label().as_ref()])
+            .inc()
+    }
+}
+```
+
+We could increment the failure metric directly, but we have also made a helper function stashed away that extracts the object name and a short error name as labels for the metric.
+
+This type of error extraction requires an impl on your `Error` type. We use `Debug` here:
+
+```rust
+impl Error {
+    pub fn metric_label(&self) -> String {
+        format!("{self:?}").to_lowercase()
+    }
 }
 ```
 
 !!! note "Future exemplar work"
 
-    If we had exemplar support here, we could have attached our `trace_id` to the histogram metric to be able to cross-browse from grafana metric panels into a trace-viewer.
+    If we had exemplar support, we could have attached our `trace_id` to the histogram metric - through `count_and_measure` - to be able to cross-browse from grafana metric panels into a trace-viewer.
 
 ### Exposing
 
@@ -263,11 +311,16 @@ and you could then create alerts on aberrant values (e.g. say 10% error rate, ze
 
 The above metric setup should comprise the core need of a **standard** controller (although you may have [more things to care about](https://sirupsen.com/metrics) than our simple example).
 
+!!! note "kube-state-metrics"
+
+    It is possible to derive metrics from conditions and fields in your CRD schema using [runtime flags to `kube-state-metrics`](https://github.com/kubernetes/kube-state-metrics/blob/main/docs/customresourcestate-metrics.md) without instrumentation, but since this is an implicit dependency for operators, it should not be a default.
+
 You will also want resource utilization metrics, but this is typically handled upstream. E.g. cpu/memory utilization metrics are generally available via kubelet's metrics and other utilization metrics can be gathered from [node_exporter](https://github.com/prometheus/node_exporter).
 
 !!! note "tokio-metrics"
 
     New **experimental** runtime metrics are also availble for the tokio runtime via [tokio-metrics](https://github.com/tokio-rs/tokio-metrics).
+
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
