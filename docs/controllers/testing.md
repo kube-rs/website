@@ -174,7 +174,7 @@ First, we need a working [Client]. Using `Client::try_default()` inside an async
     #[ignore = "uses k8s current-context"]
     async fn integration_reconcile_should_set_status() {
         let client = Client::try_default().await.unwrap();
-        let ctx = State::default().create_context(client.clone());
+        let ctx = State::default().to_context(client.clone());
 
         // create a test doc and run it through ~= kubectl apply --server-side
         let doc = Document::test().finalized().needs_hide();

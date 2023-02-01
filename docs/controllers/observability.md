@@ -275,12 +275,12 @@ impl Error {
 
 For prometheus to obtain our metrics, we require a web server. As per the [[webserver]] guide, we will assume [actix-web].
 
-In our case, we will pass a `Manager` struct that contains the `Metrics` struct and attach it to the `HttpServer` in `main`:
+In our case, we will pass a `State` struct that contains the `Metrics` struct and attach it to the `HttpServer` in `main`:
 
 ```rust
 HttpServer::new(move || {
     App::new()
-        .app_data(Data::new(manager.clone())) // new state
+        .app_data(Data::new(state.clone())) // new state
         .service(metrics) // new endpoint
     })
 ```
@@ -289,7 +289,7 @@ the `metrics` service is the important one here, and its implementation is able 
 
 ```rust
 #[get("/metrics")]
-async fn metrics(c: web::Data<Manager>, _req: HttpRequest) -> impl Responder {
+async fn metrics(c: web::Data<State>, _req: HttpRequest) -> impl Responder {
     let metrics = c.metrics(); // grab out of actix data
     let encoder = TextEncoder::new();
     let mut buffer = vec![];
