@@ -3,7 +3,7 @@
 The Kube-rs maintainers are:
 
 * Eirik Albrigtsen <sszynrae@gmail.com> [@clux](https://github.com/clux)
-* Teo Klestrup Röijezon <teo@nullable.se> [@teozkr](https://github.com/teozkr)
+* Natalie Klestrup Röijezon <nat@nullable.se> [@nightkr](https://github.com/nightkr)
 * Kaz Yoshihara <kazk.dev@gmail.com> [@kazk](https://github.com/kazk)
 
 ## Emeriti
