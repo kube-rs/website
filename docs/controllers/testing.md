@@ -158,6 +158,10 @@ Using mocks are __comparable__ to using integration tests in **power and versati
 ### Downsides
 Compared to using a real cluster, the amount of code we need to write - to compensate for a missing apiserver - is currently quite significant. This **verbosity** means a _higher initial cost_ of writing these tests, and also **more complexity** to keep in your head and maintain. We hope that some of this complexity can be reduced in the future with more [Kubernetes focused test helpers](https://github.com/kube-rs/kube/issues/1108).
 
+### External Examples
+
+- [nais/hahaha exec tests](https://github.com/nais/hahaha/blob/43cff519ffbc7c0106ff46f963c3308329301500/src/reconciler.rs#L205-L308) using [an automock trait](https://github.com/nais/hahaha/blob/43cff519ffbc7c0106ff46f963c3308329301500/src/api.rs#L13-L21)
+
 ## Integration Tests
 
 Integration tests run against a **real Kubernetes cluster**, and lets you verify that the IO components of your controller is doing the right thing in a real environment. The big selling point is that they require little code to write and are easy to understand.
