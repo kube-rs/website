@@ -231,7 +231,7 @@ Controller::new(foos, ListParams::default())
 then you can pull out your user defined struct (here `Data`) items inside `reconcile`:
 
 ```rust
-async fn reconcile(object: Arc<MyObject>, data: Arc<Data>) -> Result<Action, Error> {
+async fn reconcile(object: Arc<MyObject>, ctx: Arc<Data>) -> Result<Action, Error> {
     ctx.state.write().await.last_event = Utc::now();
     let reporter = ctx.state.read().await.reporter.clone();
     let objs: Api<MyObject> = Api::all(ctx.client.clone());

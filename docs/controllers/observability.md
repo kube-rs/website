@@ -198,7 +198,7 @@ and as these metrics are measurable entirely from within **`reconcile` or `error
 
 ### Measuring
 
-Measuring our metric values can then be done by doing by explicitly by taking a `Duration`  inside `reconcile`, but it is easier to wrap this in a struct that relies on `Drop` with a convenience constructor:
+Measuring our metric values can then be done by explicitly taking a `Duration`  inside `reconcile`, but it is easier to wrap this in a struct that relies on `Drop` with a convenience constructor:
 
 
 ```rust
