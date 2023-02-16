@@ -22,11 +22,12 @@ CLIs that are used for occasional build or release time manipulation. Maintainer
 - [just](https://github.com/casey/just)
 - [sd](https://github.com/chmln/sd)
 - [rg](https://github.com/BurntSushi/ripgrep)
+- [choose](https://github.com/theryangeary/choose)
 - [fastmod](https://github.com/facebookincubator/fastmod)
 - [curl](https://curl.se/)
 - [cargo-release](https://github.com/crate-ci/cargo-release)
 
-GNU tools like `grep` + `head` + `tail` + `awk` + `sed`, are also referenced a handful of times, but are generally avoided due to more modern tools above.
+GNU tools like `grep` + `head` + `tail` + `awk` + `sed`, are also referenced a handful of times, but are generally avoided due to cross-platform compatibility issues, plus the existence of more modern tools above.
 
 ### CI Dependencies
 
