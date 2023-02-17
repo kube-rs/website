@@ -321,6 +321,11 @@ You will also want resource utilization metrics, but this is typically handled u
 
     New **experimental** runtime metrics are also availble for the tokio runtime via [tokio-metrics](https://github.com/tokio-rs/tokio-metrics).
 
+### External References
+
+- [Metrics in axum using metrics crate](https://github.com/tokio-rs/axum/tree/143c415955bbd5021e28f493ef7c285de191ffe1/examples/prometheus-metrics)
+
+
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
