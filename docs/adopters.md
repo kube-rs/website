@@ -18,6 +18,7 @@
 - [blixt](https://github.com/kong/blixt) - A Kubernetes [Gateway API](https://gateway-api.sigs.k8s.io)-based Layer 4 Load-Balancer for ingress
 - [databricks-kube-operator](https://github.com/mach-kernel/databricks-kube-operator) - GitOps/Helm style management of [Databricks](https://www.databricks.com/) jobs
 - [mirrord](https://github.com/metalbear-co/mirrord) - Run your local service in the context of your remote cluster.
+- [coredb](https://github.com/CoreDB-io/coredb) - Postgres for Everything
 
 ## Companies
 
@@ -35,6 +36,7 @@
 - [nais](https://nais.io)
 - [Kong](https://konghq.com)
 - [MetalBear](https://metalbear.co)
+- [CoreDB](https://coredb.io/)
 
 If you're using `kube-rs` in production and are not on this list, please [submit a pull request](https://github.com/kube-rs/website/edit/main/docs/adopters.md)!
 
