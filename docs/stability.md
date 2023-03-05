@@ -45,11 +45,11 @@ Altered methods/fns/constants **should** in general not be changed directly, but
 
 New variants **should** have a new name, and the old variant **should** remain with a **deprecation attribute** that can guide users towards the new behaviour before the deprecated variant disappears.
 
-!!! warn "Deprecation Duration"
+!!! note "Deprecation Duration"
 
     Deprecated functionality **must** stick around for at least **3 releases**.
 
-For instance, we deprecated [`runtime::utils::try_flatten_applied`](https://github.com/kube-rs/kube-rs/blob/d0bf02f9c0783a3087b83633f2fa899d8539e91d/kube-runtime/src/utils/mod.rs) in `0.72.0`:
+For instance, we deprecated [`runtime::utils::try_flatten_applied`](https://github.com/kube-rs/kube/blob/d0bf02f9c0783a3087b83633f2fa899d8539e91d/kube-runtime/src/utils/mod.rs#L29-L40) in `0.72.0`:
 
 ```rust
 /// Flattens each item in the list following the rules of [`watcher::Event::into_iter_applied`].
@@ -140,7 +140,7 @@ As a brief summary to these policies and constraints, our approach to stability 
 - **track** our breaking changes with [changelog-change labeled PRs](https://github.com/kube-rs/kube-rs/pulls?q=is%3Apr+label%3Achangelog-change+is%3Aclosed)
 - **inform** on necessary changes in [releases](https://github.com/kube-rs/kube-rs/releases) and the [[changelog]]
 - **carefully change** according to our [guidelines on interface changes](#interface-changes)
-- **experiment** with new functionality under [unstable feature falgs](#unstable-features)
+- **experiment** with new functionality under [unstable feature flags](#unstable-features)
 - **deprecate** according to our [deprecation strategy](#deprecation-strategy)
 
 <!--
