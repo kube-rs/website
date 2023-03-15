@@ -57,6 +57,7 @@ nav:
   - stability.md
   - architecture.md
   - adopters.md
+  - guides.md
 
 - Controllers:
   - controllers/intro.md
