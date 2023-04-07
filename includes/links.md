@@ -11,6 +11,7 @@
 [Resource]: https://docs.rs/kube/latest/kube/trait.Resource.html
 [ApiResource]: https://docs.rs/kube/latest/kube/core/struct.ApiResource.html
 [ListParams]: https://docs.rs/kube/latest/kube/api/struct.ListParams.html
+[watcher::Config]: https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html
 [Object]: https://docs.rs/kube/latest/kube/core/struct.Object.html
 [DynamicObject]: https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html
 [Store]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.Store.html

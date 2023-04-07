@@ -1,3 +1,4 @@
+
 # Related Objects
 
 A [Controller] needs to specify related resources if changes to them is meant to trigger the [[reconciler]].
@@ -12,8 +13,8 @@ The [Controller::owns] relation is the most straight-forward and most ubiquitous
 let cmgs = Api::<ConfigMapGenerator>::all(client.clone());
 let cms = Api::<ConfigMap>::all(client.clone());
 
-Controller::new(cmgs, ListParams::default())
-    .owns(cms, ListParams::default())
+Controller::new(cmgs, watcher::Config::default())
+    .owns(cms, watcher::Config::default())
 ```
 
 This [configmapgen example](https://github.com/kube-rs/kube-rs/blob/master/examples/configmapgen_controller.rs) uses one custom resource `ConfigMapGenerator` whose controller is in charge of the lifecycle of the child `ConfigMap`.
@@ -37,8 +38,8 @@ let mapper = |obj: RelatedObject| {
     })
 };
 
-Controller::new(main, ListParams::default())
-    .watches(related, ListParams::default(), mapper)
+Controller::new(main, watcher::Config::default())
+    .watches(related, watcher::Config::default(), mapper)
 ```
 <!-- TODO: ReconcileRequest::from sets reason to Unknow, needs a method to set reason, ReconcileReason -> controller::Reason -->
 
@@ -59,14 +60,14 @@ The current best way to do this is to inject reconciliation requests to the [Con
 
 ## Subsets
 
-With owned and watched relations, it is not always necessary to watch the full space. Use [ListParams] to filter on the categories you want to reduce IO utilization:
+With owned and watched relations, it is not always necessary to watch the full space. Use [watcher::Config] to filter on the categories you want to reduce IO utilization:
 
 ```rust
 let myobjects = Api::<MyObject>::all(client.clone());
 let pods = Api::<Pod>::all(client.clone())
 
-Controller::new(myobjects, ListParams::default())
-    .owns(pods, ListParams::default().labels("managed-by=my-controller"))
+Controller::new(myobjects, watcher::Config::default())
+    .owns(pods, watcher::Config::default().labels("managed-by=my-controller"))
 ```
 
 ## Summary

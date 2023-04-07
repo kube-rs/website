@@ -224,7 +224,7 @@ let context = Arc::new(Data {
     client: client.clone(),
     state: state.clone(),
 });
-Controller::new(foos, ListParams::default())
+Controller::new(foos, watcher::Config::default())
     .run(reconcile, error_policy, context)
 ```
 

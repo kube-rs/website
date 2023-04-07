@@ -22,7 +22,7 @@ To use a typed Kubernetes resource as a source of truth in a [Controller], impor
 use k8s_openapi::api::core::v1::Pod;
 
 let pods = Api::<Pod>::all(client);
-Controller::new(pods, ListParams::default())
+Controller::new(pods, watcher::Config::default())
 ```
 
 This is the simplest flow and works right out of the box because the openapi implementation ensures we have all the api information via the [Resource] traits.
@@ -59,7 +59,7 @@ This will generate a `pub struct Document` in this scope which implements [Resou
 
 ```rs
 let docs = Api::<Document>::all(client);
-Controller::new(docs, ListParams::default())
+Controller::new(docs, watcher::Config::default())
 ```
 
 !!! note "Custom resources require schemas"
@@ -155,7 +155,7 @@ you typically would then import this file as a module and use it as follows:
 use prometheusrule::PrometheusRule;
 
 let prs: Api<PrometheusRule> = Api::default_namespaced(client);
-Controller::new(prs, ListParams::default())
+Controller::new(prs, watcher::Config::default())
 ```
 
 !!! warning "Kopium is unstable"
@@ -191,7 +191,7 @@ let (ar, caps) = apigroup.recommended_kind("Document").unwrap();
 
 // Use the discovered kind in an Api, and Controller with the ApiResource as its DynamicType
 let api: Api<DynamicObject> = Api::all_with(client, &ar);
-Controller::new_with(api, ListParams::default(), &ar)
+Controller::new_with(api, watcher::Config::default(), &ar)
 ```
 
 Other ways of doing [discovery] are also available. We are highlighting [recommended_kind] in particular here because it can be used to achieve version agnosticity.
@@ -233,7 +233,7 @@ type PodSimple = Object<PodSpecSimple, NotUsed>;
 // steal api resource information from k8s-openapi
 let ar = ApiResource::erase::<k8s_openapi::api::core::v1::Pod>(&());
 
-Controller::new_with(api, ListParams::default(), &ar)
+Controller::new_with(api, watcher::Config::default(), &ar)
 ```
 
 In the end, we end up with some extra lines to define our [Pod], but we also drop every field inside spec + status except `spec.container.image`. If your cluster has thousands of pods and you want to do some kind of common operation on a small subset of fields, then this can give a very quick win in terms of memory use (a Controller will usually maintain a `Store` of all owned objects).

@@ -99,7 +99,7 @@ async fn main() -> Result<(), kube::Error> {
 }
 ```
 
-This creates a [Client], a Pod [Api] object (for all namespaces), and a [Controller] for the full list of pods defined by a default [ListParams].
+This creates a [Client], a Pod [Api] object (for all namespaces), and a [Controller] for the full list of pods defined by a default [watcher::Config].
 
 We are not using [[relations]] here, so we merely tell the controller to call reconcile when a pod changes.
 

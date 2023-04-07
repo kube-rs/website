@@ -7,8 +7,8 @@ Suppose you have a `Controller` for a main [[object]] `K` which **owns** a child
 I.e. if `child_c` is an `Api<C>` and `main_k` is an `Api<K>`, then the following code sets up this basic scenario:
 
 ```rust
-Controller::new(main_k, ListParams::default())
-    .owns(child_c, ListParams::default())
+Controller::new(main_k, watcher::Config::default())
+    .owns(child_c, watcher::Config::default())
     .run(reconcile, error_policy, context)
     .for_each(|_| futures::future::ready(()))
     .await
