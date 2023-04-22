@@ -1,0 +1,16 @@
+[package]
+name = "ctrl"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+doc = false
+name = "relations"
+path = "relations.rs"
+
+[dependencies]
+futures = "0.3"
+k8s-openapi = { version = "0.18.0", features = ["v1_26"] }
+kube = { version = "0.82.2" , features = ["runtime", "client", "derive"] }
+thiserror = "1"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }

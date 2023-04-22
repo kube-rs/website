@@ -44,8 +44,20 @@ Controller::new(main, watcher::Config::default())
 <!-- TODO: ReconcileRequest::from sets reason to Unknow, needs a method to set reason, ReconcileReason -> controller::Reason -->
 
 In this case we are extracing an object reference from the spec of our object. Regardless of how you get the information, your mapper must return an iterator of [ObjectRef] for the root object(s) that must be reconciled as a result of the change.
+ example; every [HPA](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) object bundles a scale ref to the workload, so you could use this to build a Controller for `Deployment` using HPA as a watched object:
 
-As a theoretical example; every [HPA](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) object bundles a scale ref to the workload, so you could use this to build a Controller for `Deployment` using HPA as a watched object.
+```
+let mapper = |obj: HorizontalPodAutoscaler| {
+    obj.spec.map(|hspec| {
+        let crossref = hspec.scale_target_ref;
+        if crossref.kind == "Deployment" {
+            Some(ObjectRef::new_with(&crossref.name, ()))
+        } else {
+            None
+        }
+    }).flatten()
+};
+```
 
 ## External Relations
 
