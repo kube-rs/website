@@ -1,0 +1,115 @@
+# Optimization
+
+## Memory + IO Usage
+
+Unless you have another large in-memory cache or other similar memory users in your controller, the primary contributor to your controller's memory use is going to be the mandatory reflector for the main [[object]] and any other optional reflectors for related objects.
+
+The memory usage of reflectors can be minimized by tweaking a number of properties:
+
+1. Amount of objects watched (`watcher::Config`)
+2. Pruning unnecessary fields before storing (modify + clear pre-storage)
+3. Asking for metadata only when applicable (`metadata_watcher`)
+
+Since kube 0.82 it is possible to propagate custom streams throughout any part of the [`Controller`] interface using
+
+```rust
+let cfg = watcher::Config { CUSTOM_RESTRICTIONS };
+let stream = reflector(writer, SOME_WATCHER)
+Controller::for_stream(stream, reader);
+```
+and similarly for watched streams using [`Controller::]
+
+### Reducing Number of Watched Objects
+By default when using `watcher::Config::default` you will watch every object in the scope you created your [`Api`] for:
+
+- `Api::namespaced` or `Api::default_namespaced` -> all objects in that namespace
+- `Api::all` -> all cluster scoped objects (or all objects in all namespaces)
+
+This can be limited to just a subset of namespaces, or a subset of objects using field selectors to limit to a selection of known names:
+
+```rust
+let cfg = watcher::Config::default().fields(&format!("metadata.name={name}"));
+```
+
+which can also be comma-delimited for more names.
+Similarly, you can also exclude a known list if you can enumerate them all:
+
+```rust
+let ignoring_system_namespaces = [
+    "carousel",
+    "cattle-fleet-system",
+    "cattle-impersonation-system",
+    "cattle-monitoring-system",
+    "cattle-system",
+    "fleet-system",
+    "gatekeeper-system",
+    "kube-node-lease",
+    "kube-public",
+    "kube-system",
+]
+.into_iter()
+.map(|ns| format!("metadata.namespace!={ns}"))
+.collect::<Vec<_>>()
+.join(",");
+let cfg = watcher::Config::default().fields(&ignoring_system_namespaces);
+```
+
+but note that [field-selector limitations apply](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/);you cannot filter on most arbitrary fields, nor can you do set complements (need to enumerate explicitly).
+
+If you find that field-selectors are too constrictive for your set of objects, the problem can generally be solved using by [explicitly labelling](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) the objects you care about and use label selectors instead:
+
+```rust
+let cfg = Config::default().labels("environment in (production, qa)");
+```
+
+### Pruning Fields
+By default, the memory stored for each object is equivalent to what you get from asking `kubectl` for all objects matching your `ListParams`, but additionally asking for `--show-managed-fields` which `kubectl` hides from you by default, but is always part of any underlying api based request.
+
+Most controllers do not need to know about the specifics of these, and they should usually be pruned pre-insertion:
+
+```rust
+let api: Api<Pod> = Api::default_namespaced(client);
+let stream = watcher(pods, watcher::Config::default()).map_ok(|ev| {
+    ev.modify(|pod| {
+        // memory optimization for our store - we don't care about fields/annotations/status
+        pod.managed_fields_mut().clear();
+        pod.annotations_mut().clear();
+        pod.status = None;
+    })
+});
+let (reader, writer) = reflector::store::<Pod>();
+let rf = reflector(writer, stream).applied_objects();
+```
+
+This can in general be done for all the fields you do not care about. Above we also clear out the status object and annotations entirely pre-storage.
+
+!!! warning "Pruning ObjectMeta"
+
+    Do not prune everything from [`ObjectMeta`] as `kube::runtime` relies on being able to see `.metadata.name`, `.metadata.resource_version` and `metadata.namespace` from [`watcher`] streams in controllers and reflector stores.
+
+### Watching Metadata Only
+
+By default **Kubernetes will return all fields** for an object when doing a watch (so the only tool so far at our disposal to reduce networked traffic has been to reduce the number of watched objects).
+
+We can ask Kubernetes to only return [`TypeMeta`] (`.api_version` + `.kind`) + [`ObjectMeta`] (`.metadata`) in our watches and list calls, and it will not only reduce reflector sizes by default, it will also reduce the amount of networked traffic the controller is responsible for.
+
+Using [`metadata_watcher`] is a drop-in replacement for `watcher`:
+
+```rust
+let cfg = watcher::Config::default().fields(&ignoring_system_namespaces);
+let stream = reflector(writer, metadata_watcher(api, cfg)).applied_objects();
+```
+
+###
+
+## Summary
+
+TABLE OF OPTIMIZATIONS AND EFFECTS
+metadata_watcher IO + Memory
+selectors IO + Memory
+pruning Memory
+predicates reconcile hits
+
+[//begin]: # "Autogenerated link references for markdown compatibility"
+[object]: object "The Object"
+[//end]: # "Autogenerated link references"
