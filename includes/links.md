@@ -1,6 +1,9 @@
 [Controller]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html
 [Controller::owns]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.owns
 [Controller::watches]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.watches
+[Controller::owns_stream]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.owns_stream
+[Controller::watches_stream]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.watches_stream
+[Controller::for_stream]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.for_stream
 [Controller::reconcile_all_on]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.reconcile_all_on
 [Controller::run]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.run
 [ObjectRef]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.ObjectRef.html
@@ -12,11 +15,13 @@
 [ApiResource]: https://docs.rs/kube/latest/kube/core/struct.ApiResource.html
 [ListParams]: https://docs.rs/kube/latest/kube/api/struct.ListParams.html
 [watcher::Config]: https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html
+[WatchStreamExt::predicate_filter]: https://docs.rs/kube/latest/kube/runtime/trait.WatchStreamExt.html#method.predicate_filter
 [Object]: https://docs.rs/kube/latest/kube/core/struct.Object.html
 [DynamicObject]: https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html
 [Store]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.Store.html
 [reflector]: https://docs.rs/kube/latest/kube/runtime/fn.reflector.html
 [watcher]: https://docs.rs/kube/latest/kube/runtime/fn.watcher.html
+[metadata_watcher]: https://docs.rs/kube/latest/kube/runtime/fn.metadata_watcher.html
 [Recorder]: https://docs.rs/kube/latest/kube/runtime/events/struct.Recorder.html
 [Event::modify]: https://docs.rs/kube/latest/kube/runtime/watcher/enum.Event.html#method.modify
 [discovery]: https://docs.rs/kube/latest/kube/discovery/index.html
@@ -26,6 +31,7 @@
 [controller-rs]: https://github.com/kube-rs/controller-rs
 [version-rs]: https://github.com/kube-rs/version-rs
 [ObjectMeta]: https://docs.rs/kube/latest/kube/core/struct.ObjectMeta.html
+[TypeMeta]: https://docs.rs/kube/latest/kube/core/struct.TypeMeta.html
 [flattening]: https://serde.rs/attr-flatten.html
 [schemars]: https://graham.cool/schemars/
 [serde_json::Value]: https://docs.serde.rs/serde_json/enum.Value.html

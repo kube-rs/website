@@ -47,6 +47,10 @@ cargo add opentelemetry-otlp --features=tokio
 cargo add tonic
 ```
 
+!!! warning "Telemetry Dependencies"
+
+    This simple use of `cargo add` above assumes the above dependencies always work well at all given versions, but this is not always true. You might see multiple versions of `tonic` in `cargo tree` (which won't work), and due to different release cycles and pins, you might not be able to upgrade opentelemetry dependencies immediately. For working combinations see for instance the [pins in controller-rs](https://github.com/kube-rs/controller-rs/blob/main/Cargo.toml).
+
 Setting up the layer and configuring the `collector` follows fundamentally the same process:
 
 ```rust
