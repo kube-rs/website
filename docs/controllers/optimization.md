@@ -84,7 +84,7 @@ let stream = reflector(writer, metadata_watcher(api, cfg)).applied_objects();
 
 While this will not work in all cases (if you need more data than metadata), it is a big improvement when it is feasible.
 
-Given that metadata is generally only responsible for a **fraction of the data** in dense objects - and generally receives even 2x benefits for more sparse objects (see also [[#pruning-fields]]) - swapping to metadata_watchers can **significantly reduce reflector sizes** (memory footprint).
+Given that metadata is generally only responsible for a **fraction of the data** in dense objects - and generally receives even 2x benefits for more sparse objects (see also [[#pruning-fields]]) - swapping to metadata_watchers can **significantly reduce the reflector memory footprint**.
 
 TODO: panel snapshot.
 
@@ -96,7 +96,9 @@ TODO: panel snapshot.
 
 At time of writing, every permanent watch loop setup against kube-apiserver requires a `list` call (to initialise) followed by a long `watch` call starting at the given `resourceVersion` from `list`. De-syncs could happen, and these would force a re-list to re-initialize (forcing a slew of old objects to be passed through controllers again).
 
-This `list` call has **no enforced limits** on how many objects can be requested in one go and has caused kube to run without limits up until recently. This `list` call has been [showed to cause both IO and memory spikes](https://github.com/kube-rs/kube/issues/1209) and requires a future opt-in in in 0.84 via https://github.com/kube-rs/kube/pull/1211 to watcher configs:
+This `list` call has **no enforced limits** on how many objects can be requested in one go, and this has caused kube to run **without limits** up until recently. An unlimited `list` call in large clusters can [haevy memory spikes](https://github.com/kube-rs/kube/issues/1209) at both the apiserver side and the controller side.
+
+A configuration for this is scheduled for 0.84 via https://github.com/kube-rs/kube/pull/1211, and require an opt-in for setting the page limit:
 
 ```rust
 let cfg = watcher::Config::default().page_size_limit(50);
