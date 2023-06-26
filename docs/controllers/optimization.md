@@ -94,15 +94,17 @@ TODO: panel snapshot.
 
 ### Avoid the List Spike
 
-At time of writing, every permanent watch loop setup against kube-apiserver requires a `list` call (to initialise) followed by a long `watch` call starting at the given `resourceVersion` from `list`. De-syncs could happen, and these would force a re-list to re-initialize (forcing a slew of old objects to be passed through controllers again).
+At time of writing, every permanent watch loop setup against kube-apiserver requires a `list` call (to initialise) followed by a long `watch` call starting at the given `resourceVersion` from `list`. De-syncs can happen, and this would force a re-list to re-initialize (forcing a slew of old objects to be passed through controllers again).
 
-This `list` call has **no enforced limits** on how many objects can be requested in one go, and this has caused kube to run **without limits** up until recently. An unlimited `list` call in large clusters can cause [heavy memory spikes](https://github.com/kube-rs/kube/issues/1209) at both the apiserver side, and the controller side.
+This internal `list` call hides a problematic api usage; an unlimited `list` call. In large/busy clusters, retrieving all of objects in one call is very memory intensive (for both the apiserver and the controller). [#1209](https://github.com/kube-rs/kube/issues/1209) has more details.
 
 A configuration for this is scheduled for 0.84 via https://github.com/kube-rs/kube/pull/1211, and require an opt-in for setting the page limit:
 
 ```rust
 let cfg = watcher::Config::default().page_size_limit(50);
 ```
+
+This should reduce the **peak memory footprint** of both the apiserver and your controller at the times the controller needs to do a re-list.
 
 !!! note "Streaming List Alpha"
 
@@ -204,7 +206,7 @@ As a short summary, here are the main listed optimization and the effect you sho
 | ------------------ | ------------------ |
 | metadata_watcher   | IO + Memory        |
 | watcher selectors  | IO + Memory        |
-| watcher page size  | IO + Memory Spike  |
+| watcher page size  | Peak Memory        |
 | pruning            | Memory Only        |
 | predicates         | Memory + Code Size |
 
