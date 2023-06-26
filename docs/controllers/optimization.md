@@ -88,7 +88,7 @@ Given that metadata is generally only responsible for a **fraction of the data**
 
 TODO: panel snapshot.
 
-This is also a networked simplification and will also **reduce the amount of networked traffic** the controller is responsible for by commensurate amounts.
+This is a networked simplification and will also **reduce the amount of networked traffic** the controller is responsible for by commensurate amounts.
 
 TODO: panel snapshot.
 
