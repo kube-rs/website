@@ -33,7 +33,7 @@ The default `watcher::Config` will watch every object in the [Api] scope you con
 - `Api::namespaced` or `Api::default_namespaced` -> all objects in that namespace
 - `Api::all` -> all cluster scoped objects (or all objects in all namespaces)
 
-This can be limited to just a subset of namespaces, or a subset of objects using field selectors to limit to a selection of known names:
+This can be limited to just a subset of namespaces, or other properties on the objects. For example, field selectors can be used to limit to a selection of known names:
 
 ```rust
 let cfg = watcher::Config::default().fields(&format!("metadata.name={name}"));
