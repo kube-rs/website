@@ -16,7 +16,7 @@ As this document will show, there are various ways to put restrictions on your w
 
 !!! warning "The controller streams interface is unstable"
 
-    Currently plugging streams into [Controller] requires the `kube/unstable-runtime` feature. This feature requirement will be removed in a future release.
+    Currently plugging streams into [Controller] requires the `kube/unstable-runtime` feature. This interface is planned to be stabilized in a future release.
 
 The controller streams interface is comprised of [Controller::for_stream], and [Controller::watches_stream] and [Controller::owns_stream], which are stream input analogues for the commonly advertised `Controller::new`, `Controller::watches`, and `Controller::owns` (respectively) interfaces.
 
