@@ -96,7 +96,7 @@ TODO: panel snapshot.
 
 At time of writing, every permanent watch loop setup against kube-apiserver requires a `list` call (to initialise) followed by a long `watch` call starting at the given `resourceVersion` from `list`. De-syncs could happen, and these would force a re-list to re-initialize (forcing a slew of old objects to be passed through controllers again).
 
-This `list` call has **no enforced limits** on how many objects can be requested in one go, and this has caused kube to run **without limits** up until recently. An unlimited `list` call in large clusters can [haevy memory spikes](https://github.com/kube-rs/kube/issues/1209) at both the apiserver side and the controller side.
+This `list` call has **no enforced limits** on how many objects can be requested in one go, and this has caused kube to run **without limits** up until recently. An unlimited `list` call in large clusters can cause [heavy memory spikes](https://github.com/kube-rs/kube/issues/1209) at both the apiserver side, and the controller side.
 
 A configuration for this is scheduled for 0.84 via https://github.com/kube-rs/kube/pull/1211, and require an opt-in for setting the page limit:
 
