@@ -39,7 +39,7 @@ This can be limited to just a subset of namespaces, or other properties on the o
 let cfg = watcher::Config::default().fields(&format!("metadata.name={name}"));
 ```
 
-This can also be comma-delimited for more names, and similarly you you can also comma deliminate an exclusion list on names or namespaces:
+This can be comma-delimited for more names, and similarly you you can also comma deliminate an exclusion list on names or namespaces:
 
 ```rust
 let ignoring_system_namespaces = [
