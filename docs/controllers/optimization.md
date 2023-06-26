@@ -84,7 +84,7 @@ let stream = reflector(writer, metadata_watcher(api, cfg)).applied_objects();
 
 While this will not work in all cases (if you need more data than metadata), it is a big improvement when it is feasible.
 
-Given metadata is generally only responsible from a **fraction of the data** in dense objects - and generally receives even 2x benefits for more sparse objects (see also [[#pruning-fields]]) - swapping to metadata_watchers can **significantly reduce reflector sizes** (memory footprint).
+Given that metadata is generally only responsible for a **fraction of the data** in dense objects - and generally receives even 2x benefits for more sparse objects (see also [[#pruning-fields]]) - swapping to metadata_watchers can **significantly reduce reflector sizes** (memory footprint).
 
 TODO: panel snapshot.
 
