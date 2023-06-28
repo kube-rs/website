@@ -67,6 +67,7 @@ nav:
   - controllers/observability.md
   - controllers/relations.md
   - controllers/optimization.md
+  - controllers/streams.md
   - controllers/testing.md
   - controllers/security.md
 

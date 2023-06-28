@@ -2,30 +2,24 @@
 
 This document aims to help optimize various factors of resource consumption by controllers, and it will effectively be a guide on how to reduce the usage of your [watcher] streams to simplify things for downstream consumers.
 
-## Watcher Streams in Controllers
+## Watcher Optimization
 
-By **default**, [watcher] streams are **implicitly configured** within the [Controller], but using the controller streams interface setup introduced in [kube 0.81](https://github.com/kube-rs/kube/releases/tag/0.81.0) you can **explicitly setup** all the [watcher] stream for more precise targeting:
+One of the biggest contributor to activity in a [Controller] is the constant, long-polling watch of the min [[object]] and every related object by the use of multiple [watcher] streams created with some variant of:
 
 ```rust
 let cfg = watcher::Config { RESTRICTIONS };
-let stream = reflector(writer, SOME_WATCHER(cfg))
-Controller::for_stream(stream, reader);
+let stream = reflector(writer, SOME_WATCHER(cfg)).SOME_MODIFICATION();
 ```
 
-As this document will show, there are various ways to put restrictions on your watcher (and there are also two main types of watchers), but the central premise herein is that **controllers benefit from customizing the input stream** and we will show how to do these configurations.
+By **default**, [watcher] streams are **implicitly configured** within the [Controller], but using the controller streams interface outlined in the **[[streams]] chapter**, you can customize every aspect of these streams.
 
-!!! warning "The controller streams interface is unstable"
+The central premise herein is that **controllers benefit from customizing the input streams** and we will show how to do these configurations.
 
-    Currently plugging streams into [Controller] requires the `kube/unstable-runtime` feature. This interface is planned to be stabilized in a future release.
+!!! warning "Streams Interface Required"
 
-The controller streams interface is comprised of [Controller::for_stream], and [Controller::watches_stream] and [Controller::owns_stream], which are stream input analogues for the commonly advertised `Controller::new`, `Controller::watches`, and `Controller::owns` (respectively) interfaces.
+    The watcher optimizations here that directly call `watcher` / `metadata_watcher` require the unstable [[streams]] interface to interface with controllers.
 
-## Watcher Optimization
-
-One of the biggest contributor to activity in a [Controller] is the constant, long-polling watch of the [[object]] and every related object by the use of multiple [watcher] streams.
-
-By themselves, the optimizations listed herein for watchers are generally for reducing IO or networked traffic. However, when used in combination with [reflector] caches they also become memory optimizations.
-
+Better watcher configuration primarily aim to reduce IO or networked traffic. However, when used in combination with [reflector] caches, they also become memory optimizations.
 
 ### Reducing Number of Watched Objects
 The default `watcher::Config` will watch every object in the [Api] scope you configured:
@@ -71,37 +65,68 @@ If you find that field-selectors are too constrictive for your set of objects, t
 let cfg = Config::default().labels("environment in (production, qa)");
 ```
 
-### Watching Metadata Only
+### Backoff on Errors
 
-Generally, **Kubernetes will return all fields** for an object when doing a watch, so while the main tool at our disposal to reduce networked traffic is to reduce the number of watched objects, there is one trick available:
+Implicitly created controller streams are always created with a `Backoff` implementation (from [backoff]) similar to the [defaults set by client-go](https://github.com/kubernetes/client-go/blob/980663e185ab6fc79163b1c2565034f6d58368db/tools/cache/reflector.go#L177-L181) to avoid hammering the apiserver when errors occur.
 
-We can ask Kubernetes to only return [TypeMeta] (`.api_version` + `.kind`) + [ObjectMeta] (`.metadata`) in our watches and list calls using `Api::watch_metadata` + `Api::list_metadata` and the stream analogue [metadata_watcher]; a drop-in replacement for [watcher]:
+!!! warning "Use backoffs"
+
+    A watcher that does not call `.default_backoff()` or setup any other form of `.backoff(b)` will **continuously loop** on errors. This generally spams your logs/traces, and can starve your controller and your apiserver of resources. On newer Kubernetes versions, such behaviour can get you [throttled](https://kubernetes.io/docs/concepts/cluster-administration/flow-control/#concepts).
+
+When going from implicit controller streams to manually created streams, remember to add `.default_backoff()` at some point in the stream chain:
 
 ```rust
-let cfg = watcher::Config::default().fields(&ignoring_system_namespaces);
-let stream = reflector(writer, metadata_watcher(api, cfg)).applied_objects();
+let stream = watcher(api, cfg).default_backoff();
+```
+### Watching Metadata Only
+
+If you do not need all the data on the resource you are watching, then you should consider using the [[streams#Metadata-Watcher]] to reduce the amount of data transmitted, and reduce memory consumption of reflectors.
+
+TODO: panel screenshot if i can find it...
+
+Given that metadata is generally only responsible for a **fraction of the data** in dense objects - and generally receives even 2x benefits for more sparse objects (see also [[#pruning-fields]]) - swapping to [metadata_watcher] can **significantly reduce the reflector memory footprint**.
+
+There are three pathways to consider when doing this:
+
+#### 1. Associated Streams
+> When watching an **associated** stream (via [[relations]]) that is only used for mapping and not stored.
+
+In this case a lot of extra data go on the wire without a need for it. `Controller::owns_stream` or `Controller::watches_stream` are very good fits for `metadata_watcher`, and are often quick replacements. See [[streams#inputs]].
+
+#### 2. Primary Streams
+> When only metadata properties are acted on (e.g. you have a controller that only acts on labels/annotations or similar).
+
+In this case you can replace the [[streams#main-stream]] for a significant memory reduction from the mandatory reflector. Do note the caveat that this changes the type signature of your reconciler slightly (see [[streams#metadata-watcher]]).
+
+#### 3. Predicated Primary Streams
+> When running a controller with predicate_filters to limit the amount of reconciler hits, and simultaneously not using the cache for anything important.
+
+In this case you can actually also follow the [[streams#main-stream]] pattern and call `Api::get` on the object name when the reconcile function actually calls so you get an up-to-date object. Remember that if you are using [predicates] on the long watch, then you can quickly discard changes without requiring all of the data being transmitted.
+
+Such a setup can involve running the metadata watcher with the less consistent [any_semantic] because your reconciler only happens every so often, but when it does, you will do the work properly:
+
+```rust
+let deploys: Api<Deployment> = Api::all(client);
+let cfg = watcher::Config::default().any_semantic();
+let (reader, writer) = reflector::store();
+let stream = reflector(writer, metadata_watcher(api, cfg))
+    .default_backoff()
+    .applied_objects()
+    .predicate_filter(predicates::generation);
+
+async fn reconcile(partial: Arc<PartialObjectMeta<Deployment>>, ctx: Arc<Context>) -> Result<Action, Error>
+{
+    // if we are here, then we have a changed generation - fetch it fully
+    let api: Api<Deployment> = Api::namespaced(partial.namespace(), ctx.client.clone());
+    let deploy = api.get(&partial.name_any()).await?;
+
+    unimplemented!()
+}
+
+Controller::for_stream(stream, reader)...
 ```
 
-This has some clear limitations;
-
-- `metadata_watcher` based reflector caches are generally **not useful** - unless you only need to look up metadata properties
-- if you need `.spec` data in your controller then you have to fetch it out-of-band anyway
-
-But in many cases these limitations do not apply, and in some cases they can be worked around:
-
-1. if the watch stream is for an owned/watched objects (via [[relations]]), then the `Controller` only needs metadata for routing
-2. if you are not using the `reflector` for any data reduction or lookup, then you don't need to store the `.spec`
-3. you can still use `metadata_watcher` with early predicate filtering (see [[#Repeatedly Triggering Yourself]]) if you only plan on fetching the full object in the reconciler using `Api::get`
-
-TODO: example with watcher for main api, and metadata_watcher for child apis
-
-Given that metadata is generally only responsible for a **fraction of the data** in dense objects - and generally receives even 2x benefits for more sparse objects (see also [[#pruning-fields]]) - swapping to metadata_watchers can **significantly reduce the reflector memory footprint**.
-
-TODO: panel snapshot.
-
-This is a networked simplification and will also **reduce the amount of networked traffic** the controller is responsible for by commensurate amounts.
-
-TODO: panel snapshot.
+This will also help avoid [[#Repeatedly Triggering Yourself]].
 
 ### Avoid the List Spike
 
@@ -189,7 +214,7 @@ These approaches are **both recommended** because they both have independent mer
 1. idempotency is good, and it avoids the spin problem the "good practice way"
 2. early filtering can allow for more precise reconcile bypasses with less code complexity, and allow opt-in non-determinism (such as timestamp fields)
 
-Watch events can be filtered out early using **predicates** with [WatchStreamExt::predicate_filter], and passing on these pre-filtered streams to controllers:
+Watch events can be filtered out early using [predicates] with [WatchStreamExt::predicate_filter], and passing on these pre-filtered streams to controllers:
 
 ```rust
 let deploys: Api<Deployment> = Api::default_namespaced(client);
@@ -202,6 +227,25 @@ let changed_deploys = watcher(deploys, watcher::Config::default())
 
     Predicates are a new feature in some flux with the last change in 0.84. They require one of the `unstable-runtime` feature flags.
 
+### Reconciler Parallelism
+
+The controller will schedule **different objects** concurrently. For example, for the event queue ABA, we'd currently schedule object A and B to reconcile concurrently, and start the second reconciliation of A as soon as the first one finishes. Our guarantee here is that we will never run two reconciliations for the same object concurrently.
+
+There is currently no specific support for setting a global limit on parallelism, with the rationale that it would be roughly equivalent to having your reconciler run in a semaphore like:
+
+```rust
+Controller::run(|(obj, ctx)| async {
+    let _permit = ctx.semaphore.acquire().await?;
+    reconcile(obj, ctx).await
+}, error_policy, ctx);
+```
+
+If you are experiencing spiky controller workloads (as a result of fast reconciliations with consistent requeue times), then you can consider implementing a semaphore, or adding some skew to your requeue durations to avoid all of these happening consistently at the same time.
+
+!!! note "Reconciler Deduplication"
+
+    Multiple repeat reconciliations for the same object are **deduplicated** if they are queued but haven't been started yet. For example, a queue for two objects that is meant to run `ABABAAAAA` will be deduped into a shorter queue `ABAB`, assuming that `A1` and `B1` are still executing when the subsequent entries come in.
+
 ## Impossible Optimizations
 
 We leave a list of **currently impossible** (or technically infeasible) controller optimisation problems here and link to issues for transparency and in the hope that they will be tackled in the future.
@@ -213,25 +257,31 @@ We leave a list of **currently impossible** (or technically infeasible) controll
 
 As a short summary, here are the main listed optimization and the effect you should expect to see from utilising them.
 
-| Optimization Type  | Target Reduction   |
-| ------------------ | ------------------ |
-| metadata_watcher   | IO + Memory        |
-| watcher selectors  | IO + Memory        |
-| watcher page size  | Peak Memory        |
-| pruning            | Memory Only        |
-| predicates         | Memory + Code Size |
+| Optimization Type      | Target Reduction   |
+| ---------------------- | ------------------ |
+| metadata_watcher       | IO + Memory        |
+| watcher selectors      | IO + Memory        |
+| watcher page size      | Peak Memory        |
+| reconciler parallelism | Peak CPU + Memory  |
+| pruning                | Memory Only        |
+| predicates             | Memory + Code Size |
 
-It is important to note that **all of these are watcher tweaks**.
-The target reductions above can all be granted by passing more precise streams to your controller.
+It is important to note that **most of these are watcher tweaks**.
+The target reductions above can all be granted by passing more precise streams to your controller, or by tweaking controller input parameters.
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
 
 [//begin]: # "Autogenerated link references for markdown compatibility"
 [object]: object "The Object"
-[relations]: relations "Related Objects"
-[#Repeatedly Triggering Yourself]: optimization "Optimization"
+[streams]: streams "Streams"
+[streams#Metadata-Watcher]: streams "Streams"
 [#pruning-fields]: optimization "Optimization"
+[relations]: relations "Related Objects"
+[streams#inputs]: streams "Streams"
+[streams#main-stream]: streams "Streams"
+[streams#metadata-watcher]: streams "Streams"
+[#Repeatedly Triggering Yourself]: optimization "Optimization"
 [#Reducing Number of Watched Objects]: optimization "Optimization"
 [#Watching Metadata Only]: optimization "Optimization"
 [reconciler]: reconciler "The Reconciler"
