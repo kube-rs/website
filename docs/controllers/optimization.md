@@ -80,11 +80,17 @@ let stream = watcher(api, cfg).default_backoff();
 ```
 ### Watching Metadata Only
 
-If you do not need all the data on the resource you are watching, then you should consider using the [[streams#Metadata-Watcher]] to reduce the amount of data transmitted, and reduce memory consumption of reflectors.
+If you do not need all the data on the resource you are watching, then you should consider using the [[streams#Metadata-Watcher]] to reduce the amount of data watched (incoming bandwidth):
 
-TODO: panel screenshot if i can find it...
+![rx bandwidth from watcher vs metadata_watcher over 6h](rx-bandwidth-watcher.png)
 
-Given that metadata is generally only responsible for a **fraction of the data** in dense objects - and generally receives even 2x benefits for more sparse objects (see also [[#pruning-fields]]) - swapping to [metadata_watcher] can **significantly reduce the reflector memory footprint**.
+Metadata is generally only responsible for a **fraction of the data** so you can often expect a comensurate reduction in incoming bandwidth from the watches. When these watches are funnelled into a [reflector] they will also **significantly reduce the reflector memory footprint**:
+
+![](memory-meta-watcher.png)
+
+Note that this interplays with [[#pruning-fields]], which can be combined for greater gains:
+
+![memory usage graphs over 3 hours showing differences between using a watcher, metadata_watcher and a metadata_watcher with managed-field pruning showing ~30% improvements between each one](memory-opt.png)
 
 There are three pathways to consider when doing this:
 
@@ -177,6 +183,10 @@ let stream = watcher(pods, watcher::Config::default()).map_ok(|ev| {
 let (reader, writer) = reflector::store::<Pod>();
 let rf = reflector(writer, stream).applied_objects();
 ```
+
+Even for metadata_watchers, this will be effective, as managed-fields often accounts for close to half of the yaml. Here is the result of clearing managed fields from a roughly ~2000 object metadata reflector cache:
+
+![](memory-pruning.png)
 
 In general, this __can be done for all the fields you do not care about__. Above we also clear out the status object and annotations entirely pre-storage.
 
