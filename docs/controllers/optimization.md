@@ -172,13 +172,11 @@ Most controllers do not need to know about the specifics of these, and they shou
 
 ```rust
 let api: Api<Pod> = Api::default_namespaced(client);
-let stream = watcher(pods, watcher::Config::default()).map_ok(|ev| {
-    ev.modify(|pod| {
-        // memory optimization for our store - we don't care about fields/annotations/status
-        pod.managed_fields_mut().clear();
-        pod.annotations_mut().clear();
-        pod.status = None;
-    })
+let stream = watcher(pods, watcher::Config::default()).modify(|ev| {
+    // memory optimization for our store - we don't care about fields/annotations/status
+    pod.managed_fields_mut().clear();
+    pod.annotations_mut().clear();
+    pod.status = None;
 });
 let (reader, writer) = reflector::store::<Pod>();
 let rf = reflector(writer, stream).applied_objects();
@@ -255,13 +253,6 @@ If you are experiencing spiky controller workloads (as a result of fast reconcil
 !!! note "Reconciler Deduplication"
 
     Multiple repeat reconciliations for the same object are **deduplicated** if they are queued but haven't been started yet. For example, a queue for two objects that is meant to run `ABABAAAAA` will be deduped into a shorter queue `ABAB`, assuming that `A1` and `B1` are still executing when the subsequent entries come in.
-
-## Impossible Optimizations
-
-We leave a list of **currently impossible** (or technically infeasible) controller optimisation problems here and link to issues for transparency and in the hope that they will be tackled in the future.
-
-- [Sharing streams between **multiple controllers**](https://github.com/kube-rs/kube/issues/1080) (can only configure so far)
-- [Waiting for a store to be ready](https://github.com/kube-rs/kube/issues/1226)
 
 ## Summary
 

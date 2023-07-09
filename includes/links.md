@@ -16,7 +16,6 @@
 [ListParams]: https://docs.rs/kube/latest/kube/api/struct.ListParams.html
 [watcher::Config]: https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html
 [any_semantic]: https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html#method.any_semantic
-[WatchStreamExt::predicate_filter]: https://docs.rs/kube/latest/kube/runtime/trait.WatchStreamExt.html#method.predicate_filter
 [Object]: https://docs.rs/kube/latest/kube/core/struct.Object.html
 [DynamicObject]: https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html
 [PartialObjectMeta]: https://docs.rs/kube/latest/kube/core/struct.PartialObjectMeta.html
@@ -28,6 +27,9 @@
 [EventFlatten]: https://docs.rs/kube/latest/kube/runtime/utils/struct.EventFlatten.html
 [Recorder]: https://docs.rs/kube/latest/kube/runtime/events/struct.Recorder.html
 [Event::modify]: https://docs.rs/kube/latest/kube/runtime/watcher/enum.Event.html#method.modify
+[StreamExt]: https://docs.rs/futures/latest/futures/stream/trait.StreamExt.html
+[WatchStreamExt]: https://docs.rs/kube/latest/kube/runtime/trait.WatchStreamExt.html
+[WatchStreamExt::predicate_filter]: https://docs.rs/kube/latest/kube/runtime/trait.WatchStreamExt.html#method.predicate_filter
 [predicate_filter]: https://docs.rs/kube/latest/kube/runtime/trait.WatchStreamExt.html#method.predicate_filter
 [predicates]: https://docs.rs/kube/latest/kube/runtime/utils/predicates/index.html
 [discovery]: https://docs.rs/kube/latest/kube/discovery/index.html
