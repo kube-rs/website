@@ -37,12 +37,12 @@ This can be comma-delimited for more names, and similarly you you can also comma
 
 ```rust
 let ignoring_system_namespaces = [
-    "carousel",
-    "cattle-fleet-system",
-    "cattle-impersonation-system",
-    "cattle-monitoring-system",
-    "cattle-system",
-    "fleet-system",
+    "cert-manager",
+    "flux2",
+    "linkerd",
+    "linkerd-jaeger",
+    "linkerd-smi",
+    "linkerd-viz",
     "gatekeeper-system",
     "kube-node-lease",
     "kube-public",
@@ -57,7 +57,7 @@ let cfg = watcher::Config::default().fields(&ignoring_system_namespaces);
 
 !!! note "Field Selector Limitations"
 
-    Due to [field-selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) limitations, you cannot filter on arbitrary fields, nor can you do set complements (need to enumerate explicitly).
+    Due to [field-selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) limitations, you cannot filter on arbitrary fields, nor can you do set complements (forcing explicit enumeration).
 
 If you find that field-selectors are too constrictive for your set of objects, the problem can generally be solved using by [explicitly labelling](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) the objects you care about and use label selectors instead:
 
@@ -80,34 +80,30 @@ let stream = watcher(api, cfg).default_backoff();
 ```
 ### Watching Metadata Only
 
-If you do not need all the data on the resource you are watching, then you should consider using the [[streams#Metadata-Watcher]] to reduce the amount of data watched (incoming bandwidth):
+If you do not need all the data on the resource you are watching, then you should consider using the [[streams#Metadata-Watcher]] to reduce the amount of data being handled by your watch stream.
 
-![rx bandwidth from watcher vs metadata_watcher over 6h](rx-bandwidth-watcher.png)
-
-Metadata is generally only responsible for a **fraction of the data** so you can often expect a comensurate reduction in incoming bandwidth from the watches. When these watches are funnelled into a [reflector] they will also **significantly reduce the reflector memory footprint**:
+Metadata is generally responsible for a smaller amount of the total object size (generally <1/2), so you can often expect a commensurate reduction in incoming bandwidth from the watches. When these watches are funnelled into a [reflector] they will also **significantly reduce the reflector memory footprint**:
 
 ![](memory-meta-watcher.png)
 
-Note that this interplays with [[#pruning-fields]], which can be combined for greater gains:
+Note that this memory reduction can also be achieved through [[#pruning-fields]] - and you can potentially omit even more data that way by combining the approaches - but pruned data is still sent on the wire.
 
-![memory usage graphs over 3 hours showing differences between using a watcher, metadata_watcher and a metadata_watcher with managed-field pruning showing ~30% improvements between each one](memory-opt.png)
+There are three pathways to consider when changing controller inputs to metadata watchers:
 
-There are three pathways to consider when doing this:
-
-#### 1. Associated Streams
+#### 1. Changing Associated Streams
 > When watching an **associated** stream (via [[relations]]) that is only used for mapping and not stored.
 
-In this case a lot of extra data go on the wire without a need for it. `Controller::owns_stream` or `Controller::watches_stream` are very good fits for `metadata_watcher`, and are often quick replacements. See [[streams#inputs]].
+In this case a lot of extra data go on the wire without a need for it. `Controller::owns_stream` should use `metadata_watcher` in general, and `Controller::watches_stream` can also do this if its lookup is based on metadata properties. See [[streams#inputs]].
 
-#### 2. Primary Streams
+#### 2. Changing Primary Streams
 > When only metadata properties are acted on (e.g. you have a controller that only acts on labels/annotations or similar).
 
-In this case you can replace the [[streams#main-stream]] for a significant memory reduction from the mandatory reflector. Do note the caveat that this changes the type signature of your reconciler slightly (see [[streams#metadata-watcher]]).
+In this case you can replace the [[streams#main-stream]] for a significant memory reduction from the mandatory reflector. Do note the caveat that this changes the type signature of your reconciler slightly.
 
-#### 3. Predicated Primary Streams
+#### 3. Changing Predicated Primary Streams
 > When running a controller with predicate_filters to limit the amount of reconciler hits, and simultaneously not using the cache for anything important.
 
-In this case you can actually also follow the [[streams#main-stream]] pattern and call `Api::get` on the object name when the reconcile function actually calls so you get an up-to-date object. Remember that if you are using [predicates] on the long watch, then you can quickly discard changes without requiring all of the data being transmitted.
+In this case you can actually also follow the [[streams#main-stream]] pattern and call `Api::get` on the object name when the `reconcile` function actually calls so you get an up-to-date object. Remember that if you are using [predicates] on the long watch, then you can quickly discard many changes without requiring all of the data being transmitted.
 
 Such a setup can involve running the metadata watcher with the less consistent [any_semantic] because your reconciler only happens every so often, but when it does, you will do the work properly:
 
@@ -120,6 +116,8 @@ let stream = reflector(writer, metadata_watcher(api, cfg))
     .applied_objects()
     .predicate_filter(predicates::generation);
 
+Controller::for_stream(stream, reader)...
+
 async fn reconcile(partial: Arc<PartialObjectMeta<Deployment>>, ctx: Arc<Context>) -> Result<Action, Error>
 {
     // if we are here, then we have a changed generation - fetch it fully
@@ -128,35 +126,33 @@ async fn reconcile(partial: Arc<PartialObjectMeta<Deployment>>, ctx: Arc<Context
 
     unimplemented!()
 }
-
-Controller::for_stream(stream, reader)...
 ```
 
 This will also help avoid [[#Repeatedly Triggering Yourself]].
 
-### Avoid the List Spike
+### Reduce the List Spike
 
-At time of writing, every permanent watch loop setup against kube-apiserver requires a `list` call (to initialise) followed by a long `watch` call starting at the given `resourceVersion` from `list`. De-syncs can happen, and this would force a re-list to re-initialize (forcing a slew of old objects to be passed through controllers again).
+Every permanent watch loop setup against kube-apiserver generally requires a `list` call (to initialise) followed by a long `watch` call starting at the given `resourceVersion` from `list`. De-syncs can happen, and this forces a re-list to re-initialize (forcing a slew of old objects to be passed through controllers again).
 
-This internal `list` call hides a problematic api usage; an unlimited `list` call. In large/busy clusters, retrieving all of objects in one call is very memory intensive (for both the apiserver and the controller). [#1209](https://github.com/kube-rs/kube/issues/1209) has more details.
+This internal `list` call was until recently **unlimited**. In large/busy clusters, retrieving all of objects in one call is [very memory intensive](https://github.com/kube-rs/kube/issues/1209) (for both the apiserver and the controller).
 
-A configuration for this is scheduled for 0.84 via https://github.com/kube-rs/kube/pull/1211, and require an opt-in for setting the page limit:
+A configuration for this was added for `0.84.0` via https://github.com/kube-rs/kube/pull/1249, and sets a **default page size** matching client-go's `500`, but can be reduced further when working on large objects if needed:
 
 ```rust
-let cfg = watcher::Config::default().page_size_limit(50);
+let cfg = watcher::Config::default().page_size(50);
 ```
 
 This should reduce the **peak memory footprint** of both the apiserver and your controller at the times the controller needs to do a re-list.
 
 !!! note "Streaming List Alpha"
 
-    The [1.27 alpha streaming-lists feature](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists) may change things up in the future, but this is not currently supported by kube.
+    The [1.27 alpha streaming-lists feature](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists) may change things up in the future, but this is [not currently](https://github.com/kube-rs/kube/issues/1209) supported by kube.
 
 ## Reflector Optimization
 
 Unless you have another large in-memory cache or other similar memory users in your controller, the **primary contributor** to your controller's memory use is going to be the **mandatory reflector** for the main [[object]] as well as any other **optional reflectors** for related objects.
 
-The memory usage of reflectors can be minimized by tweaking a number of properties:
+The memory usage of reflectors is directly proportional to how much stuff you put in it, and can be minimized by tweaking a number of properties:
 
 1. Amount of objects watched (`watcher::Config`)
 2. Asking for metadata only when applicable (`metadata_watcher`)
@@ -182,23 +178,32 @@ let (reader, writer) = reflector::store::<Pod>();
 let rf = reflector(writer, stream).applied_objects();
 ```
 
-Even for metadata_watchers, this will be effective, as managed-fields often accounts for close to half of the yaml. Here is the result of clearing managed fields from a roughly ~2000 object metadata reflector cache:
+In the above example we also clear out the status object and annotations entirely pre-storage.
+
+This can be effective, even when already using [metadata_watcher], as managed-fields often accounts for close to half of the metadata yaml. Here is the result of clearing only managed fields from a roughly ~2000 object metadata reflector cache:
 
 ![](memory-pruning.png)
 
-In general, this __can be done for all the fields you do not care about__. Above we also clear out the status object and annotations entirely pre-storage.
+For reference, here is the full graph showing the effect of first switching from `watcher` to `metadata_watcher` (which effectively acts as a smarter way to prune the Spec/Status) on a 2000 object `Pod` reflector that adds managed field pruning on top:
+
+![memory usage graphs over 3 hours showing differences between using a watcher, metadata_watcher and a metadata_watcher with managed-field pruning showing ~30% improvements between each one](memory-opt.png)
+
+
+Except for some of the .metadata properties  __pruning can generally be done for all the fields you do not care about__.
 
 !!! warning "Pruning ObjectMeta"
 
-    Do not prune **everything** from [ObjectMeta] as `kube::runtime` relies on being able to see `.metadata.name`, `.metadata.resourceVersion`, `.metadata.namespace` and in some cases `.metadata.ownerReferences` (possibly more if using custom [[relations]] mappers) from [watcher] streams in controllers and reflector stores.
+    Do **not** prune **everything** from [ObjectMeta] as `kube::runtime` relies on being able to see `.metadata.name`, `.metadata.resourceVersion`, `.metadata.namespace` and in some cases `.metadata.ownerReferences`.
 
-Note that pruning will not reduce your network traffic. All object data retrieved from the watcher is always transmitted over the wire.
+!!! note "Pruning will not reduce your network traffic"
+
+    All object data passed through a `watcher` is always ultimately received over the wire from `kube-apiserver`. Pruning is only local truncation.
 
 ## Reconciler Optimization
 
-The [[reconciler]] is the generally the entry-point for your business logic, so we cannot give too much blanket advice on optimizing this, but we can give a few pointers.
+The [[reconciler]] is generally the entry-point for your business logic, so we cannot give too much blanket advice on optimizing this, but we can give a few pointers.
 
-As a general recommendation; instrumenting standard metrics ([[observability#what-metrics]]) on your reconciler, and sending traces of more complicated microservice interactions to a trace collector ([[observability#instrumenting]]) are good [[observability]] practices, but outside the scope of this document.
+Note that instrumenting standard metrics ([[observability#what-metrics]]) on your reconciler, and sending traces of more complicated microservice interactions to a trace collector ([[observability#instrumenting]]) are good [[observability]] practices, and can go along way in identifying performance issues.
 
 ### Repeatedly Triggering Yourself
 
@@ -235,11 +240,11 @@ let changed_deploys = watcher(deploys, watcher::Config::default())
 
     Predicates are a new feature in some flux with the last change in 0.84. They require one of the `unstable-runtime` feature flags.
 
-### Reconciler Parallelism
+### Reconciler Concurrency
 
 The controller will schedule **different objects** concurrently. For example, for the event queue ABA, we'd currently schedule object A and B to reconcile concurrently, and start the second reconciliation of A as soon as the first one finishes. Our guarantee here is that we will never run two reconciliations for the same object concurrently.
 
-There is currently no specific support for setting a global limit on parallelism, with the rationale that it would be roughly equivalent to having your reconciler run in a semaphore like:
+There is [currently no specific support](https://github.com/kube-rs/kube/issues/1248) for setting a global limit on concurrency, with the rationale that it would be roughly equivalent to having your reconciler run in a semaphore like:
 
 ```rust
 Controller::run(|(obj, ctx)| async {
@@ -254,6 +259,15 @@ If you are experiencing spiky controller workloads (as a result of fast reconcil
 
     Multiple repeat reconciliations for the same object are **deduplicated** if they are queued but haven't been started yet. For example, a queue for two objects that is meant to run `ABABAAAAA` will be deduped into a shorter queue `ABAB`, assuming that `A1` and `B1` are still executing when the subsequent entries come in.
 
+## Future Optimizations
+
+Not everything is possible to optimize yet. Some tracking issues:
+
+- [Controller concurrency control](https://github.com/kube-rs/kube/issues/1248)
+- [Controller debounce control](https://github.com/kube-rs/kube/issues/1247)
+- [watcher with sendInitialEvents](https://github.com/kube-rs/kube/issues/1209)
+- [Sharing watcher streams and caches between Controllers](https://github.com/kube-rs/kube/issues/1080)
+
 ## Summary
 
 As a short summary, here are the main listed optimization and the effect you should expect to see from utilising them.
@@ -263,8 +277,8 @@ As a short summary, here are the main listed optimization and the effect you sho
 | metadata_watcher       | IO + Memory        |
 | watcher selectors      | IO + Memory        |
 | watcher page size      | Peak Memory        |
-| reconciler parallelism | Peak CPU + Memory  |
-| pruning                | Memory Only        |
+| reconciler parallelism | Peak Usage         |
+| pruning                | Memory Usage       |
 | predicates             | Memory + Code Size |
 
 It is important to note that **most of these are watcher tweaks**.
@@ -281,7 +295,6 @@ The target reductions above can all be granted by passing more precise streams t
 [relations]: relations "Related Objects"
 [streams#inputs]: streams "Streams"
 [streams#main-stream]: streams "Streams"
-[streams#metadata-watcher]: streams "Streams"
 [#Repeatedly Triggering Yourself]: optimization "Optimization"
 [#Reducing Number of Watched Objects]: optimization "Optimization"
 [#Watching Metadata Only]: optimization "Optimization"
