@@ -32,6 +32,7 @@
 [WatchStreamExt::predicate_filter]: https://docs.rs/kube/latest/kube/runtime/trait.WatchStreamExt.html#method.predicate_filter
 [predicate_filter]: https://docs.rs/kube/latest/kube/runtime/trait.WatchStreamExt.html#method.predicate_filter
 [predicates]: https://docs.rs/kube/latest/kube/runtime/utils/predicates/index.html
+[DefaultBackoff]: https://docs.rs/kube/latest/kube/runtime/watcher/struct.DefaultBackoff.html
 [discovery]: https://docs.rs/kube/latest/kube/discovery/index.html
 [recommended_kind]: https://docs.rs/kube/latest/kube/discovery/struct.ApiGroup.html#method.recommended_kind
 [kube]: https://crates.io/crates/kube

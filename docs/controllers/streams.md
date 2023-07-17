@@ -64,9 +64,9 @@ But note this changes the stream signature slightly; returning a wrapped [Partia
 
 - **watcher stream** :: a stream that is started by one of the watcher [[#stream-entrypoints]]
 - **flattened stream** :: a stream that's been through [EventFlatten] via one of `WatchStreamExt::touched_objects`, `WatchStreamExt::applied_objects`
-- **raw event stream** :: a raw [watcher] stream producing un-flattened [watcher::Event] objects
+- **event stream** :: a raw [watcher] stream producing un-flattened [watcher::Event] objects
 
-The significant difference between them is that the **user** and the [Controller] generally wants to interact with a **flattened stream**, but a [reflector] needs a **raw event stream** to be able to safely replace its contents.
+The significant difference between them is that the **user** and the [Controller] generally wants to interact with a **flattened stream**, but a [reflector] needs an **event stream** to be able to safely replace its contents.
 
 ### WatchStreamExt
 The [WatchStreamExt] trait is a `Stream` extension trait (ala [StreamExt]) with Kubernetes specific helper methods that can be chained onto a watcher stream;
@@ -79,15 +79,15 @@ watcher(api, watcher::Config::default())
     .predicate_filter(predicates::generation)
 ```
 
-These methods require one of the:
+These methods can require one of:
 
-- **raw stream** (where the input stream `Item = Result<Event<K>, ...>`
+- **event stream** (where the input stream `Item = Result<Event<K>, ...>`
 - **flattened stream** (where `Item = Result<K, ...>`, the last ones in the chain)
 
 It is impossible to apply them in an incompatible configuration.
 
 ## Stream Mutation
-It is possible to modify or filter the input streams before passing them on. This is usually done to feed the downstream controller less data so that it either triggers less frequently or for memory [[optimization]] reasons.
+It is possible to modify or filter the input streams before passing them on. This can usually either done to limit data in memory by pruning, or to filter events to a downstream controller so that it either triggers less frequently.
 
 ### Predicates
 Using [predicates], we can **filter out** events from a stream where the **last value** of a particular property is **unchanged**. This is done internally by storing hashes of the given property(ies), and can be chained onto a **flattened** stream:
@@ -112,7 +112,7 @@ let stream = reflector(writer, watcher(api, cfg))
 ```
 
 ### Event Modification
-You can modify raw objects in flight before they are passed on to a reflector or controller. This is usually done to minimise [reflector] memory consumption by [[optimization#pruning-fields]].
+You can modify raw objects in flight before they are passed on to a reflector or controller. This can help minimise [reflector] memory consumption by [[optimization#pruning-fields]].
 
 ```rust
 let stream = watcher(pods, cfg).modify(|pod| {
@@ -144,7 +144,7 @@ where the various stream variables would be created from either [watcher], or [m
 
     Currently plugging streams into [Controller] requires the `kube/unstable-runtime` feature. This interface is planned to be stabilized in a future release.
 
-### Outputs
+### Output Stream
 
 To start a controller, you typically invoke `Controller::run`, and this actually produces a stream of object references that are yielded after being passed through the reconciler.
 
@@ -164,16 +164,16 @@ Controller::new(api, Config::default())
     .await;
 ```
 
-### Inputs
-To swap out one of the input streams you need to:
+### Input Streams
+To configure one of the input streams manually you need to:
 
 1. create a watcher stream with backoff
 2. flatten the stream
-3. replace the interface
+3. call the stream-equivalent `Controller` interface
 
-Note that the `Controller` will poll all the passed (or implicitly created) watcher streams as a whole when you await poll the output stream from the controller.
+Note that the `Controller` will poll all the passed (or implicitly created) watcher streams as a whole when you poll the output stream from the controller.
 
-### Main Stream
+#### Main Stream
 The controller runtime requires a [reflector] for the main api, so you must also create a [reflector] pair yourself in this case:
 
 ```diff
@@ -203,7 +203,7 @@ leaving additionally the `reader` in your hands should you need it (obviating th
 
     This means the object you get in your reconciler is just a partial object with only `.metadata`. You can call `api.get()` inside `reconcile` to get a full object if needed.
 
-### Owned Stream
+#### Owned Stream
 As per [[relations]], this requires your owned objects to have owner refrences back to your main object (`cr`):
 
 ```diff
@@ -220,9 +220,9 @@ As per [[relations]], this requires your owned objects to have owner refrences b
 
 !!! note "Metadata Watcher Default"
 
-    We use a [[#Metadata-Watcher]] in [Controller::owns] as the reverse mapping (say from `Deployment` to `MyCustomResource`) is done entirely with metadata properties. As such, it is the recommended default for [Controller::owns_stream].
+    [[#Metadata-Watcher]] is used in [Controller::owns] for its stream, as the reverse mapping (say from `Deployment` to `MyCustomResource`) is always done entirely with metadata properties. As such, it is also the recommended default for [Controller::owns_stream].
 
-### Watched Stream
+#### Watched Stream
 As per [[relations]], this requires a custom mapper mapping back to your main object (`cr`):
 
 ```diff

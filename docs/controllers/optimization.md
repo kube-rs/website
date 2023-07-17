@@ -8,7 +8,7 @@ One of the biggest contributor to activity in a [Controller] is the constant, lo
 
 ```rust
 let cfg = watcher::Config { RESTRICTIONS };
-let stream = reflector(writer, SOME_WATCHER(cfg)).SOME_MODIFICATION();
+let stream = SOME_WATCHER(cfg).SOME_MODIFICATION();
 ```
 
 By **default**, [watcher] streams are **implicitly configured** within the [Controller], but using the controller streams interface outlined in the **[[streams]] chapter**, you can customize every aspect of these streams.
@@ -67,7 +67,7 @@ let cfg = Config::default().labels("environment in (production, qa)");
 
 ### Backoff on Errors
 
-Implicitly created controller streams are always created with a `Backoff` implementation (from [backoff]) similar to the [defaults set by client-go](https://github.com/kubernetes/client-go/blob/980663e185ab6fc79163b1c2565034f6d58368db/tools/cache/reflector.go#L177-L181) to avoid hammering the apiserver when errors occur.
+Implicitly created controller streams are always created with a [DefaultBackoff] `Backoff` implementation (from [backoff]) similar to the [defaults set by client-go](https://github.com/kubernetes/client-go/blob/980663e185ab6fc79163b1c2565034f6d58368db/tools/cache/reflector.go#L177-L181) to avoid hammering the apiserver when errors occur.
 
 !!! warning "Use backoffs"
 
@@ -82,7 +82,7 @@ let stream = watcher(api, cfg).default_backoff();
 
 If you do not need all the data on the resource you are watching, then you should consider using the [[streams#Metadata-Watcher]] to reduce the amount of data being handled by your watch stream.
 
-Metadata is generally responsible for a smaller amount of the total object size (generally <1/2), so you can often expect a commensurate reduction in incoming bandwidth from the watches. When these watches are funnelled into a [reflector] they will also **significantly reduce the reflector memory footprint**:
+Metadata is generally responsible for a small amount of the total object size, so you can often expect a commensurate reduction in incoming bandwidth by only watching metadata. When these watches are sent through a [reflector] they will also **significantly reduce the reflector memory footprint**:
 
 ![](memory-meta-watcher.png)
 
@@ -93,7 +93,7 @@ There are three pathways to consider when changing controller inputs to metadata
 #### 1. Changing Associated Streams
 > When watching an **associated** stream (via [[relations]]) that is only used for mapping and not stored.
 
-In this case a lot of extra data go on the wire without a need for it. `Controller::owns_stream` should use `metadata_watcher` in general, and `Controller::watches_stream` can also do this if its lookup is based on metadata properties. See [[streams#inputs]].
+If you are using normal watchers for these, then there is potentially a lot of unused data go on the wire. `Controller::owns_stream` should use `metadata_watcher` in general (ownerReference lookup only needs metadata), and `Controller::watches_stream` can also do this if its lookup is based on metadata properties. See [[streams#input-streams]].
 
 #### 2. Changing Primary Streams
 > When only metadata properties are acted on (e.g. you have a controller that only acts on labels/annotations or similar).
@@ -105,7 +105,7 @@ In this case you can replace the [[streams#main-stream]] for a significant memor
 
 In this case you can actually also follow the [[streams#main-stream]] pattern and call `Api::get` on the object name when the `reconcile` function actually calls so you get an up-to-date object. Remember that if you are using [predicates] on the long watch, then you can quickly discard many changes without requiring all of the data being transmitted.
 
-Such a setup can involve running the metadata watcher with the less consistent [any_semantic] because your reconciler only happens every so often, but when it does, you will do the work properly:
+Such a setup can involve running the metadata watcher with the cheaper/less consistent [any_semantic] because your reconciler only happens every so often, but when it does, you will do the work properly:
 
 ```rust
 let deploys: Api<Deployment> = Api::all(client);
@@ -146,7 +146,7 @@ This should reduce the **peak memory footprint** of both the apiserver and your 
 
 !!! note "Streaming List Alpha"
 
-    The [1.27 alpha streaming-lists feature](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists) may change things up in the future, but this is [not currently](https://github.com/kube-rs/kube/issues/1209) supported by kube.
+    The [1.27 alpha streaming-lists feature](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists) is [not currently](https://github.com/kube-rs/kube/issues/1254) supported by kube, but is a WIP.
 
 ## Reflector Optimization
 
@@ -155,8 +155,8 @@ Unless you have another large in-memory cache or other similar memory users in y
 The memory usage of reflectors is directly proportional to how much stuff you put in it, and can be minimized by tweaking a number of properties:
 
 1. Amount of objects watched (`watcher::Config`)
-2. Asking for metadata only when applicable (`metadata_watcher`)
-2. Pruning unnecessary fields before storing (modify + clear pre-storage)
+2. Asking for only metadata (`metadata_watcher`)
+3. Pruning unnecessary fields before storing (`WatchStreamExt`)
 
 We have already talked about the first two points ([[#Reducing Number of Watched Objects]] and [[#Watching Metadata Only]]) above as these have IO benefits for watchers on their own, but also cause memory usage reductions by forcing less stored objects/data.
 
@@ -203,7 +203,7 @@ Except for some of the .metadata properties  __pruning can generally be done for
 
 The [[reconciler]] is generally the entry-point for your business logic, so we cannot give too much blanket advice on optimizing this, but we can give a few pointers.
 
-Note that instrumenting standard metrics ([[observability#what-metrics]]) on your reconciler, and sending traces of more complicated microservice interactions to a trace collector ([[observability#instrumenting]]) are good [[observability]] practices, and can go along way in identifying performance issues.
+Note that instrumenting standard metrics ([[observability#what-metrics]]) on your reconciler, and sending traces of more complicated microservice interactions to a trace collector ([[observability#instrumenting]]) are good [[observability]] practices, and can go a long way in identifying performance issues.
 
 ### Repeatedly Triggering Yourself
 
@@ -259,6 +259,7 @@ If you are experiencing spiky controller workloads (as a result of fast reconcil
 
     Multiple repeat reconciliations for the same object are **deduplicated** if they are queued but haven't been started yet. For example, a queue for two objects that is meant to run `ABABAAAAA` will be deduped into a shorter queue `ABAB`, assuming that `A1` and `B1` are still executing when the subsequent entries come in.
 
+
 ## Future Optimizations
 
 Not everything is possible to optimize yet. Some tracking issues:
@@ -293,7 +294,7 @@ The target reductions above can all be granted by passing more precise streams t
 [streams#Metadata-Watcher]: streams "Streams"
 [#pruning-fields]: optimization "Optimization"
 [relations]: relations "Related Objects"
-[streams#inputs]: streams "Streams"
+[streams#input-streams]: streams "Streams"
 [streams#main-stream]: streams "Streams"
 [#Repeatedly Triggering Yourself]: optimization "Optimization"
 [#Reducing Number of Watched Objects]: optimization "Optimization"
