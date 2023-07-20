@@ -1,6 +1,6 @@
 # kube-rs website
 
-[![CI](https://github.com/kube-rs/website/actions/workflows/release.yml/badge.svg)](https://github.com/kube-rs/release/actions/workflows/release.yml)
+[![release](https://github.com/kube-rs/website/actions/workflows/release.yml/badge.svg)](https://github.com/kube-rs/website/actions/workflows/release.yml)
 
 Markdown resources and scripts for generating the [kube.rs](https://kube.rs) website.
 
