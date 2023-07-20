@@ -127,9 +127,7 @@ Extracting the `trace_id` requires a helper function atm:
 
 ```rust
 pub fn get_trace_id() -> opentelemetry::trace::TraceId {
-    // opentelemetry::Context -> opentelemetry::trace::Span
     use opentelemetry::trace::TraceContextExt as _;
-    // tracing::Span -> opentelemetry::Context
     use tracing_opentelemetry::OpenTelemetrySpanExt as _;
 
     tracing::Span::current()
