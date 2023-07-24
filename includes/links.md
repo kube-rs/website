@@ -11,6 +11,8 @@
 [Api]: https://docs.rs/kube/latest/kube/struct.Api.html
 [Client]: https://docs.rs/kube/latest/kube/struct.Client.html
 [CustomResource]: https://docs.rs/kube/latest/kube/derive.CustomResource.html
+[CustomResourceExt]: https://docs.rs/kube/latest/kube/trait.CustomResourceExt.html
+[CustomResourceDefinition]: https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html
 [Resource]: https://docs.rs/kube/latest/kube/trait.Resource.html
 [ApiResource]: https://docs.rs/kube/latest/kube/core/struct.ApiResource.html
 [ListParams]: https://docs.rs/kube/latest/kube/api/struct.ListParams.html
@@ -35,6 +37,7 @@
 [DefaultBackoff]: https://docs.rs/kube/latest/kube/runtime/watcher/struct.DefaultBackoff.html
 [discovery]: https://docs.rs/kube/latest/kube/discovery/index.html
 [recommended_kind]: https://docs.rs/kube/latest/kube/discovery/struct.ApiGroup.html#method.recommended_kind
+[merge_crds]: https://docs.rs/kube/latest/kube/core/crd/v1/fn.merge_crds.html
 [kube]: https://crates.io/crates/kube
 [kopium]: https://github.com/kube-rs/kopium
 [controller-rs]: https://github.com/kube-rs/controller-rs
@@ -45,6 +48,7 @@
 [schemars]: https://graham.cool/schemars/
 [serde_json::Value]: https://docs.serde.rs/serde_json/enum.Value.html
 [json]: https://docs.serde.rs/serde_json/macro.json.html
+[garde]: https://docs.rs/garde/latest/garde/
 [proc_macro]: https://doc.rust-lang.org/reference/procedural-macros.html
 [k8s-pb]: https://github.com/kube-rs/k8s-pb
 [k8s-openapi]: https://crates.io/crates/k8s-openapi
