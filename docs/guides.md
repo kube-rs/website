@@ -4,6 +4,7 @@ List of third party guides and tutorials for using the `kube-rs` that holds up t
 
 | Title | Year | Use |
 | ----- | ---- | --- |
+| [Writing a Kubernetes Scheduler in Rust](https://blog.appliedcomputing.io/p/writing-a-kubernetes-scheduler-in) | 2023 | Scheduler PoC |
 | [Writing a Kubernetes Operator](https://metalbear.co/blog/writing-a-kubernetes-operator) | 2023 | Operator with [extension api-server](https://kubernetes.io/docs/tasks/extend-kubernetes/setup-extension-api-server/) |
 | [Oxidizing the Kubernetes operator](https://www.pavel.cool/rust/rust-kubernetes-operators/) | 2021 | Controller guide with finalizers, state machines
 | [A Rust controller for Kubernetes](https://blog.frankel.ch/start-rust/6/) | 2021 | Introductory; project setup + api use |
