@@ -49,7 +49,6 @@ nav:
   - getting-started.md
   #- quick-tutorial.md
   - changelog.md
-  #- integrations.md
   - security.md
   - release-process.md
   - rust-version.md

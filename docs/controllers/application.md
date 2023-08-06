@@ -21,7 +21,7 @@ add then install `kube`, `k8s-openapi`, `thiserror`, `futures`, and `tokio`:
 
 ```sh
 cargo add kube --features=runtime,client,derive
-cargo add k8s-openapi --features=v1_26
+cargo add k8s-openapi --features=latest --default-features=false
 cargo add thiserror
 cargo add tokio --features=macros,rt-multi-thread
 cargo add futures
@@ -32,7 +32,7 @@ This should give you a `[dependencies]` part in your `Cargo.toml` looking like:
 
 ```toml
 kube = { version = "LATESTKUBE", features = ["runtime", "client", "derive"] }
-k8s-openapi = { version = "LATESTK8SOPENAPI", features = ["v1_26"]}
+k8s-openapi = { version = "LATESTK8SOPENAPI", features = ["latest"]}
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 futures = "0.3"
 thiserror = "LATESTTHISERROR"
