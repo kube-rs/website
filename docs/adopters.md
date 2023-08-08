@@ -19,6 +19,7 @@
 - [databricks-kube-operator](https://github.com/mach-kernel/databricks-kube-operator) - GitOps/Helm style management of [Databricks](https://www.databricks.com/) jobs
 - [mirrord](https://github.com/metalbear-co/mirrord) - Run your local service in the context of your remote cluster.
 - [coredb](https://github.com/CoreDB-io/coredb) - Postgres for Everything
+- [xline-operator](https://github.com/xline-kv/xline-operator) - The xline-operator is a powerful tool designed to automate the process of bootstrapping, monitoring, snapshotting, and recovering an xline cluster on Kubernetes.
 
 ## Companies
 
