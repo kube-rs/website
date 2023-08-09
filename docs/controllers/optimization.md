@@ -242,12 +242,11 @@ let changed_deploys = watcher(deploys, watcher::Config::default())
 
 ## Debouncing Away Transitions
 
-Since kube 0.86 it is possible to use **debouncing** to deduplicate reconcile calls that happen quick succession. Configuring debounce can be done on the controller options and will cause an initial delay to the eventual reconcile call (triggering only after no events have been seen for the object for the debounce period).
+After kube 0.86 (via [#1265](https://github.com/kube-rs/kube/pull/1265) it is possible to use **debouncing** to deduplicate reconcile calls that happen quick succession. Configuring debounce can be done on the controller options and will cause an initial delay to the eventual reconcile call (triggering only after no events have been seen for the object for the debounce period).
 
 ```rust
-use kube::runtime::controller::Config;
 Controller::new(pods, watcher::Config::default())
-    .with_config(Config::default().debounce(Duration::from_secs(5)))
+    .with_config(controller::Config::default().debounce(Duration::from_secs(5)))
 ```
 
 A common example is to lessen the noise from rapid phase transitions of `Pod` watches (which receives several repeat status updates after initial application). If your controller only treats pods as a watched resource and does not need to react to every status update, then adding a handful of seconds to the default zero second debounce time can help reduce reconciler load.
@@ -256,7 +255,7 @@ A common example is to lessen the noise from rapid phase transitions of `Pod` wa
 
 Graph shows how a `5s` debounce acts on reconciliation loads for various workloads (via 4 different controllers) in a cluster with ~1500 pods (the second blue line indicates a deployment of the controller that enabled debounce).
 
-See the documentation for [Config::debounce] for more information.
+See the documentation for [controller::Config] for more information.
 
 ### Reconciler Concurrency
 
