@@ -240,6 +240,24 @@ let changed_deploys = watcher(deploys, watcher::Config::default())
 
     Predicates are a new feature in some flux with the last change in 0.84. They require one of the `unstable-runtime` feature flags.
 
+## Debouncing Away Transitions
+
+Since kube 0.86 it is possible to use **debouncing** to deduplicate reconcile calls that happen quick succession. Configuring debounce can be done on the controller options and will cause an initial delay to the eventual reconcile call (triggering only after no events have been seen for the object for the debounce period).
+
+```rust
+use kube::runtime::controller::Config;
+Controller::new(pods, watcher::Config::default())
+    .with_config(Config::default().debounce(Duration::from_secs(5)))
+```
+
+A common example is to lessen the noise from rapid phase transitions of `Pod` watches (which receives several repeat status updates after initial application). If your controller only treats pods as a watched resource and does not need to react to every status update, then adding a handful of seconds to the default zero second debounce time can help reduce reconciler load.
+
+![](debounce-workloads.png)
+
+Graph shows how a `5s` debounce acts on reconciliation loads for various workloads (via 4 different controllers) in a cluster with ~1500 pods (the second blue line indicates a deployment of the controller that enabled debounce).
+
+See the documentation for [Config::debounce] for more information.
+
 ### Reconciler Concurrency
 
 The controller will schedule **different objects** concurrently. For example, for the event queue ABA, we'd currently schedule object A and B to reconcile concurrently, and start the second reconciliation of A as soon as the first one finishes. Our guarantee here is that we will never run two reconciliations for the same object concurrently.
