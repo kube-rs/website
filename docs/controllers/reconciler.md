@@ -6,7 +6,7 @@ The reconciler is the **user-defined function** in charge of reconciling the **s
 async fn reconcile(o: Arc<K>, ctx: Arc<T>) -> Result<Action, Error>
 ```
 
-It is always **called** with the [[object]] type that you instantiate the [Controller] with, regardless of what auxillary objects you end up watching:
+It is always **called** with the [[object]] type that you instantiate the [Controller] with, independent of what auxillary objects you may be watching:
 
 ```mermaid
 graph TD
@@ -25,17 +25,16 @@ graph TD
     end
 ```
 
-A [Controller] contains a machinery that will:
+A [Controller] is a system that will:
 
-- watch api endpoints in Kubernetes (main object and related objects)
-- map changes from those apis (via [[relations]]) into your main [[object]]
-- schedule and apply reconciliations
-- observe the result of reconciliations to decide when to reschedule
-- tolerate a wide class of failures
+1. watch resources from the Kubernetes api (main + related objects)
+2. `map` returned objects (via [[relations]]) into your main [[object]]
+3. schedule and run reconciliations
+4. observe the result of reconciliations to decide when to reschedule
 
-We will largerly treat [Controller] as a black-box, but details are explored in [[internals]] and [[architecture]].
+> Details about this system is explored in [[internals]] and [[architecture]].
 
-As a user of `kube`, you will just to have to instantiate a [Controller] (see [[application]]) and define your `reconcile` fn.
+You must instantiate a [Controller] in your [[application]], and define your `reconcile` + `error_policy` fns.
 
 ## The World
 
@@ -69,13 +68,13 @@ Notice that the **reason** for why the reconciliation started is **not included*
 
 !!! note "Fault-tolerance against missed messages"
 
-    If your controller is down / crashed earlier, you **might have missed messages**. In fact, **no matter how well** you guard against downtime (e.g with multiple replicas, rolling upgrades, pdbs, leases), the Kubernetes watch api is **not sufficiently safe** to guarantee unmissed messages. <!-- TODO; link to desync explanations (watch desyncs can happen and you never know you will have skipped an update) -->
+    If your controller is down / crashed earlier, you **might have missed messages**. No matter how well you guard against downtime (e.g with multiple replicas, rolling upgrades, pdbs, leases), the Kubernetes watch api is **not sufficiently safe** to guarantee unmissed messages. <!-- TODO; link to desync explanations (watch desyncs can happen and you never know you will have skipped an update) -->
 
-> It is unsafe to give you a reason for why you got a `reconcile` call, because it is sometimes impossible to know.
+It is unsafe to give you a reason for why you got a `reconcile` call, because it is sometimes impossible to know.
 
-We therefore **have to hide** this information from you, and you are forced to write a more **defensive reconciler**.
+We therefore **omit** this information, so you that you write a more **defensive reconciler**.
 
-We have to:
+You should:
 
 - assume nothing about why reconciliation started
 - assume the reconciler could have failed at any point during the function
@@ -100,7 +99,7 @@ Both of these operations can be done in isolation in an idempotent manner (we wi
 
 ### Combining Idempotent Operations
 
-A naive approach to the above problem might be to take a shortcut, and simply **check if the work has been done**, and if not, do it:
+The naive approach to the above problem would be to **check if the work has been done**, and if not, do it:
 
 ```rust
 if pod_missing {

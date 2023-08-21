@@ -187,7 +187,7 @@ First, we need a working [Client]. Using `Client::try_default()` inside an async
         let patch = Patch::Apply(doc.clone());
         docs.patch("test", &ssapply, &patch).await.unwrap();
 
-        // reconcile it (as if it was just applied to the cluster like this)
+        // reconcile it (as if it was applied to the cluster like this)
         reconcile(Arc::new(doc), ctx).await.unwrap();
 
         // verify side-effects happened
