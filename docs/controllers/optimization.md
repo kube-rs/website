@@ -240,6 +240,27 @@ let changed_deploys = watcher(deploys, watcher::Config::default())
 
     Predicates are a new feature in some flux with the last change in 0.84. They require one of the `unstable-runtime` feature flags.
 
+### Debouncing Repetitions
+
+After kube 0.86 (via [#1265](https://github.com/kube-rs/kube/pull/1265)) it is possible to [debounce](https://en.wiktionary.org/wiki/debounce) to filter out reconcile calls that happen quick succession (only taking the latest). A debounce time can be set on the [controller::Config], and will __introduce a delay__ between the observed event and the eventual reconcile call, triggering __only after__ no relevant events have been seen for the debounce period.
+
+```rust
+Controller::new(pods, watcher::Config::default())
+    .with_config(controller::Config::default().debounce(Duration::from_secs(5)))
+```
+
+A common example is to lessen the noise from rapid [phase](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-phase) transitions of `Pod` watches (which receives several repeat status updates after initial application). If your controller only treats pods as a watched resource and does not need to react to every status update, then introducing a handful of seconds of debounce time can help reduce reconciler load:
+
+![](debounce-workloads.png)
+
+The graph shows how a `5s` debounce acts on reconciliation rates for various workloads (via 4 different controllers) in a cluster with ~1500 pods (the last dashed line indicates a deployment of the controller that enabled debounce).
+
+!!! warning "Debounce effect is situational and will slow down responsiveness"
+
+    As can be seen from the generally completely unaffected other kinds in the above graph, the effect may not benefit all controllers, and a downside is that it will slow down the controller's average response time to changes. A few seconds can be helpful while waiting for other eventually-consistent components, but beyond that you should consider the tradeoff between the **consistency loss** and the **cost of re-running**.
+
+See the documentation for [controller::Config] for more information.
+
 ### Reconciler Concurrency
 
 The controller will schedule **different objects** concurrently. For example, for the event queue ABA, we'd currently schedule object A and B to reconcile concurrently, and start the second reconciliation of A as soon as the first one finishes. Our guarantee here is that we will never run two reconciliations for the same object concurrently.
@@ -265,7 +286,6 @@ If you are experiencing spiky controller workloads (as a result of fast reconcil
 Not everything is possible to optimize yet. Some tracking issues:
 
 - [Controller concurrency control](https://github.com/kube-rs/kube/issues/1248)
-- [Controller debounce control](https://github.com/kube-rs/kube/issues/1247)
 - [watcher with sendInitialEvents](https://github.com/kube-rs/kube/issues/1209)
 - [Sharing watcher streams and caches between Controllers](https://github.com/kube-rs/kube/issues/1080)
 
