@@ -151,9 +151,14 @@ copyright: ''
 extra:
   generator: false
   social:
-    - icon: fontawesome/regular/bookmark
-      link: https://kube.rs
+    #- icon: fontawesome/regular/bookmark
+    #  link: https://kube.rs
+    - icon: fontawesome/brands/rust
+      link: https://docs.rs/kube
     - icon: fontawesome/brands/github
-      link: https://github.com/kube-rs/website
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/kube_rs
+      link: https://github.com/kube-rs/kube/discussions
+    #- icon: fontawesome/brands/mastodon
+    #  link: https://hachyderm.io/@clux
+    # better than twitter, but not really doing PR
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/tokio

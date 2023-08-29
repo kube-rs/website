@@ -22,3 +22,8 @@ sync:
 # Query dynamic properties of kube and put into docs
 dynprops:
   echo "TODO: find cargo rust-version of kube and put in msrv doc"
+
+# experimental linkcheck
+linkcheck:
+  lychee --github-token=$GITHUB_TOKEN https://kube.rs
+  lychee --github-token=$GITHUB_TOKEN docs/controllers/*.md
