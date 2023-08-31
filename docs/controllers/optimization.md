@@ -168,7 +168,7 @@ Most controllers do not need to know about the specifics of these, and they shou
 
 ```rust
 let api: Api<Pod> = Api::default_namespaced(client);
-let stream = watcher(pods, watcher::Config::default()).modify(|ev| {
+let stream = watcher(pods, watcher::Config::default()).modify(|pod| {
     // memory optimization for our store - we don't care about fields/annotations/status
     pod.managed_fields_mut().clear();
     pod.annotations_mut().clear();
