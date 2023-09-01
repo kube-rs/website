@@ -108,7 +108,7 @@ Finally, the `Client` manages other key aspects of IO the protocol such as:
 
 - `Client::connect` performs an [HTTP Upgrade](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Upgrade) for specialised verbs
 - `Client::request` handles 90% of all requests
-- `Client::request_events` handles streaming `watch` eventss using `tokio_utils`'s `FramedRead` codec
+- `Client::request_events` handles streaming `watch` events using `tokio_utils`'s `FramedRead` codec
 - `Client::request_status` handles `Either<T, Status>` responses from kubernetes
 
 #### api
