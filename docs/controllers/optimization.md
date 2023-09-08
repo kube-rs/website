@@ -295,7 +295,7 @@ As a short summary, here are the main listed optimization and the effect you sho
 | metadata_watcher       | IO + Memory        |
 | watcher selectors      | IO + Memory        |
 | watcher page size      | Peak Memory        |
-| reconciler parallelism | Peak Usage         |
+| reconciler concurrency | Peak Usage         |
 | pruning                | Memory Usage       |
 | predicates             | Memory + Code Size |
 
