@@ -132,21 +132,21 @@ This will also help avoid [[#Repeatedly Triggering Yourself]].
 
 ### Reduce the List Spike
 
-Every permanent watch loop setup against kube-apiserver generally requires a `list` call (to initialise) followed by a long `watch` call starting at the given `resourceVersion` from `list`. De-syncs can happen, and this forces a re-list to re-initialize (forcing a slew of old objects to be passed through controllers again).
+Every permanent watch loop setup against kube-apiserver generally requires an initial __listing__ of objects (usually in the form of a `list` api call), followed by a long `watch`starting at the given `resourceVersion` from the initial list. On big clusters this listing was until recently quite memory intensive (for both the apiserver and the controller).
 
-This internal `list` call was until recently **unlimited**. In large/busy clusters, retrieving all of objects in one call is [very memory intensive](https://github.com/kube-rs/kube/issues/1209) (for both the apiserver and the controller).
-
-A configuration for this was added for `0.84.0` via https://github.com/kube-rs/kube/pull/1249, and sets a **default page size** matching client-go's `500`, but can be reduced further when working on large objects if needed:
+Pagination for this initial list was added for `0.84.0` - with a new default **default page size** matching client-go's `500`. This can be reduced further when working on large objects if needed:
 
 ```rust
 let cfg = watcher::Config::default().page_size(50);
 ```
 
-This should reduce the **peak memory footprint** of both the apiserver and your controller at the times the controller needs to do a re-list.
+A more efficient alternative was added in `0.86.0` and **avoids paging entirely** using the streaming [WatchList feature](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists). This is supported through [Config::initial_list_strategy](https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html#structfield.initial_list_strategy), and can be sanity tested in the [pod_watcher example](https://github.com/kube-rs/kube/blob/c8e98285362e1d0739c56baf27aaab703051dcd4/examples/pod_watcher.rs#L15-L21) on a cluster with the [feature gate](https://github.com/kube-rs/kube/blob/c8e98285362e1d0739c56baf27aaab703051dcd4/justfile#L91) enabled.
 
-!!! note "Streaming List Alpha"
+```rust
+let cfg = watcher::Config::default().streaming_lists();
+```
 
-    The [1.27 alpha streaming-lists feature](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists) is [not currently](https://github.com/kube-rs/kube/issues/1254) supported by kube, but is a WIP.
+Both these methods should reduce the **peak memory footprint** of both the apiserver and your controller at the times the controller needs to do a re-list.
 
 ## Reflector Optimization
 
@@ -263,30 +263,27 @@ See the documentation for [controller::Config] for more information.
 
 ### Reconciler Concurrency
 
-The controller will schedule **different objects** concurrently. For example, for the event queue ABA, we'd currently schedule object A and B to reconcile concurrently, and start the second reconciliation of A as soon as the first one finishes. Our guarantee here is that we will never run two reconciliations for the same object concurrently.
+The controller will schedule **different objects** concurrently. For example, for the event queue ABA, we'd currently schedule object A and B to reconcile concurrently, and start the second reconciliation of A as soon as the first one finishes. Our guarantee here is that __kube will never run two reconciliations for the same object concurrently__. This means that default kube behaviour is __infinite concurrency__ whereas `controller-runtime` has [no default concurrency](https://github.com/kubernetes-sigs/controller-runtime/blob/aa9f8c9e8ef099910ff36031ccafe900fe31d9e1/pkg/controller/controller.go#L39-L40).
 
-There is [currently no specific support](https://github.com/kube-rs/kube/issues/1248) for setting a global limit on concurrency, with the rationale that it would be roughly equivalent to having your reconciler run in a semaphore like:
+On large datasets, spiky workloads can occur with this default. Big datasets being funnelled through the `watcher` and into the reconciler can cause large amount of work, and when using consistent requeue times, that same spike is likely to show up later:
+
+![](spiky-workload.png)
+
+To flatten such a workload curve, consider limiting your `concurrency` to control how much work can happen at the same time.
 
 ```rust
-Controller::run(|(obj, ctx)| async {
-    let _permit = ctx.semaphore.acquire().await?;
-    reconcile(obj, ctx).await
-}, error_policy, ctx);
+Controller::new(pods, watcher::Config::default())
+    .with_config(controller::Config::default().concurency(3))
 ```
-
-If you are experiencing spiky controller workloads (as a result of fast reconciliations with consistent requeue times), then you can consider implementing a semaphore, or adding some skew to your requeue durations to avoid all of these happening consistently at the same time.
 
 !!! note "Reconciler Deduplication"
 
     Multiple repeat reconciliations for the same object are **deduplicated** if they are queued but haven't been started yet. For example, a queue for two objects that is meant to run `ABABAAAAA` will be deduped into a shorter queue `ABAB`, assuming that `A1` and `B1` are still executing when the subsequent entries come in.
 
-
 ## Future Optimizations
 
 Not everything is possible to optimize yet. Some tracking issues:
 
-- [Controller concurrency control](https://github.com/kube-rs/kube/issues/1248)
-- [watcher with sendInitialEvents](https://github.com/kube-rs/kube/issues/1209)
 - [Sharing watcher streams and caches between Controllers](https://github.com/kube-rs/kube/issues/1080)
 
 ## Summary
