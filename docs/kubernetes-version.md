@@ -4,6 +4,7 @@ Our Kubernetes version compatibility is similar to the strategy employed by [cli
 
 | kube version   | MK8SV   | Latest  | Generated Source  |
 | -------------- | ------- | ------- | ----------------- |
+| `0.86.0`       |  `1.23` | [`1.28`](https://kubernetes.io/blog/2023/08/15/kubernetes-v1-28-release/) | [k8s-openapi@0.20.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0200-2023-09-07) |
 | `0.85.0`       |  `1.22` | [`1.27`](https://kubernetes.io/blog/2023/04/11/kubernetes-v1-27-release/) | [k8s-openapi@0.19.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0190-2023-08-05) |
 | `0.78.0`       |  `1.21` | [`1.26`](https://kubernetes.io/blog/2022/12/09/kubernetes-v1-26-release/) | [k8s-openapi@0.17.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0170-2023-01-04) |
 | `0.75.0`       |  `1.20` | [`1.25`](https://kubernetes.io/blog/2022/08/23/kubernetes-v1-25-release/) | [k8s-openapi@0.16.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0160-2022-09-15) |
@@ -15,7 +16,7 @@ Our Kubernetes version compatibility is similar to the strategy employed by [cli
 
 The MK8SV is listed in our README as a badge:
 
-> [![Tested against Kubernetes 1.21 and above](https://img.shields.io/badge/MK8SV-1.21-326ce5.svg)](https://kube.rs/kubernetes-version)
+> [![Tested against Kubernetes 1.23 and above](https://img.shields.io/badge/MK8SV-1.23-326ce5.svg)](https://kube.rs/kubernetes-version)
 
 The **minimum** indicates the lower bound of our testing range, and the **latest** is the maximum Kubernetes version selectable as a target version.
 
