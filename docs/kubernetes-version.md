@@ -17,6 +17,8 @@ The MK8SV is listed in our README as a badge:
 
 > [![Tested against Kubernetes 1.23 and above](https://img.shields.io/badge/MK8SV-1.23-326ce5.svg)](https://kube.rs/kubernetes-version)
 
+## Policy
+
 The **minimum** indicates the lower bound of our testing range, and the **latest** is the maximum Kubernetes version selectable as a target version.
 
 !!! note "Minimum Kubernetes Version Policy"
