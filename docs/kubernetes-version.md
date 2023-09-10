@@ -26,7 +26,7 @@ The **minimum** indicates the lower bound of our testing range, and the **latest
     The Minimum Supported Kubernetes Version (MK8SV) is set as **5 releases below** the **latest** Kubernetes version.
 
 This policy is intended to match **stable channel support** within **major cloud providers**.
-Compare with: [EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html), [AKS](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar), [GKE](https://cloud.google.com/kubernetes-engine/docs/release-schedule), [upstream Kubernetes](https://endoflife.date/google-kubernetes-engine).
+Compare with: [EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html), [AKS](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar), [GKE](https://cloud.google.com/kubernetes-engine/docs/release-schedule), [upstream Kubernetes](https://endoflife.date/kubernetes).
 
 ## Picking Versions
 
