@@ -1,6 +1,13 @@
-## Compatibility
 
-Our Kubernetes version compatibility is similar to the strategy employed by [client-go](https://github.com/kubernetes/client-go#compatibility-matrix) and can interoperate well under a wide range of target Kubernetes versions defined by a **soft minimum** (MK8SV) and  the current **latest** available Kubernetes feature version.
+## Policy
+
+Our Kubernetes version compatibility is following a similar strategy to the one employed by [client-go](https://github.com/kubernetes/client-go#compatibility-matrix) and can interoperate under a wide range of Kubernetes versions. We define by a **soft minimum** (MK8SV) based on the current **latest** available Kubernetes version in the _generated source_.
+
+!!! note "Minimum Kubernetes Version Policy"
+
+    The Minimum Supported Kubernetes Version (MK8SV) is **5 releases less than** the **latest** Kubernetes version.
+
+The **minimum** indicates the lower bound of our testing range, and the **latest** is the maximum Kubernetes version selectable as a target version. The minimum has evolved like this:
 
 | kube version   | MK8SV   | Latest  | Generated Source  |
 | -------------- | ------- | ------- | ----------------- |
@@ -13,20 +20,12 @@ Our Kubernetes version compatibility is similar to the strategy employed by [cli
 
 <!-- NB: k8s-openapi 0.18 did not introduce a new Kubernetes version: https://github.com/Arnavion/k8s-openapi/releases/tag/v0.18.0 so its bump is not listed -->
 
-The MK8SV is listed in our README as a badge:
-
-> [![Tested against Kubernetes 1.23 and above](https://img.shields.io/badge/MK8SV-1.23-326ce5.svg)](https://kube.rs/kubernetes-version)
-
-## Policy
-
-The **minimum** indicates the lower bound of our testing range, and the **latest** is the maximum Kubernetes version selectable as a target version.
-
-!!! note "Minimum Kubernetes Version Policy"
-
-    The Minimum Supported Kubernetes Version (MK8SV) is set as **5 releases below** the **latest** Kubernetes version.
 
 This policy is intended to match **stable channel support** within **major cloud providers**.
 Compare with: [EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html), [AKS](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar), [GKE](https://cloud.google.com/kubernetes-engine/docs/release-schedule), [upstream Kubernetes](https://endoflife.date/kubernetes).
+
+
+It is displayed in the main README as a badge: [![Tested against Kubernetes 1.23 and above](https://img.shields.io/badge/MK8SV-1.23-326ce5.svg)](https://kube.rs/kubernetes-version)
 
 ## Picking Versions
 
@@ -34,13 +33,16 @@ Given a `kube` version, you may choose a **target Kubernetes version** from the 
 
 ### Example
 
-When using [`kube@0.86.0`](https://github.com/kube-rs/kube/releases/tag/0.86.0), the generated source is [`k8s-openapi@0.20.0`](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.20.0), which exports the [following version features](https://docs.rs/crate/k8s-openapi/0.20.0/features). I.e. the `latest` supported version feature is _here_ aliased to `v1_28`, and the `earliest` is aliased to `v1_22`.
+When using [`kube@0.86.0`](https://github.com/kube-rs/kube/releases/tag/0.86.0), the generated source is [`k8s-openapi@0.20.0`](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.20.0), which exports the [following version features](https://docs.rs/crate/k8s-openapi/0.20.0/features). The `latest` supported version feature is _here_ aliased to `v1_28`, our minimum tested version is `v1_23`.
 
 ### Guideline
 
-What Kubernetes version you pick is up to you, but the consequences are often insignificant (see [details below](#version-skew)). Thus, we recommend:
+!!! note "Recommendation is `latest`"
 
-> Pick `latest` as your target version (even when running against older clusters). Consider **pinning** to a version matching your cluster **if** you are programming explicitly against deprecated or alpha apis.
+    The `latest` feature as your target version is a good default choice, even when running against older clusters.
+    Consider **pinning** to a specific cluster version **if** you are programming explicitly against deprecated or alpha apis.
+
+See the [version skew outcomes](#version-skew) if you are unsure whether you need to pin a version.
 
 <!--
 With [k8s-pb], we plan on [doing this automatically](https://github.com/kube-rs/k8s-pb/issues/10).
