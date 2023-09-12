@@ -4,7 +4,7 @@ Builds on CI always run against the most stable rust version, but we also suppor
 
 ## Minimum Supported Rust Version
 
-The MSRV is shown in the main [Cargo.toml](https://github.com/kube-rs/kube-rs/blob/master/kube/Cargo.toml#L1-L16) and as a [**readme badge**](https://github.com/kube-rs/kube-rs#kube-rs):
+The MSRV is shown in the main [Cargo.toml](https://github.com/kube-rs/kube/blob/master/kube/Cargo.toml#L1-L16) and as a [**readme badge**](https://github.com/kube-rs/kube#kube-rs):
 
 > [![Rust 1.XX](https://img.shields.io/badge/MSRV-1.XX-dea584.svg)](https://github.com/rust-lang/rust/releases/)
 
@@ -34,7 +34,7 @@ as well as the badge plus devcontainer. If the bump is sufficient, CI will verif
 
 ## For contributors: Nightly tooling
 
-Due to some [limitations in stable `rustdoc` and `rustfmt`](https://github.com/kube-rs/kube-rs/issues/707), we use the `nightly` toolchain for auto-formatting and documentation.
+Due to some [limitations in stable `rustdoc` and `rustfmt`](https://github.com/kube-rs/kube/issues/707), we use the `nightly` toolchain for auto-formatting and documentation.
 
 **NB**: This is contributor quirk only. All crates will **always build** with the **stable** toolchain.
 

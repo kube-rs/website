@@ -1,6 +1,6 @@
 # Release Process
 
-The release process for all the crates in kube is briefly outlined in [release.toml](https://github.com/kube-rs/kube-rs/blob/master/release.toml).
+The release process for all the crates in kube is briefly outlined in [release.toml](https://github.com/kube-rs/kube/blob/master/release.toml).
 
 ## Versioning
 
@@ -23,9 +23,9 @@ The process is automated where possible, and the non-writing bits usually only t
 
 ### Preliminary Steps
 
-Close the [current ongoing milestone](https://github.com/kube-rs/kube-rs/milestones), and ensure the [prs merged since the last version](https://github.com/kube-rs/kube-rs/commits/master) are included in the milestone.
+Close the [current ongoing milestone](https://github.com/kube-rs/kube/milestones), and ensure the [prs merged since the last version](https://github.com/kube-rs/kube/commits/master) are included in the milestone.
 
-Ensure the PRs in the milestone all have exactly one `changelog-*` label to ensure the release notes are generated correctly (we follow [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) with the setup as outlined in [#754](https://github.com/kube-rs/kube-rs/issues/754)).
+Ensure the PRs in the milestone all have exactly one `changelog-*` label to ensure the release notes are generated correctly (we follow [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) with the setup as outlined in [#754](https://github.com/kube-rs/kube/issues/754)).
 
 ### Publishing Crates
 
@@ -45,11 +45,11 @@ once this completes, double check that all the crates are correctly published to
 
 This will [enqueue a documentation build in docs.rs](https://docs.rs/releases/queue) to complete.
 
-> Docs build usually completes in less than `30m`, but we have seen it take [around half a day](https://github.com/kube-rs/kube-rs/issues/665#issuecomment-949988895) when publishing during an anticipated rust release.
+> Docs build usually completes in less than `30m`, but we have seen it take [around half a day](https://github.com/kube-rs/kube/issues/665#issuecomment-949988895) when publishing during an anticipated rust release.
 
 ### Generating the release
 
-Once the crates have been published, we can start the process for creating a [GitHub Release](https://github.com/kube-rs/kube-rs/releases).
+Once the crates have been published, we can start the process for creating a [GitHub Release](https://github.com/kube-rs/kube/releases).
 
 If you just published, you will have at least one commit unpushed locally. You can push and tag this in one go using it:
 
@@ -57,8 +57,8 @@ If you just published, you will have at least one commit unpushed locally. You c
 ./scripts/release-post.sh
 ```
 
-This creates a tag, and a **draft** release using our [release workflow](https://github.com/kube-rs/kube-rs/actions/workflows/release.yml).
-The resulting github **release** will show up on [kube-rs/releases](https://github.com/kube-rs/kube-rs/releases) immediately.
+This creates a tag, and a **draft** release using our [release workflow](https://github.com/kube-rs/kube/actions/workflows/release.yml).
+The resulting github **release** will show up on [kube-rs/releases](https://github.com/kube-rs/kube/releases) immediately.
 
 However, we should **not publish** this until the [enqueued documentation build in docs.rs](https://docs.rs/releases/queue) completes.
 
@@ -87,7 +87,7 @@ For these cases, it's perfectly OK to just hit [Publish](#){ .md-button-primary 
 
 ### Completion Steps
 
-- Create a [new milestone](https://github.com/kube-rs/kube-rs/milestones) for current minor version + 1
+- Create a [new milestone](https://github.com/kube-rs/kube/milestones) for current minor version + 1
 - Press [Publish](#){ .md-button-primary } on the release once [docs.rs build completes](https://docs.rs/releases/queue)
 - Run `./scripts/release-afterdoc.sh` to port the changed release notes into the `CHANGELOG.md` and push
 - Run `./sync.sh` in the website repo to port the new release notes onto the website
@@ -98,8 +98,8 @@ For these cases, it's perfectly OK to just hit [Publish](#){ .md-button-primary 
 
 Some example release notes from recent history has some ideas:
 
-- [0.68.0](https://github.com/kube-rs/kube-rs/releases/tag/0.68.0)
-- [0.66.0](https://github.com/kube-rs/kube-rs/releases/tag/0.66.0)
+- [0.68.0](https://github.com/kube-rs/kube/releases/tag/0.68.0)
+- [0.66.0](https://github.com/kube-rs/kube/releases/tag/0.66.0)
 
 Note that headers should link to PRs/important documents, but it is not necessary to link into the release or the milestone in this document yourself (the `afterdoc` step automates this).
 

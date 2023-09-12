@@ -98,7 +98,7 @@ The `CustomResourceDefinition` resource at `v1beta1` was [removed](https://kuber
 
 Their replacement; in `v1` was released in Kubernetes `1.16`.
 
-Kube had special support for both versions of `CustomResourceDefinition` from `0.26.0` up until [`0.72.0`](https://github.com/kube-rs/kube-rs/releases/tag/0.72.0) when kube supported structs from Kubernetes >= 1.22.
+Kube had special support for both versions of `CustomResourceDefinition` from `0.26.0` up until [`0.72.0`](https://github.com/kube-rs/kube/releases/tag/0.72.0) when kube supported structs from Kubernetes >= 1.22.
 
 This special support took the form of the proc macro [CustomResource] and [associated helpers](https://docs.rs/kube/latest/kube/core/crd/index.html) that allowing pinning the crd version to `v1beta1` up until its removal. It is now `v1` only.
 

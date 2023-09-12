@@ -29,7 +29,7 @@ This is the simplest flow and works right out of the box because the openapi imp
 
 If you have a native Kubernetes type, **you generally want to start with [k8s-openapi]**. If will likely do exactly what you want without further issues. **That said**, if both your clusters and your chosen object are large, then you can **consider optimizing** further by changing to a [partially typed resource](#partially-typed-resource) for smaller memory profile.
 
-A separate [k8s-pb] repository for our [future protobuf serialization structs](https://github.com/kube-rs/kube-rs/issues/725) also exists, and while it will slot into this category and should hotswappable with [k8s-openapi], it is **not yet usable** here.
+A separate [k8s-pb] repository for our [future protobuf serialization structs](https://github.com/kube-rs/kube/issues/725) also exists, and while it will slot into this category and should hotswappable with [k8s-openapi], it is **not yet usable** here.
 
 ## Custom Resources
 ### Derived Custom Resource
@@ -198,7 +198,7 @@ Other ways of doing [discovery] are also available. We are highlighting [recomme
 
 !!! note "Multiple versions of an object"
 
-    Kubernetes supports specifying [multiple versions of a specification](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/), and using [DynamicObject] above can help solve that. There are [other potential ways](https://github.com/kube-rs/kube-rs/issues/569) of achieving similar results, but it does require some work.
+    Kubernetes supports specifying [multiple versions of a specification](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/), and using [DynamicObject] above can help solve that. There are [other potential ways](https://github.com/kube-rs/kube/issues/569) of achieving similar results, but it does require some work.
 
 ### Partially-typed Resource
 
@@ -206,7 +206,7 @@ A very special-case setup where we specify a subset of the normal typed informat
 
 !!! warning "Better methods available for improving memory characteristics"
 
-    Because almost all methods on Kubernetes objects such as [PodSpec] are wrapped in `Option`s, as long as unnecessary properties are unset before passing them to a [reflector], similar memory reductions can be achieved. One method is to use [Event::modify] chained onto the watcher stream. See the [pod_reflector](https://github.com/kube-rs/kube-rs/blob/05b48cf61a4b55948274d4cfadd26255e026cec4/examples/pod_reflector.rs#L31-L38) for details.
+    Because almost all methods on Kubernetes objects such as [PodSpec] are wrapped in `Option`s, as long as unnecessary properties are unset before passing them to a [reflector], similar memory reductions can be achieved. One method is to use [Event::modify] chained onto the watcher stream. See the [pod_reflector](https://github.com/kube-rs/kube/blob/05b48cf61a4b55948274d4cfadd26255e026cec4/examples/pod_reflector.rs#L31-L38) for details.
 
     Because of these advances, the partially-typed resource pattern is not recommended.
 

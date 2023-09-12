@@ -51,5 +51,5 @@ To become a maintainer, start by expressing interest to existing maintainers.
 Existing maintainers will then ask you to demonstrate the qualifications above by contributing PRs, doing code reviews, and other such tasks under their guidance.
 After several months of working together, maintainers will decide whether to grant maintainer status.
 
-[coc]: https://github.com/kube-rs/kube-rs/blob/master/code-of-conduct.md
-[contrib]: https://github.com/kube-rs/kube-rs/blob/master/CONTRIBUTING.md
+[coc]: https://github.com/kube-rs/kube/blob/maain/code-of-conduct.md
+[contrib]: https://github.com/kube-rs/kube/blob/main/CONTRIBUTING.md

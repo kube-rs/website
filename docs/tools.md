@@ -7,7 +7,7 @@ All repositories under kube-rs are buildable using FLOSS tools, and they are lis
 Dependencies a user needs to use kube-rs.
 
 - [Rust](https://www.rust-lang.org/)
-- various crates satisfying our [license allowlist](https://github.com/kube-rs/kube-rs/blob/master/deny.toml)
+- various crates satisfying our [license allowlist](https://github.com/kube-rs/kube/blob/master/deny.toml)
 
 ## Development Dependencies
 

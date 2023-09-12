@@ -7,7 +7,7 @@
 
 Our support level is determined by our continuous integration.
 
-[Github Actions](https://github.com/kube-rs/kube-rs/actions/workflows/ci.yml) continually builds and tests `kube` against the [LTS supported environments](https://github.com/actions/virtual-environments#available-environments) for **Ubuntu**, and **macOS**, and **Windows**:
+[Github Actions](https://github.com/kube-rs/kube/actions/workflows/ci.yml) continually builds and tests `kube` against the [LTS supported environments](https://github.com/actions/virtual-environments#available-environments) for **Ubuntu**, and **macOS**, and **Windows**:
 
 | Support                        | Source         | Guarantee        | LTS Cycle  |
 | ------------------------------ | -------------- | ---------------- | ---------- |
@@ -31,7 +31,7 @@ then also print table of tested Kubernetes distros such as k3s, EKS, GKE, AKS --
 Public interfaces from `kube` is allowed to change between **minor** versions, provided github release & [[changelog]] provides adequate guidance on the change, and the amount of user facing changes is minimized and trivialised. In particular:
 
 - PRs that perform breaking changes **must** have the `changelog-change` label
-- changes needed to user code **should** have a [diff code comment](https://github.com/kube-rs/kube-rs/releases/tag/0.73.0) on the change
+- changes needed to user code **should** have a [diff code comment](https://github.com/kube-rs/kube/releases/tag/0.73.0) on the change
 - changes as a result of interface changes **should** be explained
 - changes that affect controller-rs or version-rs, **should** link to a fixing commit
 - renamed functions/changed arguments/changing imports, **should** show what to search/replace in the PR
@@ -114,7 +114,7 @@ While our codebase is heavily stabilising, and we officially satisfy the [upstre
 
 Firstly, there are a handful of major features we would like to have in place first as they could influence some of our main interfaces:
 
-1. [protobuf serialization layer](https://github.com/kube-rs/kube-rs/issues/725) is WIP
+1. [protobuf serialization layer](https://github.com/kube-rs/kube/issues/725) is WIP
    a). This is likely to force new features (possibly making `k8s-openapi` opt-in)
    b). This might require core traits to be moved out of `kube-core`
 2. [Client Api Methods](https://github.com/kube-rs/kube/issues/1032) is WIP
@@ -131,14 +131,14 @@ Thirdly, some external concerns:
 - we depend on pre-1.0 libraries and upgrading these under semver would technically force major bumps
 - the public async iterator interface is [still being stabilised in rust](https://github.com/rust-lang/rust/issues/79024)
 
-Because of these conditions we do not have a planned release date for `1.0.0`, but it is [being discussed separately](https://github.com/kube-rs/kube-rs/issues/923).
+Because of these conditions we do not have a planned release date for `1.0.0`, but it is [being discussed separately](https://github.com/kube-rs/kube/issues/923).
 
 
 ## Summary
 As a brief summary to these policies and constraints, our approach to stability is to:
 
-- **track** our breaking changes with [changelog-change labeled PRs](https://github.com/kube-rs/kube-rs/pulls?q=is%3Apr+label%3Achangelog-change+is%3Aclosed)
-- **inform** on necessary changes in [releases](https://github.com/kube-rs/kube-rs/releases) and the [[changelog]]
+- **track** our breaking changes with [changelog-change labeled PRs](https://github.com/kube-rs/kube/pulls?q=is%3Apr+label%3Achangelog-change+is%3Aclosed)
+- **inform** on necessary changes in [releases](https://github.com/kube-rs/kube/releases) and the [[changelog]]
 - **carefully change** according to our [guidelines on interface changes](#interface-changes)
 - **experiment** with new functionality under [unstable feature flags](#unstable-features)
 - **deprecate** according to our [deprecation strategy](#deprecation-strategy)

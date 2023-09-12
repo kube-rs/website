@@ -18,7 +18,7 @@ Notice the first line of these files contain a line like the following:
 
 ```sh
 <!--GENERATED FROM
-https://github.com/kube-rs/kube-rs/blob/master/CONTRIBUTING.md
+https://github.com/kube-rs/kube/blob/master/CONTRIBUTING.md
 CHANGES MUST BE MADE THERE -->
 ```
 

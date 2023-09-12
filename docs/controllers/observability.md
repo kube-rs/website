@@ -106,7 +106,7 @@ Note that the `reconcile` span should be **the root span** in the context of a c
 
 !!! warning "Higher levels spans"
 
-    Do not `#[instrument]` any function that creates a [Controller] as this would create an unintentionally wide ([application lifecycle wide](https://github.com/kube-rs/kube-rs/pull/741#issuecomment-991163664)) span being a parent to all `reconcile` spans. Such a span will be **problematic** to manage.
+    Do not `#[instrument]` any function that creates a [Controller] as this would create an unintentionally wide ([application lifecycle wide](https://github.com/kube-rs/kube/pull/741#issuecomment-991163664)) span being a parent to all `reconcile` spans. Such a span will be **problematic** to manage.
 
 ### Linking Logs and Traces
 
