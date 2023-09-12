@@ -1,6 +1,6 @@
 # Release Process
 
-The release process for all the crates in kube is briefly outlined in [release.toml](https://github.com/kube-rs/kube/blob/master/release.toml).
+The release process for all the crates in kube is briefly outlined in [release.toml](https://github.com/kube-rs/kube/blob/main/release.toml).
 
 ## Versioning
 
@@ -23,7 +23,7 @@ The process is automated where possible, and the non-writing bits usually only t
 
 ### Preliminary Steps
 
-Close the [current ongoing milestone](https://github.com/kube-rs/kube/milestones), and ensure the [prs merged since the last version](https://github.com/kube-rs/kube/commits/master) are included in the milestone.
+Close the [current ongoing milestone](https://github.com/kube-rs/kube/milestones), and ensure the [prs merged since the last version](https://github.com/kube-rs/kube/commits/main) are included in the milestone.
 
 Ensure the PRs in the milestone all have exactly one `changelog-*` label to ensure the release notes are generated correctly (we follow [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) with the setup as outlined in [#754](https://github.com/kube-rs/kube/issues/754)).
 

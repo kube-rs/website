@@ -17,7 +17,7 @@ Controller::new(cmgs, watcher::Config::default())
     .owns(cms, watcher::Config::default())
 ```
 
-This [configmapgen example](https://github.com/kube-rs/kube/blob/master/examples/configmapgen_controller.rs) uses one custom resource `ConfigMapGenerator` whose controller is in charge of the lifecycle of the child `ConfigMap`.
+This [configmapgen example](https://github.com/kube-rs/kube/blob/main/examples/configmapgen_controller.rs) uses one custom resource `ConfigMapGenerator` whose controller is in charge of the lifecycle of the child `ConfigMap`.
 
 - What happens if we delete a `ConfigMapGenerator` instance here? Well, there will be a `ConfigMap` with [ownerReferences] matching the `ConfigMapGenerator` so Kubernetes will automatically cleanup the associated `ConfigMap`.
 - What happens if we modify the **managed** `ConfigMap`? The Controller sees a change and associates the change with the owning `ConfigMapGenerator`, ultimately triggering a reconciliation of the root `ConfigMapGenerator`.
