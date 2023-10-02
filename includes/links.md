@@ -58,7 +58,8 @@
 [CustomResourceDefinition]: https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html
 [rust]: https://www.rust-lang.org/
 [ownerReferences]: https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/#owner-references-in-object-specifications
-[finalizers]: https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/#ownership-and-finalizers
+[finalizers]: https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/
+[finalizer]: https://docs.rs/kube/latest/kube/runtime/finalizer/fn.finalizer.html
 [cargo-edit]: https://github.com/killercup/cargo-edit
 [cargo-tree]: https://doc.rust-lang.org/cargo/commands/cargo-tree.html
 [rust]: https://www.rust-lang.org/
