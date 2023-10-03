@@ -40,7 +40,7 @@ Controller::new(cmgs, watcher::Config::default())
 ```
 
 ## Finalizers
-A finalizer is a marker on a root object that indicates that a controller will perform cleanup if it is ever deleted. Kubernetes will block the object from being deleted until the controller completes this action, and subsequently takes itself of the finalizer list.
+A finalizer is a marker on a root object that indicates that a controller will perform cleanup if the object is ever deleted. Kubernetes will block the object from being deleted __until__ the controller completes the cleanup. The controller is supposed to remove this marker in the finalizer list when cleanup is done, so that Kubernetes is free to proceed with deletion.
 
 This is explained in more detail in [Kubernetes.io :: Finalizers](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/).
 
@@ -53,10 +53,9 @@ The main way to use finalizers with controllers is to define a unique finalizer 
 - have a deletion happened, and we need to cleanup? we are in the `Event::Cleanup` arm
 - no deletion has been recorded? we are in the normal `Event::Apply` arm
 
+!!! warning "Finalizer can prevent objects from being deleted"
 
-!!! warning "Finalizer prevent objects from being deleted"
-
-    If your controller is down, or for some other reason is not able to complete the cleanup (or remove the finalizer from the object), the object will not be deleted.
+    If your controller is down, deletes will be delayed until the controller is back.
 
 ### Finalizer Example
 
