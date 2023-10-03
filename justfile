@@ -1,3 +1,5 @@
+export PIP_REQUIRE_VIRTUALENV := "true"
+
 default:
   @just --list --unsorted --color=always | rg -v "    default"
 open := if os() == "macos" { "open" } else { "xdg-open" }
@@ -27,3 +29,14 @@ dynprops:
 linkcheck:
   lychee --github-token=$GITHUB_TOKEN https://kube.rs
   lychee --github-token=$GITHUB_TOKEN docs/controllers/*.md
+
+# helper to try-upgrade everything in the pip environment
+upgrade:
+  #!/usr/bin/env bash
+  rm -rf ./venv
+  python3 -m venv venv
+  source venv/bin/activate
+  pip3 install mkdocs-material=="9.*"
+  pip3 install mkdocs-roamlinks-plugin
+  pip3 install mkdocs-exclude
+  pip3 freeze > requirements.txt
