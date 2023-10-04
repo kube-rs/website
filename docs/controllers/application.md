@@ -1,27 +1,26 @@
 # The Application
 
-The **application** starts the [Controller] and links it up with the [[reconciler]] for your [[object]].
+The **application** is a Rust application manages a [Controller]. It needs a [[reconciler]] that will be called with entries of your chosen [[object]], and a few dependencies to deal with async streams, error handling, and upstream Kubernetes structs.
 
-## Goal
-
-This document shows the basics of creating a small controller with a `Pod` as the main [[object]].
+This document shows how to create a __minimal__ application, with the builtin `Pod` type as the main object, and a no-op reconciler.
 
 ## Requirements
 
-We will assume that you have latest **stable** [rust] installed::
+You need a [newish version](/rust-version) of stable [Rust], and access to a Kubernetes cluster.
 
 ## Project Setup
+We create a new rust project:
 
 ```sh
 cargo new --bin ctrl
 cd ctrl
 ```
 
-add then install `kube`, `k8s-openapi`, `thiserror`, `futures`, and `tokio`:
+add then install our dependencies:
 
 ```sh
 cargo add kube --features=runtime,client,derive
-cargo add k8s-openapi --features=latest --default-features=false
+cargo add k8s-openapi --features=latest
 cargo add thiserror
 cargo add tokio --features=macros,rt-multi-thread
 cargo add futures
@@ -49,11 +48,11 @@ This will populate some [`[dependencies]`](https://doc.rust-lang.org/cargo/refer
 - [futures] :: async rust abstractions
 - [tokio] :: supported runtime for async rust features
 
+Additional dependencies are useful, but we will go through these later as we add more features.
+
 !!! warning "Alternate async runtimes"
 
-    We depend on `tokio` for its `time`, `signal` and `sync` features, and while it is in theory possible to swap out a runtime, you would be sacrificing the most actively supported and most advanced runtime available. Avoid going down an alternate path unless you have a good reason.
-
-Additional dependencies are useful, but we will go through these later as we add more features.
+    `kube` depends on [tokio] for its `time`, `signal` and `sync` features. Trying to swap to an alternate runtime is neither recommended, nor practical.
 
 ### Setting up errors
 
@@ -122,7 +121,7 @@ To make this reconciler useful, we can reuse the one created in the [[reconciler
 
 ## Checkpoint
 
-If you copy-pasted everything above, and fixed imports, you should have a `src/main.rs` in your `ctrl` directory with this:
+If you copy-pasted everything above, and fixed imports, you should have a `main.rs` with this:
 
 ```rust
 use std::{sync::Arc, time::Duration};
@@ -162,9 +161,9 @@ fn error_policy(_object: Arc<Pod>, _err: &Error, _ctx: Arc<()>) -> Action {
 
 ## Developing
 
-At this point, you are ready start the app and see if it works. I.e. you need Kubernetes.
+At this point, you are ready `cargo run` the app and see if it works against a Kubernetes cluster.
 
-### Prerequisites
+### Cluster Setup
 
 > If you already have a cluster, skip this part.
 
@@ -180,7 +179,7 @@ If you can run `kubectl get nodes` after this, you are good to go. See [k3d/quic
 
 ### Local Development
 
-In your `ctrl` directory, you can now `cargo run` and check that you can successfully connect to your cluster.
+You should now be able to `cargo run` and check that you can successfully connect to your cluster.
 
 You should see an output like the following:
 
@@ -195,40 +194,15 @@ reconcile request: local-path-provisioner-5ff76fc89d-4x86w
 reconcile request: svclb-traefik-q8zkw
 ```
 
-I.e. you should get a reconcile request for every pod in your cluster (`kubectl get pods --all`).
+Implying you get reconcile requests for every pod in your cluster (cross reference with `kubectl get pods --all`).
 
 If you now edit a pod (via `kubectl edit pod traefik-xxx` and make a change), or create a new pod, you should immediately get a reconcile request.
 
 **Congratulations**. You have __technically__ built a kube controller.
 
-!!! warning "Continuation"
+!!! note "Where to Go From Here"
 
-    You have created the [[application]] using trivial reconcilers and objects, but you are not controlling anything yet. See the [[object]] and [[reconciler]] chapters for the business logic.
-
-## Deploying
-
-### Containerising
-
-WIP. Showcase both multi-stage rust build and musl builds into distroless.
-
-### Containerised Development
-
-WIP. Showcase a basic `tilt` setup with `k3d`.
-
-### Continuous Integration
-
-See [[testing]] and [[security]].
-
-## Advanced Topics
-### Observability
-
-See [[observability]] for common practices for metrics, traces and logs.
-
-### Optimization and Stream Tuning
-For techniques involving optimizing resource use, and fine tunining reconciler behaviour see:
-
-- [[optimization]]
-- [[streams]]
+    You have created the [[application]] using a trivial reconciler and a builtin object. See the [[object]] and [[reconciler]] chapters to change it into something more useful. The documents under __Concepts__ on the left navigation menu shows the core concepts that are instrumental to help create the right abstraction.
 
 ### Useful Dependencies
 
@@ -246,6 +220,31 @@ The following dependencies are **already used** transitively **within kube** tha
 - [thiserror]
 
 These in turn also pull in their own dependencies (and tls features, depending on your tls stack), consult [cargo-tree] for help minimizing your dependency tree.
+
+
+## Deploying
+
+### Containerising
+
+WIP. Showcase both multi-stage rust build and musl builds into distroless.
+
+### Containerised Development
+
+WIP. Showcase a basic `tilt` setup with `k3d`.
+
+### Continuous Integration
+
+See [[testing]] and [[security]].
+
+## Advanced Topics
+
+See [[observability]] for common practices for metrics, traces and logs.
+
+### Optimization and Stream Tuning
+For techniques involving optimizing resource use, and fine tunining reconciler behaviour see:
+
+- [[optimization]]
+- [[streams]]
 
 
 --8<-- "includes/abbreviations.md"
