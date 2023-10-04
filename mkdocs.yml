@@ -7,7 +7,7 @@ repo_url: https://github.com/kube-rs/kube
 repo_name: kube
 # NB: edit uri won't work well with sync system if we don't have canonical docs in the same repo as the site
 #edit_uri: edit/main/docs
-edit_uri: ''
+edit_uri: 'https://github.com/kube-rs/website/edit/main/docs'
 theme:
   icon:
     repo: fontawesome/brands/github
@@ -39,6 +39,8 @@ theme:
     - navigation.sections
     - navigation.instant
     - navigation.tracking
+    - navigation.prune
+    - content.action.edit
 
 # NB: Maintaining the nav list is not necessary, but is needed to reorder.
 # Generated from "fd .md ." in docs/ folder.
@@ -60,19 +62,21 @@ nav:
   - upgrading.md
 
 - Controllers:
-  - controllers/intro.md
-  - controllers/object.md
-  - controllers/reconciler.md
-  - controllers/application.md
-  - controllers/observability.md
-  - controllers/relations.md
-  - controllers/gc.md
-  - controllers/schemas.md
-  - controllers/optimization.md
-  - controllers/streams.md
-  - controllers/testing.md
-  - controllers/security.md
-  - controllers/internals.md
+    Concepts:
+    - controllers/intro.md
+    - controllers/object.md
+    - controllers/reconciler.md
+    - controllers/application.md
+    - controllers/relations.md
+    - controllers/gc.md
+    - controllers/schemas.md
+    Advanced:
+    - controllers/testing.md
+    - controllers/observability.md
+    - controllers/optimization.md
+    - controllers/security.md
+    - controllers/streams.md
+    - controllers/internals.md
 
   #- comunity.md
   #- proposal-process.md

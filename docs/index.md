@@ -2,7 +2,12 @@
 hide:
   - navigation
   - toc
+  #- path (insiders)
 ---
+
+<script>
+document.getElementsByTagName('h1')[0].remove(); // remove big Home - (hide: path is insiders)
+</script>
 
 <figure markdown>
 ![kube-rs logo](https://user-images.githubusercontent.com/639336/155115602-cb5f4c64-24a3-4921-b5e9-0e4d5a656c6b.svg#only-dark){ width="600px" } ![kube-rs logo](https://user-images.githubusercontent.com/639336/155115130-758a8ba9-e209-42de-bf6d-cde7be3ed86f.svg#only-light){ width="600px" }
@@ -14,6 +19,28 @@ These crates build upon Kubernetes [apimachinery](https://github.com/kubernetes/
 
 <!-- TODO: use an overrides page for home https://github.com/squidfunk/mkdocs-material/blob/9655c3a92471f261533d48b8611a8d24dbfebb13/src/overrides/home.html via https://github.com/squidfunk/mkdocs-material/blob/master/docs/index.md -->
 
-[:fontawesome-solid-book: Getting Started](getting-started){ .md-button align=left } [:fontawesome-brands-discord: Community](https://discord.gg/tokio){ .md-button align=left } [:material-language-rust: Crates](https://crates.io/crates/kube){ .md-button align=left } [:material-github: Github](https://github.com/kube-rs){ .md-button align=left }
+
+[:fontawesome-solid-book: Getting Started](getting-started){ .md-button align=left } [:fontawesome-brands-github-alt: Q&A](https://github.com/kube-rs/kube/discussions){ .md-button align=left } [:material-language-rust: Crates](https://crates.io/crates/kube){ .md-button align=left } [:material-github: Github](https://github.com/kube-rs){ .md-button align=left }  [:fontawesome-brands-discord: Community](https://discord.gg/tokio){ .md-button align=left }
+
+<style>
+  p:has(a.md-button) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  p > a.md-button {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin: 3px;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  p > a.md-button:hover {
+    background: #114;
+    color: #ddd;
+    text-decoration: none;
+  }
+</style>
 
 <!-- adopters here? -->

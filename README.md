@@ -1,18 +1,18 @@
 # kube-rs website
 
 [![release](https://github.com/kube-rs/website/actions/workflows/release.yml/badge.svg)](https://github.com/kube-rs/website/actions/workflows/release.yml)
-
-Markdown resources and scripts for generating the [kube.rs](https://kube.rs) website.
+Markdown documents and scripts for generating the [kube.rs](https://kube.rs) website.
 
 Hosted on [github pages](https://kube-rs.github.io/website).
 
 ## Setup
 
-This repo uses [foam](https://foambubble.github.io/foam/) + [`mkdocs`](https://www.mkdocs.org/) with [mkdocs-material](https://squidfunk.github.io/mkdocs-material/).
+This repo uses [`mkdocs`](https://www.mkdocs.org/) with [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) and wiki style markdown cross-links.
 
-To browse locally in `code`; [clone + install recommended extensions](https://foambubble.github.io/foam/#getting-started) to browse with [markdown links](https://marketplace.visualstudio.com/items?itemName=tchayen.markdown-links).
-
+## Editing
 To preview the webpage install requirements in a virtualenv and run `mkdocs serve`.
+
+Wiki links work locally given something like the [marksman markdown language server](https://github.com/artempyanykh/marksman), or through [foam](https://foambubble.github.io/foam/) for vs code with the recommended extensions in this repo.
 
 ## Organisation
 
