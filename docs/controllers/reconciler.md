@@ -64,20 +64,18 @@ Typically, this is accomplished with a call to [Controller::owns] on any owned [
 
 ## Reasons for reconciliation
 
-Notice that the **reason** for why the reconciliation started is **not included** in the signature of `reconcile`; **you only get the object**. The reason for this omission is **fault-tolerance**:
+Notice that the [ReconcileReason] is **not included** in the signature of `reconcile`; **you only get the object**. The reason for this omission is to encourage **fault-tolerance**:
 
 !!! note "Fault-tolerance against missed messages"
 
-    If your controller is down / crashed earlier, you **might have missed messages**. No matter how well you guard against downtime (e.g with multiple replicas, rolling upgrades, pdbs, leases), the Kubernetes watch api is **not sufficiently safe** to guarantee unmissed messages. <!-- TODO; link to desync explanations (watch desyncs can happen and you never know you will have skipped an update) -->
+    If your controller has downtime you can miss messages. Additionally, the Kubernetes watch api does not guarantee delivery. You will likely miss some messages, and when this happens, Kubernetes will coalesce the ones you have not received into one single message. <!-- TODO; link to desync explanations (watch desyncs can happen and you never know you will have skipped an update) -->
 
-It is unsafe to give you a reason for why you got a `reconcile` call, because it is sometimes impossible to know.
+As a result, the reason is just a __best-effort property__ (that we only include for telemetry). You should not attempt to write logic against the reason in your reconciler.
 
-We therefore **omit** this information, so you that you write a more **defensive reconciler**.
-
-You should:
+Instead, you must write a **defensive reconciler** and handle missed messages, and paritial runs:
 
 - assume nothing about why reconciliation started
-- assume the reconciler could have failed at any point during the function
+- assume the reconciler could have failed at any question mark
 - check every property independently (you always start at the beginning)
 
 The type of **defensive** function writing described above is intended to grant a formal property called **idempotency**.
@@ -95,7 +93,7 @@ Let us create a reconciler for a custom `PodManager` resource that will:
 - create an associated `Pod` with [ownerReferences]
 - note its `creation` time on the status object of `PodManager`
 
-Both of these operations can be done in isolation in an idempotent manner (we will show below), but it is possible to compose the two operations in an erroneous way.
+Both of these operations are idempotent by themselves, but you must be careful with how you combine them.
 
 ### Combining Idempotent Operations
 
@@ -108,9 +106,7 @@ if pod_missing {
 }
 ```
 
-Is this a good optimization? Can we avoid calling set timestamps over and over again?
-
-Unfortunately, this reasoning is **flawed**; if the timestamp creation fails after the pod got created the first time, the second action will **never** get done!
+Now, what happens if the timestamp creation fails after the pod got created? The second action will **never** get done!
 
 !!! warning "Reconciler interruptions"
 
@@ -152,8 +148,6 @@ fn create_owned_pod(source: &PodManager) -> Pod {
     }
 }
 ```
-
-
 
 one approach of achieving idempotency is to check every property carefully::
 
@@ -241,13 +235,11 @@ async fn reconcile(object: Arc<MyObject>, ctx: Arc<Data>) -> Result<Action, Erro
 
 ## Cleanup
 
-Kubernetes provides **two methods of cleanup** of resources; the automatic [ownerReferences], and the manual (but safe) [finalizers].
-
-WIP. Separate document describing these.
+If you have dependencies, you should configure some form of [[gc]].
 
 ## Instrumentation
 
-The root `reconcile` function **should** be instrumented with logs, traces and metrics, and can also post diagnostic events to the Kubernetes api.
+The root `reconcile` function **should** be instrumented with logs, traces and metrics.
 
 See the [[observability]] document for how to add good instrumentation to your `reconcile` fn.
 

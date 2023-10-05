@@ -6,6 +6,7 @@
 [Controller::for_stream]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.for_stream
 [Controller::reconcile_all_on]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.reconcile_all_on
 [Controller::run]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.run
+[ReconcileReason]: https://docs.rs/kube/latest/kube/runtime/controller/enum.ReconcileReason.html
 [ObjectRef]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.ObjectRef.html
 [applier]: https://docs.rs/kube/latest/kube/runtime/fn.applier.html
 [Api]: https://docs.rs/kube/latest/kube/struct.Api.html
