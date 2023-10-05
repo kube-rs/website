@@ -8,7 +8,7 @@ You can upgrade `kube` and it's sibling crate `k8s-openapi` using normal Rust me
 
 We recommend you bump both `kube` and `k8s-openapi` crates at the same time to avoid build issues.
 
-Set your [[kubernetes-version]] as a feature on `k8s-openapi` as you see fit, or simply use its `latest` feature.
+Consider bumping the [[kubernetes-version]] feature pin on `k8s-openapi` unless you are using its `latest` feature.
 
 ## Command Line
 
