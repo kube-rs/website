@@ -23,10 +23,66 @@ When using `JsonSchema`, your generated [CustomResourceDefinition] (via [CustomR
 
 ### Deriving JsonSchema
 
-When using `#[kube(schema = "derived")]` (default), `#[derive(JsonSchema)]` will be propagated to the generated Kubernetes struct by [[kube-derive]].
+The default setting uses `#[derive(JsonSchema)]`, and [[kube-derive]] will propagate this derive to the generated Kubernetes struct.
 
-This requires implementing `JsonSchema` on your spec struct. This can be done via a derive attr: `#[derive(CustomResource, JsonSchema)]` on the spec struct.
+This requires `#[derive(CustomResource, JsonSchema)]` on the spec struct:
 
+```rust
+#[derive(CustomResource, Deserialize, Serialize, Clone, Debug, JsonSchema)]
+#[kube(kind = "Document", group = "kube.rs", version = "v1", namespaced)]
+pub struct DocumentSpec {
+    pub title: String,
+    pub hide: bool,
+    pub content: String,
+}
+```
+
+This example (simplified variant from [controller-rs](https://github.com/kube-rs/controller-rs/blob/main/src/controller.rs)) generates a [CustomResourceDefinition] whose yaml representation (including schema) can be serialized using `serde_yaml::to_string(&Document::crd())?` and will output:
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: documents.kube.rs
+spec:
+  group: kube.rs
+  names:
+    categories: []
+    kind: Document
+    plural: documents
+    shortNames: []
+    singular: document
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns: []
+    name: v1
+    schema:
+      openAPIV3Schema:
+        description: Auto-generated derived type for DocumentSpec via `CustomResource`
+        properties:
+          spec:
+            properties:
+              content:
+                type: string
+              hide:
+                type: boolean
+              title:
+                type: string
+            required:
+            - content
+            - hide
+            - title
+            type: object
+        required:
+        - spec
+        title: Document
+        type: object
+    served: true
+    storage: true
+    subresources: {}
+```
+
+See [[object#installation]] for a common pattern for generating this.
 
 !!! note "Schema requirements are transitive"
 
