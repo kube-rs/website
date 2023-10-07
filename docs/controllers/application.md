@@ -222,31 +222,6 @@ The following dependencies are **already used** transitively **within kube** tha
 These in turn also pull in their own dependencies (and tls features, depending on your tls stack), consult [cargo-tree] for help minimizing your dependency tree.
 
 
-## Deploying
-
-### Containerising
-
-WIP. Showcase both multi-stage rust build and musl builds into distroless.
-
-### Containerised Development
-
-WIP. Showcase a basic `tilt` setup with `k3d`.
-
-### Continuous Integration
-
-See [[testing]] and [[security]].
-
-## Advanced Topics
-
-See [[observability]] for common practices for metrics, traces and logs.
-
-### Optimization and Stream Tuning
-For techniques involving optimizing resource use, and fine tunining reconciler behaviour see:
-
-- [[optimization]]
-- [[streams]]
-
-
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
 

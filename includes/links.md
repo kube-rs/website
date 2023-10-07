@@ -5,6 +5,7 @@
 [Controller::watches_stream]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.watches_stream
 [Controller::for_stream]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.for_stream
 [Controller::reconcile_all_on]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.reconcile_all_on
+[Controller::reconcile_on]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.reconcile_on
 [Controller::run]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.run
 [ReconcileReason]: https://docs.rs/kube/latest/kube/runtime/controller/enum.ReconcileReason.html
 [ObjectRef]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.ObjectRef.html
@@ -65,6 +66,7 @@
 [cargo-tree]: https://doc.rust-lang.org/cargo/commands/cargo-tree.html
 [rust]: https://www.rust-lang.org/
 [tokio]: https://crates.io/crates/tokio
+[tokio_stream]: https://crates.io/crates/tokio-stream
 [serde]: https://crates.io/crates/serde
 [serde_json]: https://crates.io/crates/serde_json
 [serde_yaml]: https://crates.io/crates/serde_yaml

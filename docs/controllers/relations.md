@@ -7,7 +7,7 @@ These relations are generally set up with [Controller::owns], but we will go thr
 
 ## Owned Relation
 
-The [Controller::owns] relation is the most straight-forward and most ubiquitous one. One object controls the lifecycle of a child object, and cleanup happens automatically via [ownerReferences].
+The [Controller::owns] relation is the most straight-forward and most ubiquitous one. One object controls the lifecycle of a child object, and cleanup happens automatically via [[gc#Owner-References]].
 
 ```rust
 let cmgs = Api::<ConfigMapGenerator>::all(client.clone());
@@ -23,6 +23,10 @@ This [configmapgen example](https://github.com/kube-rs/kube/blob/main/examples/c
 - What happens if we modify the **managed** `ConfigMap`? The Controller sees a change and associates the change with the owning `ConfigMapGenerator`, ultimately triggering a reconciliation of the root `ConfigMapGenerator`.
 
 This relation relies on [ownerReferences] being created on the managed/owned objects for Kubernetes automatic cleanup, and the [Controller] relies on it for association with its owner.
+
+!!! note "Streams Variant"
+
+    To configure or share the [watcher] for the owned resource, see [[streams#owned-stream]].
 
 ## Watched Relations
 
@@ -47,39 +51,50 @@ In this case we are extracing an object reference from the spec of our object. R
 
 As a theoretical example; every [HPA](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) object bundles a scale ref to the workload, so you could use this to build a Controller for `Deployment` using HPA as a watched object.
 
+!!! note "Streams Variant"
+
+    To configure or share the [watcher] for watched resource, see [[streams#watched-stream]].
+
 ## External Relations
 
 It is possible to be dependent on some external api that you have semantically linked to your cluster, either as a managed resource or a source of information.
 
 - If you want to populate an external API from a custom resource, you will want to use [finalizers] to ensure the api gets cleaned up on CRD deletion.
-- If you want changes to the external API to trigger reconciliations, then you need to write some custom logic.
+- If you want changes to the external API to trigger reconciliations, you will need to inject reconciliation requests as raw `ObjectRef`s.
 
-The current best way to do this is to inject reconciliation requests to the [Controller] using [Controller::reconcile_all_on].
-
-<!-- TODO: maybe open an issue for Controller::external / suggest a way to call reconcile manually? -->
-
-## Subsets
-
-With owned and watched relations, it is not always necessary to watch the full space. Use [watcher::Config] to filter on the categories you want to reduce IO utilization:
+To inject reconciliation requests to the [Controller] see [Controller::reconcile_on] or [Controller::reconcile_all_on]. Here's a contrieved example of the former:
 
 ```rust
-let myobjects = Api::<MyObject>::all(client.clone());
-let pods = Api::<Pod>::all(client.clone())
+let ns = "external-configs".to_string();
+let externals = [ObjectRef::new("managed-cm1").within(&ns)];
+let mut next_object = externals.into_iter().cycle();
 
-Controller::new(myobjects, watcher::Config::default())
-    .owns(pods, watcher::Config::default().labels("managed-by=my-controller"))
+// pretend 3rd party api that gives you periodic data:
+let interval = tokio::time::interval(Duration::from_secs(60));
+let external_stream = IntervalStream::new(interval).map(|_| {
+    Ok(next_object.next().unwrap())
+});
 ```
+
+Here we cycle through a hardcoded list of named objects and sending the `next` ref through the reconciler at 60s interval (using [tokio_stream]'s `IntervalStream`), and the controller accepts this:
+
+```rust
+Controller::new(Api::<ConfigMap>::namespaced(client, &ns), Config::default())
+    .reconcile_on(external_stream)
+```
+
+You would now now get Kubernetes changes + whatever custom stream data you wish to inject.
 
 ## Summary
 
 Depending on what type of child object and its relation with the main [[object]], you will need the following setup and cleanup:
 
-| Child              | Controller relation  | Setup                  |  Cleanup          |
-| ------------------ | -------------------- | ---------------------- | ----------------- |
-| Kubernetes object  | Owned                | [Controller::owns]     | [ownerReferences] |
-| Kubernetes object  | Related              | [Controller::watches]  | n/a               |
-| External API       | Managed              | custom                 | [finalizers]      |
-| External API       | Related              | custom                 | n/a               |
+| Child              | Controller relation  | Setup                       |  Cleanup          |
+| ------------------ | -------------------- | --------------------------- | ----------------- |
+| Kubernetes object  | Owned                | [Controller::owns]          | [ownerReferences] |
+| Kubernetes object  | Related              | [Controller::watches]       | n/a               |
+| External API       | Managed              | [Controller::reconcile_on]  | [finalizers]      |
+| External API       | Related              | [Controller::reconcile_on]  | n/a               |
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
