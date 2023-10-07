@@ -64,7 +64,7 @@ Controller::new(docs, watcher::Config::default())
 
 !!! note "Custom resources require schemas"
 
-    Since **v1** of [CustomResourceDefinition] became the main variant ([`v1beta1` was removed in Kubernetes 1.22](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.22.md#removal-of-several-beta-kubernetes-apis)), a schema is **required**. These schemas are generated using [schemars] by specifying the `JsonSchema` derive. See the schemas section (TODO) for further information on advanced usage.
+    Kubernetes requires openapi schemas inside every [CustomResourceDefinition] ([since Kubernetes 1.22](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.22.md#removal-of-several-beta-kubernetes-apis)). Below we use the standard mechanism of deriving `JsonSchema` using [schemars]. See [[schemas]] for details.
 
 #### Installation
 
@@ -87,13 +87,13 @@ fn main() {
 
 Here, a separate `crdgen` bin entry would install your custom resource using `cargo run --bin crdgen | kubectl -f -`.
 
-!!! warning "Installation outside the controller"
+!!! warning "CRD Installation"
 
-    While it is tempting to install a custom resource within your controller at startup, this is not advisable. The permissions needed to write to the cluster-level `customresourcedefinition` resource is almost always much higher than what your controller needs to run. It is thus advisable to generate the yaml out-of-band, and bundle it with the rest of the controller's installation yaml.
+    Be careful with installing CRDs inside a controller at starup. It is customary to provide a generated yaml file so consumers can install a CRD out of band to better support [gitops](https://fluxcd.io/flux/components/helm/helmreleases/#crds) and [helm](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/). See [[security#crd-access]].
 
 ### Imported Custom Resource
 
-In the case that a `customresourcedefinition` **already exists** in your cluster, but it was **implemented in another language**, then we can **generate structs from the schema** using [kopium].
+In the case that a `customresourcedefinition` **already exists**, but it was **implemented in another language**, then we can **generate structs from the schema** using [kopium].
 
 Suppose you want to write some extra controller or replace the native controller for `PrometheusRule`:
 
@@ -102,7 +102,7 @@ curl -sSL https://raw.githubusercontent.com/prometheus-operator/prometheus-opera
     | kopium -Af - > prometheusrule.rs
 ```
 
-this will read the crd from the cluster, and generate rust-optimized structs for it:
+this will read the crd from a file / cluster, and generate rust-optimized structs for it:
 
 ```rust
 use kube::CustomResource;
@@ -202,17 +202,15 @@ Other ways of doing [discovery] are also available. We are highlighting [recomme
 
 ### Partially-typed Resource
 
-A very special-case setup where we specify a subset of the normal typed information, and allows tighter control over memory characteristics, and deserialization cost of the program, but at the cost of more `struct` code.
+You can __partially implement structs__ for an existing resource. This can be to manually control memory characteristic, deserialization parameters, or api parameters. It is done by using [Object] on an incomplete struct and supplying an existing [ApiResource].
 
-!!! warning "Better methods available for improving memory characteristics"
+This can be a quick way to control memory use, or to shield your app against the full api surface or versions of a quickly moving CRD.
 
-    Because almost all methods on Kubernetes objects such as [PodSpec] are wrapped in `Option`s, as long as unnecessary properties are unset before passing them to a [reflector], similar memory reductions can be achieved. One method is to use [Event::modify] chained onto the watcher stream. See the [pod_reflector](https://github.com/kube-rs/kube/blob/05b48cf61a4b55948274d4cfadd26255e026cec4/examples/pod_reflector.rs#L31-L38) for details.
+!!! note "Memory Optimizations"
 
-    Because of these advances, the partially-typed resource pattern is not recommended.
+    An easier way to control memory use of stores is via [[optimization#Pruning Fields]].
 
-It is similar to [DynamicObject] (above) in that [Object] is another umbrella container for arbitrary Kubernetes resources, and also requires you to discover or hard-code an [ApiResource] for extra type information to be queriable.
-
-Here is an example of handwriting a new implementation of [Pod] by overriding its **spec** and **status** and placing it inside [Object], then **stealing** its type information:
+As an **example**; a handwritten implementation of [Pod] by overriding its **spec** and **status** and placing it inside [Object], then **stealing** its type information from `k8s-openapi`:
 
 ```rust
 use kube::api::{Api, ApiResource, NotUsed, Object};
@@ -236,9 +234,9 @@ let ar = ApiResource::erase::<k8s_openapi::api::core::v1::Pod>(&());
 Controller::new_with(api, watcher::Config::default(), &ar)
 ```
 
-In the end, we end up with some extra lines to define our [Pod], but we also drop every field inside spec + status except `spec.container.image`. If your cluster has thousands of pods and you want to do some kind of common operation on a small subset of fields, then this can give a very quick win in terms of memory use (a Controller will usually maintain a `Store` of all owned objects).
+We have to recursively re-implement every part of [Pod] that we care about, but we automatically drop every field except tthe ones we defined. In this case we do not gain version independence (due to re-using pinned type-information), but you could gain this by using api [discovery].
 
-<!-- TODO: mention that it's possible to drop managedFields from this cache as well? it's a lot harder though.. -->
+This is functionally similar way to deriving `CustomResource` on an incomplete struct, but using (possibly) dynamic api parameters.
 
 ### Dynamic new_with constructors
 
@@ -254,11 +252,9 @@ All the fully typed methods all have a **consistent usage pattern** once the typ
 | ------------------------- | ------------------------------------ |---------------------------- |
 | :material-check-all: full | [k8s-openapi]                        | `use k8s-openapi::X`        |
 | :material-check-all: full | kube::[CustomResource]               | `#[derive(CustomResource)]` |
-| :material-check-all: full | [kopium]                             | `kopium > gen.rs`           |
-| :material-check: partial  | kube::core::[Object]                 | partial copy-paste          |
-| :material-close: none     | kube::core::[DynamicObject]          | write nothing               |
-
-<!-- TODO: mention somewhere that you can do partial typing with CustomResource deriving as well? -->
+| :material-check-all: full | [kopium]                             | `kopium crd > gen.rs`       |
+| :material-check: partial  | kube::core::[Object]                 | partial handwrite           |
+| :material-close: none     | kube::core::[DynamicObject]          | fully dynamic               |
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"

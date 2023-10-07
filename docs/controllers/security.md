@@ -56,13 +56,14 @@ If you do need CRD write access, consider **scoping** this to _non-delete_ acces
   - apiGroups:
     - apiextensions.k8s.io
     resourceNames:
-    - mycrd.kube.rs
+    - mycrd.kube.rs # <-- key line
     resources:
     - customresourcedefinitions
     verbs:
     - create
     - get
     - list
+    - watch
     - patch
 ```
 
