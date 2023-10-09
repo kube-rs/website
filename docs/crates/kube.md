@@ -4,6 +4,17 @@
 
 This crate has the most extensive documentation on [docs.rs/kube](https://docs.rs/kube/latest/kube/).
 
+```mermaid
+graph TD
+    kube-client --> kube-core
+    kube-derive --> kube-core
+    kube-runtime --> kube-client
+    kube --> kube-client
+    kube --> kube-core
+    kube --> kube-runtime
+    kube --> kube-derive
+```
+
 ## Re-exports
 
 - `kube` re-exports [[kube-runtime]] under `kube::runtime`
