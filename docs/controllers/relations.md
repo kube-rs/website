@@ -85,10 +85,9 @@ In this case we have some opaque `fn watch_external_objects()` which here return
     If you do not have a streaming interface (like if you are doing periodic HTTP GETs), you can wrap your data in a `Stream` via either [async_stream](https://docs.rs/async-stream/latest/async_stream/) or by using channels (say [tokio::sync::mpsc](https://docs.rs/tokio/latest/tokio/sync/mpsc/index.html), using the [Receiver](https://docs.rs/tokio/latest/tokio/sync/mpsc/struct.Receiver.html) side as a stream).
 
 ### External Writes
-If you want to populate an external API from a cluster resource, then you take advantage of a reconciler to update a third party api with the necessary client libraries for that API.
+If you want to populate an external API from a cluster resource, the you must update the external api from your [[reconciler]] (using the necessary client libraries for that API).
 
-To avoid build-up of generated objects on the external side, you will want to use [[gc#finalizers]] to ensure the external resource gets cleaned up on `kubectl delete`.
-
+To avoid build-up of generated objects on the external side, you will want to use [[gc#finalizers]], to ensure the external resource gets _safely_ cleaned up on `kubectl delete`.
 
 ## Summary
 
