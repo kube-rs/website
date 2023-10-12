@@ -57,33 +57,37 @@ As a theoretical example; every [HPA](https://kubernetes.io/docs/tasks/run-appli
 
 ## External Relations
 
-It is possible to be dependent on some external api that you have semantically linked to your cluster, either as a managed resource or a source of information.
+Free-form relations to external apis often serve to lift an external resource into your cluster via either a `ConfigMap` or a CRD (see the [tradeoff table](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#should-i-use-a-configmap-or-a-custom-resource)). This relation can go in both directions.
 
-- If you want to populate an external API from a custom resource, you will want to use [finalizers] to ensure the api gets cleaned up on CRD deletion.
-- If you want changes to the external API to trigger reconciliations, you will need to inject reconciliation requests as raw `ObjectRef`s.
+### External Watches
+If you want changes on an external API to cause changes in the cluster, you will need to a way to stream changes from the external api.
 
-To inject reconciliation requests to the [Controller] see [Controller::reconcile_on] or [Controller::reconcile_all_on]. Here's a contrieved example of the former:
+The _change events_ must be be provided as a `Stream<Item = ObjectRef>` and passed to [Controller::reconcile_on]. As an example:
 
 ```rust
-let ns = "external-configs".to_string();
-let externals = [ObjectRef::new("managed-cm1").within(&ns)];
-let mut next_object = externals.into_iter().cycle();
-
-// pretend 3rd party api that gives you periodic data:
-let interval = tokio::time::interval(Duration::from_secs(60));
-let external_stream = IntervalStream::new(interval).map(|_| {
-    Ok(next_object.next().unwrap())
+struct ExternalObject {
+    name: String,
+}
+let external_stream = watch_external_objects().map(|ext| {
+    ObjectRef::new(&ext.name).within(&ns)
 });
-```
 
-Here we cycle through a hardcoded list of named objects and sending the `next` ref through the reconciler at 60s interval (using [tokio_stream]'s `IntervalStream`), and the controller accepts this:
-
-```rust
-Controller::new(Api::<ConfigMap>::namespaced(client, &ns), Config::default())
+Controller::new(Api::<MyCr>::namespaced(client, &ns), Config::default())
     .reconcile_on(external_stream)
 ```
 
-You would now now get Kubernetes changes + whatever custom stream data you wish to inject.
+In this case we have some opaque `fn watch_external_objects()` which here returns `-> impl Stream<Item = ExternalObject>`. It is meant to return changes from the external API. Whenever a new item is found on the stream, the controller will reconcile the matching cluster object.
+
+(The example assumes __matching names__ between the external resource and cluster resource, and a __fixed namespace__ for the cluster resources.)
+
+!!! note "Streaming Interface"
+
+    If you do not have a streaming interface (like if you are doing periodic HTTP GETs), you can wrap your data in a `Stream` via either [async_stream](https://docs.rs/async-stream/latest/async_stream/) or by using channels (say [tokio::sync::mpsc](https://docs.rs/tokio/latest/tokio/sync/mpsc/index.html), using the [Receiver](https://docs.rs/tokio/latest/tokio/sync/mpsc/struct.Receiver.html) side as a stream).
+
+### External Writes
+If you want to populate an external API from a cluster resource, the you must update the external api from your [[reconciler]] (using the necessary client libraries for that API).
+
+To avoid build-up of generated objects on the external side, you will want to use [[gc#finalizers]], to ensure the external resource gets _safely_ cleaned up on `kubectl delete`.
 
 ## Summary
 

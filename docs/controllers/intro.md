@@ -36,7 +36,11 @@ The main object is the source of truth for what the world should be like, and it
 - an object from [api discovery](https://docs.rs/kube/latest/kube/discovery/index.html)
 - a [Custom Resource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
 
-Kubernetes already has a [core controller manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) for the core native objects, so the most common use-case for controller writing is a **Custom Resource**, but many more fine-grained use-cases exist. <!-- TODO: talk about use cases? -->
+Kubernetes already has a [core controller manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) for the core native objects, so the most common use-case for controller writing is a **Custom Resource**, but other more fine-grained use-cases exist.
+
+!!! note "Check if your use case fits"
+
+    Not all use-cases are well-served by a custom controller. Kubernetes.io has a [checklist to consider](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) before creating a CRD + a controller for it.
 
 See the [[object]] document for how to use the various types.
 
