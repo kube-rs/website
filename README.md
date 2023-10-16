@@ -1,6 +1,6 @@
 # kube-rs website
-
 [![release](https://github.com/kube-rs/website/actions/workflows/release.yml/badge.svg)](https://github.com/kube-rs/website/actions/workflows/release.yml)
+
 Markdown documents and scripts for generating the [kube.rs](https://kube.rs) website.
 
 Hosted on [github pages](https://kube-rs.github.io/website).
