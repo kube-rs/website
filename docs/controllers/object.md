@@ -234,7 +234,7 @@ let ar = ApiResource::erase::<k8s_openapi::api::core::v1::Pod>(&());
 Controller::new_with(api, watcher::Config::default(), &ar)
 ```
 
-We have to recursively re-implement every part of [Pod] that we care about, but we automatically drop every field except tthe ones we defined. In this case we do not gain version independence (due to re-using pinned type-information), but you could gain this by using api [discovery].
+We have to recursively re-implement every part of [Pod] that we care about, but we automatically drop every field except the ones we defined. In this case we do not gain version independence (due to re-using pinned type-information), but you could gain this by using api [discovery].
 
 This is functionally similar way to deriving `CustomResource` on an incomplete struct, but using (possibly) dynamic api parameters.
 
