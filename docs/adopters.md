@@ -18,7 +18,7 @@
 - [blixt](https://github.com/kong/blixt) - A Kubernetes [Gateway API](https://gateway-api.sigs.k8s.io)-based Layer 4 Load-Balancer for ingress
 - [databricks-kube-operator](https://github.com/mach-kernel/databricks-kube-operator) - GitOps/Helm style management of [Databricks](https://www.databricks.com/) jobs
 - [mirrord](https://github.com/metalbear-co/mirrord) - Run your local service in the context of your remote cluster.
-- [coredb](https://github.com/CoreDB-io/coredb) - Postgres for Everything
+- [tembo-operator](https://github.com/tembo-io/tembo-stacks/tree/main/tembo-operator) - Goodbye Database Sprawl, Hello Postgres
 - [xline-operator](https://github.com/xline-kv/xline-operator) - The xline-operator is a powerful tool designed to automate the process of bootstrapping, monitoring, snapshotting, and recovering an xline cluster on Kubernetes.
 
 ## Companies
@@ -37,7 +37,7 @@
 - [nais](https://nais.io)
 - [Kong](https://konghq.com)
 - [MetalBear](https://metalbear.co)
-- [CoreDB](https://coredb.io/)
+- [Tembo](https://tembo.io/)
 
 If you're using `kube-rs` in production and are not on this list, please [submit a pull request](https://github.com/kube-rs/website/edit/main/docs/adopters.md)!
 
