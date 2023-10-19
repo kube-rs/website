@@ -76,6 +76,7 @@ nav:
     - controllers/optimization.md
     - controllers/security.md
     - controllers/streams.md
+    - controllers/generics.md
     - controllers/internals.md
 
   #- comunity.md

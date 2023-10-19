@@ -16,6 +16,7 @@
 [CustomResourceExt]: https://docs.rs/kube/latest/kube/trait.CustomResourceExt.html
 [CustomResourceDefinition]: https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html
 [Resource]: https://docs.rs/kube/latest/kube/trait.Resource.html
+[ResourceExt]: https://docs.rs/kube/latest/kube/trait.ResourceExt.html
 [ApiResource]: https://docs.rs/kube/latest/kube/core/struct.ApiResource.html
 [ListParams]: https://docs.rs/kube/latest/kube/api/struct.ListParams.html
 [watcher::Config]: https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html
@@ -41,6 +42,9 @@
 [discovery]: https://docs.rs/kube/latest/kube/discovery/index.html
 [recommended_kind]: https://docs.rs/kube/latest/kube/discovery/struct.ApiGroup.html#method.recommended_kind
 [merge_crds]: https://docs.rs/kube/latest/kube/core/crd/v1/fn.merge_crds.html
+[shutdown_on_signal]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.shutdown_on_signal
+[tokio::try_join!]: https://docs.rs/tokio/latest/tokio/macro.try_join.html
+[Infallible]: https://doc.rust-lang.org/std/convert/enum.Infallible.html
 [kube]: https://crates.io/crates/kube
 [kopium]: https://github.com/kube-rs/kopium
 [controller-rs]: https://github.com/kube-rs/controller-rs
