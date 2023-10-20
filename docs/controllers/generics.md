@@ -73,8 +73,7 @@ where
             x.managed_fields_mut().clear(); // ResourceExt pruning
         })
         .reflect(writer)
-        .applied_objects()
-        .predicate_filter(predicates::generation);
+        .applied_objects();
 
     Controller::for_stream(stream, reader)
         .shutdown_on_signal()
@@ -86,7 +85,7 @@ where
 }
 ```
 
-This example assumes no [[relations]] between the main controller [[object]], so that each controller can be started in isolation without worrying about inefficiencies in stream-reuse (see [[streams]]). It also relies on [WatchStreamExt] + [metadata_watcher] to apply a consistent stream setup, pruning, and predicates (see [[optimization]]).
+This example assumes no [[relations]] between the main controller [[object]], so that each controller can be started in isolation without worrying about inefficiencies in stream-reuse (see [[streams]]). It also relies on [WatchStreamExt] + [metadata_watcher] to apply a consistent stream setup with pruning (see [[optimization]]).
 
 We can start and control the lifecycle of all the controllers with a [tokio::try_join!]:
 
