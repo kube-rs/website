@@ -7,6 +7,10 @@ This chapter is about deployment manifests and common resources you likely want 
 A Kubernetes `Role` / `ClusterRole` (with an associated binding) is necessary for your controller to function in-cluster. Below we list the common rules you need for the basics:
 
 ```yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kube-rs-controller
 rules:
 # You want access to your CRD if you have one
 # Replace documents with plural resource name, and kube.rs with your group
@@ -124,8 +128,7 @@ Some notes on the above:
 - DNS egress should work for both `coredns` and `kube-dns` (via `k8s-app: kube-dns`)
 - `prometheus` port and app labels might depend on deployment setup, drop lines from the strict default, or tune values as you see fit
 - `opentelemetry-collector` values are the regular defaults from the [collector helm chart](https://github.com/open-telemetry/opentelemetry-helm-charts/blob/1d31c4bf71445595a3a7f5f2edc0850a83422a90/charts/opentelemetry-collector/values.yaml#L238-L285) - change as you see fit
-- the interactive network policy editor does not like 'http' as a port, it only accepts integers
-
+- the [policy editor](https://editor.networkpolicy.io/) needs a non-aliased integer port - while valid, it will reject `port: http` above
 
 
 --8<-- "includes/abbreviations.md"

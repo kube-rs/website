@@ -36,7 +36,7 @@ Depending on the scope of what your controller is in charge of, you should revie
 
 Managing the RBAC rules requires a **declaration** somewhere (usually in your yaml/chart) of your controllers access **intentions**.
 
-Kubernetes manifests with such rules can be kept up-to-date via [[testing#end-to-end-tests]] in terms of **sufficiency**, but one should also **document the intent** of your controller so that excessive permissions are not just "assumed to be needed" down the road.
+Kubernetes [[manifests]] with such rules can be kept up-to-date via [[testing#end-to-end-tests]] in terms of **sufficiency**, but one should also **document the intent** of your controller so that excessive permissions are not just "assumed to be needed" down the road.
 
 !!! note "RBAC Rules Sanity"
 
@@ -50,23 +50,23 @@ Installing a CRD into a cluster requires write access to `customresourcedefiniti
 If you do need CRD write access, consider **scoping** this to _non-delete_ access, and only for the `resourceNames` you expect:
 
 ```yaml
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: ClusterRole
-  metadata:
-    name: NAME
-  rules:
-  - apiGroups:
-    - apiextensions.k8s.io
-    resourceNames:
-    - mycrd.kube.rs # <-- key line
-    resources:
-    - customresourcedefinitions
-    verbs:
-    - create
-    - get
-    - list
-    - watch
-    - patch
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: NAME
+rules:
+- apiGroups:
+  - apiextensions.k8s.io
+  resourceNames:
+  - mycrd.kube.rs # <-- key line
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - patch
 ```
 
 ### Role vs. ClusterRole
@@ -110,6 +110,8 @@ Instead, consider these security optimized base images:
 - :material-check: [distroless base images](https://github.com/GoogleContainerTools/distroless#distroless-container-images) (e.g. [`:cc`](https://github.com/GoogleContainerTools/distroless/tree/main/cc) for glibc / [`:static`](https://github.com/GoogleContainerTools/distroless/tree/main/base) for musl)
 - :material-check: [chainguard base images](https://github.com/chainguard-images/images#chainguard-images) (e.g. [gcc-glibc](https://github.com/chainguard-images/images/tree/main/images/gcc-glibc) / [static](https://github.com/chainguard-images/images/tree/main/images/static) for musl)
 
+For shell debugging, consider `kubectl debug` using [ephemeral containers](https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container) instead.
+
 ### Network Permissions
 
 Limiting who your controller can talk to / be called by will limit how useful of a target the controller will be in the case of a breach.
@@ -125,7 +127,7 @@ Thankfully, you will also **most likely** hear about it quickly from your **secu
 
 We recommend the following selection of tools that play well with the Rust ecosystem:
 
-- [dependabot](https://github.blog/2020-06-01-keep-all-your-packages-up-to-date-with-dependabot/) or [renovate](https://github.com/renovatebot/renovate) for automatic dependency updates
+- [dependabot](https://github.blog/2020-06-01-keep-all-your-packages-up-to-date-with-dependabot/) or [renovate](https://github.com/renovatebot/renovate) for automatic dependency updates ([[upgrading]])
 - [`cargo audit`](https://github.com/rustsec/rustsec/blob/main/cargo-audit/README.md) against [rustsec](https://rustsec.org/)
 - [`cargo deny`](https://embarkstudios.github.io/cargo-deny/)
 - [`cargo auditable`](https://github.com/rust-secure-code/cargo-auditable) embedding an SBOM for [trivy](https://github.com/aquasecurity/trivy) / [`cargo audit`](https://crates.io/crates/cargo-audit) / [syft](https://github.com/anchore/syft)
@@ -137,6 +139,7 @@ We recommend the following selection of tools that play well with the Rust ecosy
 - [CNL: Creating a “Paved Road” for Security in K8s Operators](https://www.youtube.com/watch?v=dyA2msK0pZE)
 - [Kubernetes Philly, November 2021 - Distroless Docker Images](https://www.youtube.com/watch?v=1R6vjpVON1o)
 - [Wolfi OS and Building Declarative Containers](https://www.youtube.com/watch?v=i4vE45c0fs8) (Chainguard)
+- [No more reasons to use distroless containers; kubectl debug](https://floss.social/@schnatterer/111266745878264466)
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"

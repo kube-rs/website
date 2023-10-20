@@ -29,7 +29,7 @@ where
 
     // example work; apply some labels to the object
     let patch: Patch<serde_json::Value> = get_standard_labels_for(&obj)?;
-    let serverside = PatchParams::apply("labeler");
+    let serverside = PatchParams::apply("labeller");
     api.patch(&object_name, &serverside, &patch).await?;
 
     Ok(Action::requeue(Duration::from_secs(5 * 60)))
@@ -85,7 +85,9 @@ where
 }
 ```
 
-This example assumes no [[relations]] between the main controller [[object]], so that each controller can be started in isolation without worrying about inefficiencies in [[streams]] usage. It uses [metadata_watcher] to provide a consistent input stream of `PartialObjectMeta<K>` with pruning ([[optimization#pruning-fields]]) and [Store] management through [WatchStreamExt].
+This example assumes no [[relations]] between the main controller [[object]], so that each controller can be started in isolation without worrying about inefficiencies in [[streams]] usage.
+
+It uses [metadata_watcher] to provide a consistent input stream of `PartialObjectMeta<K>` with pruning ([[optimization#pruning-fields]]) and [Store] management through [WatchStreamExt].
 
 We can start and control the lifecycle of all the controllers with a [tokio::join!]:
 
