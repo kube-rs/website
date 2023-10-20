@@ -1,6 +1,6 @@
 # Manifests
 
-This chapter is about deployment manifests and common properties you want to set.
+This chapter is about deployment manifests and common resources you likely want to include.
 
 ## RBAC
 
@@ -41,7 +41,7 @@ We do not provide any hooks to generate RBAC from Rust source ([it's not super h
 
 To reduce unnecessary access from and to your controller, it is a good [[Security]] practice to use [network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
 
-We will showcase a **starter** `netpol` here that allows for pushing telemetry data to an otel collector, DNS queries, talking to the Kubernetes apiserver, and having metrics scraped by a prometheus server.
+Below is a **starter** `netpol` here that allows DNS, talking to the Kubernetes apiserver, and basic [[observability]] such as pushing otel spans, and having metrics scraped by `prometheus`:
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -116,14 +116,15 @@ spec:
   - Egress
 ```
 
-Adjust your app labels, names, namespaces, and ingress port names to your own values. Note that:
+Adjust your app labels, names, namespaces, and ingress port names to your own values. Consider using the [Network Policy Editor](https://editor.networkpolicy.io/) for more interactive sanity.
+
+Some notes on the above:
 
 - [apiserver access can be done by ip](https://stackoverflow.com/questions/50102943/how-to-allow-access-to-kubernetes-api-using-egress-network-policy) - incorrect policies will yield "failed with error error trying to connect: deadline has elapsed"
 - DNS egress should work for both `coredns` and `kube-dns` (via `k8s-app: kube-dns`)
 - `prometheus` port and app labels might depend on deployment setup, drop lines from the strict default, or tune values as you see fit
 - `opentelemetry-collector` values are the regular defaults from the [collector helm chart](https://github.com/open-telemetry/opentelemetry-helm-charts/blob/1d31c4bf71445595a3a7f5f2edc0850a83422a90/charts/opentelemetry-collector/values.yaml#L238-L285) - change as you see fit
-
-Consider using the [Network Policy Editor](https://editor.networkpolicy.io/) for more interactive sanity.
+- the interactive network policy editor does not like 'http' as a port, it only accepts integers
 
 
 
