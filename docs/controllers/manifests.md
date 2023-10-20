@@ -57,46 +57,45 @@ metadata:
   namespace: controllers
 spec:
   egress:
-  # For pushing tracing spans to an opentelemetry collector
+  # Pushing tracing spans to an opentelemetry collector
   - to:
-    - ports:
-      # jaeger thrift
-      - port: 14268
-        protocol: TCP
-      # OTLP gRPC
-      - port: 4317
-        protocol: TCP
-      # OTLP HTTP
-      - port: 4318
-        protocol: TCP
-      # zipkin
-      - port: 9411
-        protocol: TCP
-      to:
     - namespaceSelector:
         matchLabels:
           name: opentelemetry-operator-system
+    ports:
+    # jaeger thrift
+    - port: 14268
+      protocol: TCP
+    # OTLP gRPC
+    - port: 4317
+      protocol: TCP
+    # OTLP HTTP
+    - port: 4318
+      protocol: TCP
+    # zipkin
+    - port: 9411
+      protocol: TCP
 
-  # For Kubernetes apiserver access
+  # Kubernetes apiserver access
   - to:
-    - ports:
-      # Port depends on targetPort listed on kubernetes svc in default ns
-      - port: 443
-        protocol: TCP
-      - port: 6443
-        protocol: TCP
     - namespaceSelector:
         matchLabels:
           name: default
+    ports:
+    # Port depends on targetPort listed on kubernetes svc in default ns
+    - port: 443
+      protocol: TCP
+    - port: 6443
+      protocol: TCP
 
   # DNS egress
   - to:
     - podSelector:
         matchLabels:
           k8s-app: kube-dns
-      ports:
-      - port: 53
-        protocol: UDP
+    ports:
+    - port: 53
+      protocol: UDP
 
   ingress:
   # For prometheus scraping support
