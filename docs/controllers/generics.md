@@ -47,7 +47,7 @@ For information about the resource we rely on the generic [Resource] and [Resour
     You will only get access to metadata of the object doing this. This can be mitigated by doing a `match` on `kind` and creating a more specific `Api<K>` inside a match arm.
 
 
-These reconcilers can be hooked up to a `Controller<K>` with another possibly generic fn.
+This reconciler can be hooked up to infallabily start a `Controller<K>` in a generic way:
 
 ```rust
 async fn run_controller<K>(client: Client)
@@ -85,9 +85,9 @@ where
 }
 ```
 
-This example assumes no [[relations]] between the main controller [[object]], so that each controller can be started in isolation without worrying about inefficiencies in stream-reuse (see [[streams]]). It also relies on [WatchStreamExt] + [metadata_watcher] to apply a consistent stream setup with pruning (see [[optimization]]).
+This example assumes no [[relations]] between the main controller [[object]], so that each controller can be started in isolation without worrying about inefficiencies in [[streams]] usage. It uses [metadata_watcher] to provide a consistent input stream of `PartialObjectMeta<K>` with pruning ([[optimization#pruning-fields]]) and [Store] management through [WatchStreamExt].
 
-We can start and control the lifecycle of all the controllers with a [tokio::try_join!]:
+We can start and control the lifecycle of all the controllers with a [tokio::join!]:
 
 ```rust
 pub async fn run_all_controllers(client: Client) {
@@ -101,7 +101,7 @@ pub async fn run_all_controllers(client: Client) {
 }
 ```
 
-This returns when **all** controller fns return. This only happens once [shutdown_on_signal] has propagated through all the controllers because the `run_controller` fn is here infallible.
+This returns when **all** controller fns return. This happens once [shutdown_on_signal] has safely propagated through all the controllers.
 
 
 --8<-- "includes/abbreviations.md"
