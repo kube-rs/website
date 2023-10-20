@@ -50,7 +50,7 @@ For information about the resource we rely on the generic [Resource] and [Resour
 These reconcilers can be hooked up to a `Controller<K>` with another possibly generic fn.
 
 ```rust
-async fn run_controller<K>(client: Client) -> Result<(), Infallible>
+async fn run_controller<K>(client: Client)
 where
     K: Resource<Scope = NamespaceResourceScope, DynamicType = ()>
         + Clone
@@ -83,7 +83,6 @@ where
         .await;
 
     warn!("controller for {kind} shutdown");
-    Ok(())
 }
 ```
 
@@ -93,20 +92,17 @@ We can start and control the lifecycle of all the controllers with a [tokio::try
 
 ```rust
 pub async fn run_all_controllers(client: Client) {
-    if let Err(e) = tokio::try_join!(
+    let _ = tokio::join!(
         run_controller::<Deployment>(client.clone()),
         run_controller::<DaemonSet>(client.clone()),
         run_controller::<StatefulSet>(client.clone()),
         run_controller::<CronJob>(client.clone()),
-    ) {
-        error!("run_controller failed: {e:?}");
-        unreachable!("run_controller is infallible");
-    }
+    );
     info!("controllers all exited");
 }
 ```
 
-This returns when **all** controller fns return `Ok(())`. This only happens once [shutdown_on_signal] has propagated through all the controllers because the `run_controller` fn is here [Infallible].
+This returns when **all** controller fns return. This only happens once [shutdown_on_signal] has propagated through all the controllers because the `run_controller` fn is here infallible.
 
 
 --8<-- "includes/abbreviations.md"

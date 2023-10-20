@@ -44,7 +44,6 @@
 [merge_crds]: https://docs.rs/kube/latest/kube/core/crd/v1/fn.merge_crds.html
 [shutdown_on_signal]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.shutdown_on_signal
 [tokio::try_join!]: https://docs.rs/tokio/latest/tokio/macro.try_join.html
-[Infallible]: https://doc.rust-lang.org/std/convert/enum.Infallible.html
 [kube]: https://crates.io/crates/kube
 [kopium]: https://github.com/kube-rs/kopium
 [controller-rs]: https://github.com/kube-rs/controller-rs
