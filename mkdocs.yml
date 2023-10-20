@@ -72,6 +72,7 @@ nav:
     - controllers/schemas.md
     Advanced:
     - controllers/testing.md
+    - controllers/manifests.md
     - controllers/observability.md
     - controllers/optimization.md
     - controllers/security.md

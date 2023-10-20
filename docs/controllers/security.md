@@ -38,9 +38,11 @@ Managing the RBAC rules requires a **declaration** somewhere (usually in your ya
 
 Kubernetes manifests with such rules can be kept up-to-date via [[testing#end-to-end-tests]] in terms of **sufficiency**, but one should also **document the intent** of your controller so that excessive permissions are not just "assumed to be needed" down the road.
 
-!!! note "RBAC Rules Generation"
+!!! note "RBAC Rules Sanity"
 
     It is possible to generate rbac rules using [audit2rbac](https://github.com/liggitt/audit2rbac) (see [controller-rs example](https://github.com/kube-rs/controller-rs/commit/3576a3f563b6b2164df0a95a04963238a1cf768e)). This approach has **limitations**: it needs a full e2e setup with an initial rbac config, and the output may need yaml conversion and refinement steps. However, you can use it to **sanity check** that your rbac rules are **not scoped too broadly**.
+
+See [[manifests#RBAC]] for a starter manifest.
 
 ### CRD Access
 Installing a CRD into a cluster requires write access to `customresourcedefinitions`. This **can** be requested for the controller, but because this is such a heavy access requirement that is only really needed at the install/upgrade time, it is often **handled separately**. This also means that a controller often assumes the CRD is installed when running (and panicking if not).
@@ -107,6 +109,14 @@ Instead, consider these security optimized base images:
 
 - :material-check: [distroless base images](https://github.com/GoogleContainerTools/distroless#distroless-container-images) (e.g. [`:cc`](https://github.com/GoogleContainerTools/distroless/tree/main/cc) for glibc / [`:static`](https://github.com/GoogleContainerTools/distroless/tree/main/base) for musl)
 - :material-check: [chainguard base images](https://github.com/chainguard-images/images#chainguard-images) (e.g. [gcc-glibc](https://github.com/chainguard-images/images/tree/main/images/gcc-glibc) / [static](https://github.com/chainguard-images/images/tree/main/images/static) for musl)
+
+### Network Permissions
+
+Limiting who your controller can talk to / be called by will limit how useful of a target the controller will be in the case of a breach.
+
+It is good practice to setup a [default-deny network policy](https://kubernetes.io/docs/concepts/services-networking/network-policies/#default-policies) for both `ingress` and `egress` and selectively apply as needed.
+
+See [[manifests#Network Policy]] for a starter manifest.
 
 ## Supply Chain Security
 
