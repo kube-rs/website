@@ -49,6 +49,11 @@ Controller::new(main, watcher::Config::default())
 
 In this case we are extracing an object reference from the spec of our object. Regardless of how you get the information, your mapper must return an iterator of [ObjectRef] for the root object(s) that must be reconciled as a result of the change.
 
+!!! note "Creating an `ObjectRef<K>`"
+
+    An [ObjectRef] is a generic variant of [ObjectReference] that carries associated type information via generics. The internal controller reflectors use this to save memory by avoiding to type out repeat information.
+    To construct one from an object, see the [ObjectRef methods](https://docs.rs/kube/latest/kube/runtime/reflector/struct.ObjectRef.html#implementations). To construct one from an [ObjectReference], see ???
+
 As a theoretical example; every [HPA](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) object bundles a scale ref to the workload, so you could use this to build a Controller for `Deployment` using HPA as a watched object.
 
 !!! note "Streams Variant"
