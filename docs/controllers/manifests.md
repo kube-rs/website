@@ -124,7 +124,7 @@ See [controller-rs/networkpolicy](https://github.com/kube-rs/controller-rs/blob/
 
 Some notes on the above:
 
-- [apiserver egress is complicated](https://stackoverflow.com/questions/50102943/how-to-allow-access-to-kubernetes-api-using-egress-network-policy). A `namespaceSelector` on `default` sometimes work, but the safest is get the `endpoints`. See the [controller-rs/netpol pr](https://github.com/kube-rs/controller-rs/pull/62). Cilium's counterpart of `toEntities: [ kube-apiserver ]` is a lot friendlier.
+- [apiserver egress is complicated](https://stackoverflow.com/questions/50102943/how-to-allow-access-to-kubernetes-api-using-egress-network-policy). A `namespaceSelector` on `default` sometimes work, but the safest is get the `endpoints`. See the [controller-rs/netpol pr](https://github.com/kube-rs/controller-rs/pull/62). Cilium's counterpart of `toEntities: [ kube-apiserver ]` looks friendlier.
 - DNS egress should work for both `coredns` and `kube-dns` (via `k8s-app: kube-dns`)
 - `prometheus` port and app labels might depend on deployment setup, drop lines from the strict default, or tune values as you see fit
 - `opentelemetry-collector` values are the regular defaults from the [collector helm chart](https://github.com/open-telemetry/opentelemetry-helm-charts/blob/1d31c4bf71445595a3a7f5f2edc0850a83422a90/charts/opentelemetry-collector/values.yaml#L238-L285) - change as you see fit
