@@ -15,8 +15,8 @@ rules:
 # You want access to your CRD if you have one
 # Replace documents with plural resource name, and kube.rs with your group
 - apiGroups: ["kube.rs"]
-  resources: ["documents", "documents/status"]
-  verbs: ["get", "list", "watch", "patch"]
+  resources: ["documents", "documents/status", "documents/finalizers"]
+  verbs: ["get", "list", "watch", "patch", "update"]
 
 # If you want events
 - apiGroups: ["events.k8s.io"]
@@ -31,8 +31,6 @@ rules:
   verbs: ["create", "delete", "get", "list", "patch", "watch"]
 -->
 
-See [controller-rs/rbac](https://github.com/kube-rs/controller-rs/blob/main/charts/doc-controller/templates/rbac.yaml) for how to hook this up with `helm`.
-
 See [[security#Access Constriction]] to ensure the setup is as strict as is needed.
 
 !!! note "Two Event structs"
@@ -40,6 +38,8 @@ See [[security#Access Constriction]] to ensure the setup is as strict as is need
     The runtime event [Recorder] uses the modern [events.k8s.io.v1.Event](https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/event-v1/) not to be mistaken for the legacy [core.v1.Event](https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.Event.html).
 
 We do not provide any hooks to generate RBAC from Rust source ([it's not super helpful](https://github.com/kube-rs/kube/issues/1115)), so it is expected you put the various rules you need straight in your chart templates / jsonnet etc.
+
+See [controller-rs/rbac](https://github.com/kube-rs/controller-rs/blob/main/charts/doc-controller/templates/rbac.yaml) for how to hook this up with `helm`.
 
 ## Network Policy
 
@@ -56,6 +56,13 @@ metadata:
     app: kube-rs-controller
   namespace: controllers
 spec:
+  podSelector:
+    matchLabels:
+      app: kube-rs-controller
+  policyTypes:
+  - Ingress
+  - Egress
+
   egress:
   # Pushing tracing spans to an opentelemetry collector
   - to:
@@ -76,19 +83,19 @@ spec:
     - port: 9411
       protocol: TCP
 
-  # Kubernetes apiserver access
+  # Kubernetes apiserver
   - to:
-    - namespaceSelector:
-        matchLabels:
-          name: default
+    - ipBlock:
+        # range should be replaced by kubernetes endpoint addresses from:
+        # kubectl get endpoints kubernetes -oyaml
+        cidr: 10.20.0.2/32
     ports:
-    # Port depends on targetPort listed on kubernetes svc in default ns
     - port: 443
       protocol: TCP
     - port: 6443
       protocol: TCP
 
-  # DNS egress
+  # DNS
   - to:
     - podSelector:
         matchLabels:
@@ -98,7 +105,7 @@ spec:
       protocol: UDP
 
   ingress:
-  # For prometheus scraping support
+  # prometheus metric scraping support
   - from:
     - namespaceSelector:
         matchLabels:
@@ -109,21 +116,15 @@ spec:
     ports:
     - port: http
       protocol: TCP
-
-  # Policy properties
-  podSelector:
-    matchLabels:
-      app: kube-rs-controller
-  policyTypes:
-  - Ingress
-  - Egress
 ```
 
 Adjust your app labels, names, namespaces, and ingress port names to your own values. Consider using the [Network Policy Editor](https://editor.networkpolicy.io/) for more interactive sanity.
 
+See [controller-rs/networkpolicy](https://github.com/kube-rs/controller-rs/blob/main/charts/doc-controller/templates/networkpolicy.yaml) for how to hook this up with `helm`.
+
 Some notes on the above:
 
-- [apiserver access can be done by ip](https://stackoverflow.com/questions/50102943/how-to-allow-access-to-kubernetes-api-using-egress-network-policy) - incorrect policies will yield "failed with error error trying to connect: deadline has elapsed"
+- [apiserver egress is complicated](https://stackoverflow.com/questions/50102943/how-to-allow-access-to-kubernetes-api-using-egress-network-policy). A `namespaceSelector` on `default` sometimes work, but the safest is get the `endpoints`. See the [controller-rs/netpol pr](https://github.com/kube-rs/controller-rs/pull/62). Cilium's counterpart of `toEntities: [ kube-apiserver ]` is a lot friendlier.
 - DNS egress should work for both `coredns` and `kube-dns` (via `k8s-app: kube-dns`)
 - `prometheus` port and app labels might depend on deployment setup, drop lines from the strict default, or tune values as you see fit
 - `opentelemetry-collector` values are the regular defaults from the [collector helm chart](https://github.com/open-telemetry/opentelemetry-helm-charts/blob/1d31c4bf71445595a3a7f5f2edc0850a83422a90/charts/opentelemetry-collector/values.yaml#L238-L285) - change as you see fit
