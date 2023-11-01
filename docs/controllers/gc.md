@@ -53,7 +53,7 @@ The main way to use finalizers with controllers is to define a unique finalizer 
 - have a deletion happened, and we need to cleanup? we are in the `Event::Cleanup` arm
 - no deletion has been recorded? we are in the normal `Event::Apply` arm
 
-!!! warning "Finalizer can prevent objects from being deleted"
+!!! warning "Finalizers can prevent objects from being deleted"
 
     If your controller is down, deletes will be delayed until the controller is back.
 
