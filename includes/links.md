@@ -20,6 +20,7 @@
 [ApiResource]: https://docs.rs/kube/latest/kube/core/struct.ApiResource.html
 [ListParams]: https://docs.rs/kube/latest/kube/api/struct.ListParams.html
 [watcher::Config]: https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html
+[watcher::Error]: https://docs.rs/kube/latest/kube/runtime/watcher/enum.Error.html
 [controller::Config]: https://docs.rs/kube/latest/kube/runtime/controller/struct.Config.html
 [any_semantic]: https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html#method.any_semantic
 [Object]: https://docs.rs/kube/latest/kube/core/struct.Object.html
