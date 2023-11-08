@@ -95,3 +95,4 @@
 [Server-Side Apply]: https://kubernetes.io/docs/reference/using-api/server-side-apply/
 [k3d]: https://k3d.io/
 [JsonSchema]: https://docs.rs/schemars/latest/schemars/trait.JsonSchema.html
+[env_logger]: https://docs.rs/env_logger/latest/env_logger/
