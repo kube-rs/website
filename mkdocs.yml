@@ -57,6 +57,7 @@ nav:
   - kubernetes-version.md
   - stability.md
   - architecture.md
+  - troubleshooting.md
   - adopters.md
   - guides.md
   - upgrading.md
