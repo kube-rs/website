@@ -20,6 +20,7 @@
 - [mirrord](https://github.com/metalbear-co/mirrord) - Run your local service in the context of your remote cluster.
 - [tembo-operator](https://github.com/tembo-io/tembo-stacks/tree/main/tembo-operator) - Goodbye Database Sprawl, Hello Postgres
 - [xline-operator](https://github.com/xline-kv/xline-operator) - The xline-operator is a powerful tool designed to automate the process of bootstrapping, monitoring, snapshotting, and recovering an xline cluster on Kubernetes.
+- [Shulker](https://github.com/jeremylvln/shulker) - a Kubernetes operator for mananing complex and dynamic Minecraft infrastructures
 
 ## Companies
 
