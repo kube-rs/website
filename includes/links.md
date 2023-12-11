@@ -96,3 +96,7 @@
 [k3d]: https://k3d.io/
 [JsonSchema]: https://docs.rs/schemars/latest/schemars/trait.JsonSchema.html
 [env_logger]: https://docs.rs/env_logger/latest/env_logger/
+[AdmissionReview]: https://docs.rs/kube/latest/kube/core/admission/struct.AdmissionReview.html
+[AdmissionResponse]: https://docs.rs/kube/latest/kube/core/admission/struct.AdmissionResponse.html
+[AdmissionRequest]: https://docs.rs/kube/latest/kube/core/admission/struct.AdmissionRequest.html
+[kube::core::admission]: https://docs.rs/kube/latest/kube/core/admission/index.html
