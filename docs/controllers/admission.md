@@ -41,10 +41,28 @@ If your controller [[object]] is a CRD you own, then this is the recommended way
     This requires __Kubernetes >=1.25__ (where the feature is Beta), or Kubernetes >= 1.29 (where the [feature is GA](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.29.md)).
 
 
-To include validation rules in the schemas you must add `x-kubernetes-validations` entries by [[schemas#overriding-members]] for the necessary types manually (or inject them more manually). We [hope this can be made more ergonomic with future improvements to the overall ecosystem](https://github.com/kube-rs/kube/issues/1367). Help is welcome.
+To include validation rules in the schemas you must add `x-kubernetes-validations` entries by [[schemas#overriding-members]] for the necessary types manually (or inject them more manually):
 
+```rust
+fn string_legality(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+    serde_json::from_value(serde_json::json!({
+        "type": "string",
+        "x-kubernetes-validations": [{
+            "rule": "self != 'illegal'",
+            "message": "string cannot be illegal"
+        }]
+    }))
+    .unwrap()
+}
+```
 
-To write CEL expressions consider using the [CEL playground](https://playcel.undistro.io/).
+and this can be attached with a `#[schemars(schema_with = "string_legality)]` field attribute on some `Option<String>` (here). See [#1372](https://github.com/kube-rs/kube/pull/1372/files) too see interactions with errors and a larger struct and other validations.
+
+!!! note "Future work"
+
+    Currently overriding the schema to include `x-kubernetes-validations` is awkward on larger types since you have override `items` (say) and other properties `schemars` usually generates. We hope [this can be made more ergonomic with future improvements to the overall ecosystem](https://github.com/kube-rs/kube/issues/1367). Help is welcome.
+
+To write CEL expressions consider using the [CEL playground](https://playcel.undistro.io/). There are more examples in the [CRD Validation Rules announcement blog](https://kubernetes.io/blog/2022/09/23/crd-validation-rules-beta/) and under [kubernetes.io crd validation-rules](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#validation-rules).
 
 ## Validation Using Webhooks
 AKA writing an [admission controller](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/).

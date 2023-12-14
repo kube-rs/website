@@ -129,9 +129,7 @@ You can define multiple structs within versioned modules ala https://github.com/
 See [CustomResource#versioning](https://docs.rs/kube/latest/kube/derive.CustomResource.html#versioning), and upstream docs on [Versions in CustomResourceDefinitions](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/) for more info.
 
 ## Validation
-Kubernetes >1.25 supports including [validation rules in the openapi schema](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#validation-rules), and there are a couple of ways to include these.
-
-See the [Openapi V3 blogpost for more context](https://kubernetes.io/blog/2023/04/24/openapi-v3-field-validation-ga/).
+Kubernetes >1.25 supports including [validation rules in the openapi schema](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#validation-rules), and there are a couple of ways to include these. See [[admission#Validation Using CEL Validation]] for examples.
 
 ### Manual Rules
 This can be done by following upstream docs, and manually [[#Implementing-JsonSchema]] or [[#Overriding-Members]] to inject validation rules into specific parts of the schema.
