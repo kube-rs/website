@@ -14,6 +14,7 @@ List of third party guides and tutorials for using the `kube-rs` that holds up t
 | Title | Source | Content |
 | ----- | ------ | ------- |
 | [Rust operators for Kubernetes](https://www.youtube.com/watch?v=65pyIeLtd5Y) | PlatformCon 2023 | Rust benefits + kubebuilder comparisons |
+| [Introduction to rust operators for Kubernetes](https://www.youtube.com/watch?v=feBYxeO-3cY) | Cloud Native Skunkworks 2023 | Introductory runtime structuring |
 | [Lightning Talk: Talking to Kubernetes with Rust](https://www.youtube.com/watch?v=Kp6GQjZixPE) | KubeCon EU 2023 | Introductory; api usage |
 | [Why the future of the cloud will be built on Rust](https://www.youtube.com/watch?v=BWL4889RKhU) | Cloud Native Rust Day 2021 | Cloud History + Linkerd + Rust Ecosystem Overview |
 | [The Hidden Generics in Kubernetes' API](https://www.youtube.com/watch?v=JmwnRcc2m2A) | KubeCon Virtual 2020 | Early stage kube-rs presentation on apimachinery + client-go translation |
