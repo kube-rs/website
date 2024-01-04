@@ -3,6 +3,11 @@
 `kube-core` is the core crate with the lowest level abstractions.
 It is re-exported from [[kube]] under `kube::core`.
 
+
+!!! warning "No need to depend on this directly"
+
+    The standard way to get only core features is to depend on `kube` with `default-features = false` as this will bring in the minimal `kube`. If you need a client later, you don't then need to change your import paths.
+
 This crate has the most extensive documentation on [docs.rs/kube/core](https://docs.rs/kube/latest/kube/core/index.html).
 
 ## Contains

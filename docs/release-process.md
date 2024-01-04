@@ -1,41 +1,48 @@
 # Release Process
 
-The release process for all the crates in kube is briefly outlined in [release.toml](https://github.com/kube-rs/kube/blob/main/release.toml).
+This document elaborates on the process defined by [release.toml](https://github.com/kube-rs/kube/blob/main/release.toml) in the kube workspace.
 
 ## Versioning
 
-We currently release all crates with the same version.
+We release all public [workspace crates](https://github.com/kube-rs/kube/blob/main/Cargo.toml) with the same version.
 
-The crates are thus **version-locked** and new version in certain [sub-crates](/crates) does not necessarily guarantee changes to that crate.
-Our [[changelog]] considers changes to the facade crate `kube` as the highest importance.
+The crates are published in reverse order of inclusion, releasing the final facade crate `kube` last, so users do not notice any version-mismatches during releases.
 
-The crates are published in reverse order of importance, releasing the final facade crate `kube` last, so users who depend on this do not notice any version-mismatches during releases.
+!!! note "You should only need to depend on `kube`"
+
+    Only `kube = {...}` needs an entry in your `Cargo.toml`, as `kube` re-exports the [sub-crates](/crates/kube).
+
 ## Cadence
 
-We **currently** have **no fixed cadence**, but we still **try** to release **roughly once a month**, or whenever important PRs are merged (whichever is earliest).
-
+We have **no fixed release cadence**, but we still **try** to release **roughly once a month**, or whenever important PRs are merged (whichever is earliest).
 
 ## For maintainers: Cutting Releases
 
 Cutting releases is a task for the maintenance team ([[contributing]]) and requires developer [[tools]] installed.
 
-The process is automated where possible, and the non-writing bits usually only take a few minutes, whereas the management of documentation and release resources require a bit of manual oversight.
+The process is __mostly automated__ once the preliminary steps are taken, and a publish should complete in 5m with everything setup.
+
+You have the option to write highlights in the release notes, but this can be elided with a "Publish" button press on the draft release.
 
 ### Preliminary Steps
 
-Close the [current ongoing milestone](https://github.com/kube-rs/kube/milestones), and ensure the [prs merged since the last version](https://github.com/kube-rs/kube/commits/main) are included in the milestone.
+Close the [current ongoing milestone](https://github.com/kube-rs/kube/milestones), and create the next one. Move over any unmerged PRs to the next milestone.
+
+!!! note "Release Notes Depend on [Github Release Notes Labels](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes)"
+
+    For best success, every PR should have __one__ `changelog-*` label and should be included in the current milestone (to avoid scouring [prs merged since the last version](https://github.com/kube-rs/kube/commits/main) later).
 
 Ensure the PRs in the milestone all have exactly one `changelog-*` label to ensure the release notes are generated correctly (we follow [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) with the setup as outlined in [#754](https://github.com/kube-rs/kube/issues/754)).
 
 ### Publishing Crates
 
-Start the process by publishing to crates.io (crate-by-crate) **locally** with the **latest stable rust toolchain** installed and active:
+Start the process on latest `main` by publishing to crates.io with `cargo-release` **locally** using the **latest stable rust toolchain** installed, and git setup to be able to sign tags. Run:
 
 ```sh
 PUBLISH_GRACE_SLEEP=20 cargo release minor --execute
 ```
 
-once this completes, double check that all the crates are correctly published to crates.io:
+once this completes, the following crates should all have been published to crates.io:
 
 - [kube-core](https://crates.io/crates/kube-core)
 - [kube-derive](https://crates.io/crates/kube-derive)
@@ -43,54 +50,60 @@ once this completes, double check that all the crates are correctly published to
 - [kube-runtime](https://crates.io/crates/kube-runtime)
 - [kube](https://crates.io/crates/kube)
 
-This will [enqueue a documentation build in docs.rs](https://docs.rs/releases/queue) to complete.
+The crate publish will [enqueue a documentation build in docs.rs](https://docs.rs/releases/queue).
 
-> Docs build usually completes in less than `30m`, but we have seen it take [around half a day](https://github.com/kube-rs/kube/issues/665#issuecomment-949988895) when publishing during an anticipated rust release.
+!!! warn "docs.rs failures"
 
-### Generating the release
+    If the `docs.rs` build fails, please [create an issue](https://github.com/kube-rs/kube/issues/new/choose) for it with the build log from docs.rs.
 
-Once the crates have been published, we can start the process for creating a [GitHub Release](https://github.com/kube-rs/kube/releases).
 
-If you just published, you will have at least one commit unpushed locally. You can push and tag this in one go using it:
+As part of the `cargo release`, a signed git tag will automatically be pushed to [kube/tags](https://github.com/kube-rs/kube/tags).
 
-```sh
-./scripts/release-post.sh
-```
+### Publishing the Release
 
-This creates a tag, and a **draft** release using our [release workflow](https://github.com/kube-rs/kube/actions/workflows/release.yml).
-The resulting github **release** will show up on [kube-rs/releases](https://github.com/kube-rs/kube/releases) immediately.
+Once crates have been published and the corresponding tag pushed, a [GitHub Release](https://github.com/kube-rs/kube/releases) will be generated by the [release job](https://github.com/kube-rs/kube/actions/workflows/release.yml) in the **draft**  state. This __can__ be edited for extra documentation / migration notes. The section below contains ideas for what to include.
 
-However, we should **not publish** this until the [enqueued documentation build in docs.rs](https://docs.rs/releases/queue) completes.
+!!! note "Publish Soon"
 
-We use this wait-time to fully prepare the release, and write the manual release header:
+    We should not spend too much time adding extra information (<1h), because dependabot will quickly pick up on a release, and start publishing dependency update PRs to downstream users. If our release notes are not ready, they might see a PR without release notes.
 
-### Editing the draft
 
-At this point we can edit the draft release. Click the edit release pencil icon, and start editing.
+
+### Adding Documentation
+
+If you are writing extra documentation, then start editing the draft release.
 
 You will notice **auto-generated notes already present** in the `textarea` along with new contributors - **please leave these lines intact**!
 
 Check if any of the PRs in the release contain any notices or are particularly noteworthy.
-We strongly advocate for highlighting some or more of the following, as part of the manually written header:
+
+We advocate for highlighting some or more of the following, as part of the manually written header:
 
 - big features
 - big fixes
 - contributor recognition
 - interface changes
 
-> A release is more than just a `git tag`, it should be something to **celebrate**, for the maintainers, the contributors, and the community.
-
 See the appendix below for ideas.
+
+!!! note "Symbol links from the Release"
+
+    If the [enqueued documentation build in docs.rs](https://docs.rs/releases/queue) done, then it is possible to link to them in the release.
+
+!!! warning "docs.rs build time"
+
+    The docs.rs build usually completes in less than `30m` after publishing, but we have seen it take [around half a day](https://github.com/kube-rs/kube/issues/665#issuecomment-949988895) when publishing during an anticipated Rust release.
+
+> A release is more than just a `git tag`, it should be something to **celebrate**, for the maintainers, the contributors, and the community.
 
 Of course, not every release is going to be noteworthy.
 For these cases, it's perfectly OK to just hit [Publish](#){ .md-button-primary } without much ceremony.
 
 ### Completion Steps
 
-- Create a [new milestone](https://github.com/kube-rs/kube/milestones) for current minor version + 1
-- Press [Publish](#){ .md-button-primary } on the release once [docs.rs build completes](https://docs.rs/releases/queue)
-- Run `./scripts/release-afterdoc.sh` to port the changed release notes into the `CHANGELOG.md` and push
-- Run `./sync.sh` in the website repo to port the new release notes onto the website
+- Press [Publish](#){ .md-button-primary } on the GitHub Release
+- Run `./scripts/release-afterdoc.sh NEW_VERSION` to port the changed release notes into the `CHANGELOG.md` and push to `main`
+- Run `./sync.sh` in the website repo to pull the new release notes to [kube.rs/changelog](https://kube.rs/changelog)
 
 ## Appendix
 
