@@ -1,7 +1,10 @@
 # kube-derive
 
-`kube-derive` is a procedural macro crate with helpers for managing Custom Resource Definitions.
-Its macros are re-exported from [[kube]].
+`kube-derive` is a procedural macro crate with helpers for managing Custom Resource Definitions. The macros are re-exported from [[kube]].
+
+!!! warning "No need to depend on this directly"
+
+    The standard way to get derive features is to depend on `kube` with the additional `derive` feature, and access `kube::CustomResource`. This way you avoid multiple entries in `Cargo.toml` which can cause version mismatches.
 
 The macros exported are heavily documented on:
 
