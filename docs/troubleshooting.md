@@ -77,7 +77,7 @@ The __easiest__ error handling setup is to tear down the application on any erro
 While easy, early exits is not the best solution;
 
 - __Locally__, having a CLI abruptly exit is a bad user experience.
-- __In-cluster__, frequent restarts of a large app with many spurious non-fatal condition can mask underlying problems.
+- __In-cluster__, frequent restarts of a large app with many spurious non-fatal conditions can mask underlying problems.
 - early exits throw cancel-safety and state transaction concerns out the window
 
 For controllers with multiple watchers, [[observability#Adding Metrics]] is instead customary, so that you can alert on percentage error rates over a time span (telling the operator to go look at logs for why).
