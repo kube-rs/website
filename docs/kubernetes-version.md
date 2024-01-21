@@ -11,6 +11,7 @@ The **minimum** indicates the lower bound of our testing range, and the **latest
 
 | kube version   | MK8SV   | Latest  | Generated Source  |
 | -------------- | ------- | ------- | ----------------- |
+| [0.88.0](https://github.com/kube-rs/kube/releases/tag/0.88.0)  |  `1.24` | [`1.29`](https://kubernetes.io/blog/2023/12/13/kubernetes-v1-29-release/) | [k8s-openapi@0.21.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.21.0) |
 | [0.86.0](https://github.com/kube-rs/kube/releases/tag/0.86.0)  |  `1.23` | [`1.28`](https://kubernetes.io/blog/2023/08/15/kubernetes-v1-28-release/) | [k8s-openapi@0.20.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.20.0) |
 | [0.85.0](https://github.com/kube-rs/kube/releases/tag/0.85.0)  |  `1.22` | [`1.27`](https://kubernetes.io/blog/2023/04/11/kubernetes-v1-27-release/) | [k8s-openapi@0.19.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.19.0) |
 | [0.78.0](https://github.com/kube-rs/kube/releases/tag/0.78.0)  |  `1.21` | [`1.26`](https://kubernetes.io/blog/2022/12/09/kubernetes-v1-26-release/) | [k8s-openapi@0.17.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.17.0) |
@@ -25,7 +26,7 @@ This policy is intended to match **stable channel support** within **major cloud
 Compare with: [EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html), [AKS](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar), [GKE](https://cloud.google.com/kubernetes-engine/docs/release-schedule), [upstream Kubernetes](https://endoflife.date/kubernetes).
 
 
-It is displayed in the main README as a badge: [![Tested against Kubernetes 1.23 and above](https://img.shields.io/badge/MK8SV-1.23-326ce5.svg)](https://kube.rs/kubernetes-version)
+It is displayed in the main README as a badge: [![Tested against Kubernetes 1.24 and above](https://img.shields.io/badge/MK8SV-1.24-326ce5.svg)](https://kube.rs/kubernetes-version)
 
 ## Picking Versions
 
