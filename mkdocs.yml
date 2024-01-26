@@ -171,3 +171,5 @@ extra:
     # better than twitter, but not really doing PR
     - icon: fontawesome/brands/discord
       link: https://discord.gg/tokio
+    - icon: fontawesome/brands/linux
+      link: https://www.linuxfoundation.org/legal/trademark-usage
