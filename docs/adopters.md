@@ -20,6 +20,7 @@
 - [mirrord](https://github.com/metalbear-co/mirrord) - Run your local service in the context of your remote cluster.
 - [tembo-operator](https://github.com/tembo-io/tembo-stacks/tree/main/tembo-operator) - Goodbye Database Sprawl, Hello Postgres
 - [Shulker](https://github.com/jeremylvln/shulker) - a Kubernetes operator for mananing complex and dynamic Minecraft infrastructures
+- [rūnō](https://github.com/aljoshare/runo) - A Secret Generator for Kubernetes written in Rust
 
 ## Companies
 
