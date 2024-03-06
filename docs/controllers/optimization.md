@@ -27,13 +27,15 @@ The default `watcher::Config` will watch every object in the [Api] scope you con
 - `Api::namespaced` or `Api::default_namespaced` -> all objects in that namespace
 - `Api::all` -> all cluster scoped objects (or all objects in all namespaces)
 
-This can be limited to just a subset of namespaces, or other properties on the objects. For example, field selectors can be used to limit to a selection of known names:
+This is easiest to do with [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#api) of [field selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/).
+
+Field selectors __can__ be used to filter on certain common properties:
 
 ```rust
 let cfg = watcher::Config::default().fields(&format!("metadata.name={name}"));
 ```
 
-This can be comma-delimited for more names, and similarly you you can also comma deliminate an exclusion list on names or namespaces:
+And allows explicitly __excluding__ lists of namespaces:
 
 ```rust
 let ignoring_system_namespaces = [
@@ -57,9 +59,9 @@ let cfg = watcher::Config::default().fields(&ignoring_system_namespaces);
 
 !!! note "Field Selector Limitations"
 
-    Due to [field-selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) limitations, you cannot filter on arbitrary fields, nor can you do set complements (forcing explicit enumeration).
+    Due to [field-selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/) limitations, you cannot filter on arbitrary fields, nor can you do set operations, forcing explicit negative enumeration as one of the few helpful tricks.
 
-If you find that field-selectors are too constrictive for your set of objects, the problem can generally be solved using by [explicitly labelling](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) the objects you care about and use label selectors instead:
+A more general solution involves [explicitly labelling](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) the objects you care about, and using the much more expressive [label selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#api) instead:
 
 ```rust
 let cfg = Config::default().labels("environment in (production, qa)");
