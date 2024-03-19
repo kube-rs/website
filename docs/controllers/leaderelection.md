@@ -9,7 +9,7 @@ This chapter is a stub about Leases, Leader Election and how to achieve distribu
 
 ## Crates
 
-At the moment, leader election support is not exported from `kube` direct, and requires 3rd party crates (as decided in [kube#485](https://github.com/kube-rs/kube/issues/485#issuecomment-1837386565)).
+At the moment, leader election support is not supported by `kube` itself, and requires 3rd party crates (see [kube#485](https://github.com/kube-rs/kube/issues/485#issuecomment-1837386565)).
 
 ### kube-leader-election
 The [`kube-leader-election` crate](https://crates.io/crates/kube-leader-election/) via [hendrikmaus/kube-leader-election](https://github.com/hendrikmaus/kube-leader-election) implements a simple and low-level form of leader election with a [use-case disclaimer](https://github.com/hendrikmaus/kube-leader-election?tab=readme-ov-file#kubernetes-lease-locking).
