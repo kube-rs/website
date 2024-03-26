@@ -71,7 +71,7 @@ let client = Client::new(mocksvc, "default");
 This is using the generic:
 
 - [`http::Request`](https://docs.rs/http/latest/http/request/struct.Request.html) + [`http::Response`](https://docs.rs/http/latest/http/response/struct.Response.html) objects
-- [`hyper::Body`](https://docs.rs/hyper/latest/hyper/struct.Body.html) as request/response content
+- [`kube::client::Body`](https://docs.rs/kube/latest/kube/client/struct.Body.html) as request/response content
 
 This `Client` can then be passed into to reconciler in the usual way through a context object ([[reconciler##using-context]]), allowing you to test `reconcile` directly.
 
@@ -107,7 +107,7 @@ impl ApiServerVerifier {
         let exp_url = format!("/apis/kube.rs/v1/namespaces/testns/documents/{}/status?&force=true&fieldManager=cntrlr", doc.name_any());
         assert_eq!(request.uri().to_string(), exp_url);
         // extract the `status` object from the `patch_status` call via the body of the request
-        let req_body = to_bytes(request.into_body()).await.unwrap();
+        let req_body = request.into_body().collect().await.unwrap().to_bytes();
         let json: serde_json::Value = serde_json::from_slice(&req_body).expect("patch_status object is json");
         let status_json = json.get("status").expect("status object").clone();
         let status: DocumentStatus = serde_json::from_value(status_json).expect("contains valid status");
@@ -215,15 +215,10 @@ We **need** a cluster for these tests though, so on CI we will spin up a [k3d] i
       fail-fast: false
       matrix:
         # Run these tests against older clusters as well
-        k8s: [v1.22, latest]
+        k8s: [v1.25, latest]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          override: true
-          toolchain: stable
-          profile: minimal
-      # Smart caching for Rust
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - uses: nolar/setup-k3d-k3s@v1
         with:
@@ -340,10 +335,10 @@ An example setup for GitHub Actions:
     runs-on: ubuntu-latest
     needs: [docker]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: nolar/setup-k3d-k3s@v1
         with:
-          version: v1.25
+          version: v1.27
           k3d-name: kube
           k3d-args: "--no-lb --no-rollback --k3s-arg --disable=traefik,servicelb,metrics-server@server:*"
       - name: Set up Docker Buildx
