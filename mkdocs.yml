@@ -80,6 +80,7 @@ nav:
     - controllers/security.md
     - controllers/streams.md
     - controllers/generics.md
+    - controllers/leaderelection.md
     - controllers/internals.md
 
   #- comunity.md
