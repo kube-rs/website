@@ -12,7 +12,7 @@ The **minimum** indicates the lower bound of our testing range, and the **latest
 | kube version   | MK8SV   | Latest  | Generated Source  |
 | -------------- | ------- | ------- | ----------------- |
 | [0.88.0](https://github.com/kube-rs/kube/releases/tag/0.88.0)  |  `1.24` | [`1.29`](https://kubernetes.io/blog/2023/12/13/kubernetes-v1-29-release/) | [k8s-openapi@0.21.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.21.0) |
-| [0.86.0](https://github.com/kube-rs/kube/releases/tag/0.86.0)  |  `1.23` | [`1.28`](https://kubernetes.io/blog/2023/08/15/kubernetes-v1-28-release/) | [k8s-openapi@0.20.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.20.0) |
+| [0.87.1](https://github.com/kube-rs/kube/releases/tag/0.87.1)  |  `1.23` | [`1.28`](https://kubernetes.io/blog/2023/08/15/kubernetes-v1-28-release/) | [k8s-openapi@0.20.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.20.0) |
 | [0.85.0](https://github.com/kube-rs/kube/releases/tag/0.85.0)  |  `1.22` | [`1.27`](https://kubernetes.io/blog/2023/04/11/kubernetes-v1-27-release/) | [k8s-openapi@0.19.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.19.0) |
 | [0.78.0](https://github.com/kube-rs/kube/releases/tag/0.78.0)  |  `1.21` | [`1.26`](https://kubernetes.io/blog/2022/12/09/kubernetes-v1-26-release/) | [k8s-openapi@0.17.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.17.0) |
 | [0.75.0](https://github.com/kube-rs/kube/releases/tag/0.75.0)  |  `1.20` | [`1.25`](https://kubernetes.io/blog/2022/08/23/kubernetes-v1-25-release/) | [k8s-openapi@0.16.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.16.0) |
@@ -34,7 +34,7 @@ Given a `kube` version, you may choose a **target Kubernetes version** from the 
 
 ### Example
 
-When using [`kube@0.86.0`](https://github.com/kube-rs/kube/releases/tag/0.86.0), the generated source is [`k8s-openapi@0.20.0`](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.20.0), which exports the [following version features](https://docs.rs/crate/k8s-openapi/0.20.0/features). The `latest` supported version feature is _here_ aliased to `v1_28`, our minimum tested version is `v1_23`.
+When using [`kube@0.87.1`](https://github.com/kube-rs/kube/releases/tag/0.87.1), the generated source is [`k8s-openapi@0.20.0`](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.20.0), which exports the [following version features](https://docs.rs/crate/k8s-openapi/0.20.0/features). The `latest` supported version feature is _here_ aliased to `v1_28`, our minimum tested version is `v1_23`.
 
 ### Guideline
 
