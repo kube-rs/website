@@ -48,7 +48,9 @@ The [controller::Config] by currently[**](https://github.com/kube-rs/kube/issues
 
 It is __possible__ to compute an optimal `concurrency` number based the CPU `resources` you assign to your container, but this would require specific measurement against your workload.
 
-* monitor that increased aggressiveness of a single controller does not run into apiserver throttling
+!!! note "Agressiveness meets fairness"
+
+    A highly parallel reconciler might be eventually throttled by [apiserver flow-control rules](https://kubernetes.io/docs/concepts/cluster-administration/flow-control/), and this can clearly degrade your controller's performance. Measurements, calculations, and [[observability]] (particularly for error rates) are useful to identifying such scenarios.
 
 ### 3. Leader Election
 Leader election allows having control over resources managed in-Kubernetes via Leases and allows for faster response times on pod rescheduling.
