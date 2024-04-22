@@ -1,6 +1,6 @@
 # Scaling
 
-This chapter is about scaling advice, strategies, and how to achieve distributed locks around Kubernetes resources.
+This chapter is about strategies for scaling controllers for its final lifecycle stage; where the workload is high and the latencies are important.
 
 ## When to Scale
 
@@ -14,7 +14,7 @@ This is due to a couple of properties:
 
 - Rust controllers are generally very efficient and often end up as IO bound
 - Rust images are often very small and will reschedule quickly
-- watch streams re-initialise with the current state on boot
+- watch streams re-initialise quickly with the current state on boot
 - [[reconciler#idempotency]] means multiple repeat reconciliations are not problematic
 - parallel execution mode of reconciliations makes restarts fast
 
@@ -31,7 +31,7 @@ In these cases, you are limited by the amount of work a controller running on a 
 We recommend trying the following scaling strategies in order:
 
 1. [[#Controller Optimizations]] (minimize expensive work to allow more work)
-2. [[#Vertical Scaling]] (more headroom)
+2. [[#Vertical Scaling]] (more headroom for the single pod)
 3. [[#Leader Election]] (faster rescheduling and lower tail latencies)
 4. [[#Sharding]] (horizontal scaling)
 
@@ -77,7 +77,7 @@ apparently you cannot set both maxSurge: 0 and maxUnavailable: 0 - https://kuber
 
 The natural expiration of `leases` means that you are required to periodically update them while your main pod (the leader) is active. When your pod is to be replaced, you can initiate a step down (and expire the lease), say when you receive a `SIGTERM`. If your pod crashes, then the lease will expire naturally (albeit likely more slowly).
 
-!!! warn "Leader election is not a requirement for scaling"
+!!! warning "Leader election is not a requirement for scaling"
 
     When running the default 1 replica controller you have a de-facto `leader for life`. Unless you have strong latency/consistency requirements, leader election is not a required solution.
 
