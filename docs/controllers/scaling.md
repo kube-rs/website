@@ -28,10 +28,15 @@ That said, this philosophy can struggle when given more intensive requirements l
 In these cases, you are limited by the amount of work a controller running on a single bounded pod can realistically accomplish. In these cases, scaling is desireable.
 
 ## Scaling Strategies
-We recommend trying the following scaling strategies in order.
+We recommend trying the following scaling strategies in order:
 
-### 1. Controller Optimizations
-Ensure you look at common controller [[optimizations]] to:
+1. [[#Controller Optimizations]] (minimize expensive work to allow more work)
+2. [[#Vertical Scaling]] (more headroom)
+3. [[#Leader Election]] (faster rescheduling and lower tail latencies)
+4. [[#Sharding]] (horizontal scaling)
+
+### Controller Optimizations
+Ensure you look at common controller [[optimization]] to:
 
 * minimize network intensive operations
 * cache/memoize expensive work
@@ -39,7 +44,7 @@ Ensure you look at common controller [[optimizations]] to:
 
 When checkpointing, care should be taken to not accidentally break [[reconciler#idempotency]].
 
-### 2. Vertical Scaling
+### Vertical Scaling
 
 * increase cpu/memory limits
 * configure controller concurrency (as a multiple of CPU limits)
@@ -52,7 +57,8 @@ It is __possible__ to compute an optimal `concurrency` number based the CPU `res
 
     A highly parallel reconciler might be eventually throttled by [apiserver flow-control rules](https://kubernetes.io/docs/concepts/cluster-administration/flow-control/), and this can clearly degrade your controller's performance. Measurements, calculations, and [[observability]] (particularly for error rates) are useful to identifying such scenarios.
 
-### 3. Leader Election
+### Leader Election
+
 Leader election allows having control over resources managed in-Kubernetes via Leases and allows for faster response times on pod rescheduling.
 
 !!! note "Terminology"
@@ -75,49 +81,20 @@ The natural expiration of `leases` means that you are required to periodically u
 
     When running the default 1 replica controller you have a de-facto `leader for life`. Unless you have strong latency/consistency requirements, leader election is not a required solution.
 
+
+#### Third Party Crates
+
 At the moment, leader election support is not supported by `kube` itself, and requires 3rd party crates (see [kube#485](https://github.com/kube-rs/kube/issues/485#issuecomment-1837386565)). A brief list of popular crates:
 
-#### [`kube-leader-election`](https://crates.io/crates/kube-leader-election/)
-A small standalone crate with a [use-case disclaimer](https://github.com/hendrikmaus/kube-leader-election?tab=readme-ov-file#kubernetes-lease-locking).
-Via [hendrikmaus/kube-leader-election](https://github.com/hendrikmaus/kube-leader-election) ([examples](https://github.com/hendrikmaus/kube-leader-election/tree/master/examples) / [docs](https://docs.rs/kube-leader-election/)).
-
-```rust
-use kube_leader_election::{LeaseLock, LeaseLockParams};
-let leadership = LeaseLock::new(client, namespace, LeaseLockParams { ... });
-let _lease = leadership.try_acquire_or_renew().await?;
-leadership.step_down().await?;
-```
-#### [`kube-coordinate`](https://crates.io/crates/kube-coordinate)
-Standalone crate. Via [thedodd/kube-coordinate](https://github.com/thedodd/kube-coordinate) ([docs](https://docs.rs/kube-coordinate/)).
-
-```rust
-use kube_coordinate::{LeaderElector, Config};
-let handle = LeaderElector::spawn(Config {...}, client);
-let state_chan = handle.state();
-if state_chan.borrow().is_leader() {
-    // Only perform leader actions if in leader state.
-}
-```
-
-#### [`kubert`](https://github.com/olix0r/kubert)
-A utility crate containing a low-level `lease` module used by [linkerd's policy-controller](https://github.com/linkerd/linkerd2/blob/1f4f4d417c6d06c3bd5a372fc75064f967117886/policy-controller/src/main.rs).
-Via [olix0r/kubert](https://github.com/olix0r/kubert) ([docs](https://docs.rs/kubert/latest/kubert/lease/index.html) / [example](https://github.com/olix0r/kubert/blob/main/examples/lease.rs))
-
-```rust
-use kubert::lease::{ClaimParams, LeaseManager};
-let lease_api: Api<Lease> = Api::namespaced(client, namespace);
-let lease = LeaseManager::init(lease_api, name).await?;
-let claim = lease.ensure_claimed(&identity, &ClaimParams { ... }).await?;
-assert!(claim.is_current_for(&identity));
-```
+- [`kube-leader-election`](https://crates.io/crates/kube-leader-election/) via [hendrikmaus](https://github.com/hendrikmaus/kube-leader-election) ([examples](https://github.com/hendrikmaus/kube-leader-election/tree/master/examples) / [docs](https://docs.rs/kube-leader-election/) / [disclaimer](https://github.com/hendrikmaus/kube-leader-election?tab=readme-ov-file#kubernetes-lease-locking))
+- [`kube-coordinate`](https://crates.io/crates/kube-coordinate) via [thedodd](https://github.com/thedodd/kube-coordinate) ([docs](https://docs.rs/kube-coordinate/))
+- [`kubert`](https://crates.io/crates/kubert) -> [`kubert::lease`](https://docs.rs/kubert/latest/kubert/lease/index.html) via [olix0r](https://github.com/olix0r/kubert) ([example](https://github.com/olix0r/kubert/blob/main/examples/lease.rs) / [linkerd use](https://github.com/linkerd/linkerd2/blob/1f4f4d417c6d06c3bd5a372fc75064f967117886/policy-controller/src/main.rs))
 
 <!-- OTHER ALTERNATIVES???
-Know other alternatives? Feel free to raise a PR here with a new H3 entry.
-
-Try to follow roughly the short and (ideally) minimally subjective format above.
+Know other alternatives? Feel free to raise a PR here with a new list entry.
 -->
 
-### 4. Sharding
+### Sharding
 
 If you are unable to meet latency/resource requirements using techniques above, you may need to consider **partitioning/sharding** your resources. Below are two commonly seen approaches for sharding:
 
@@ -128,8 +105,7 @@ A famous example of the last pattern is [fluxcd](https://fluxcd.io/). Flux expos
 
 !!! note "Leader Election with Shards"
 
-    Leader election can be used on top of sharding to ensure you have at most one pod managing one shard.
-    We have not seen any known examples of this in the wild. Links are welcome.
+    Leader election can in-theory be used on top of sharding to ensure you have at most one pod managing one shard.
 
 A mutating admission policy can help automatically assign/label partitions cluster-wide based on constraints and rebalancing needs.
 
