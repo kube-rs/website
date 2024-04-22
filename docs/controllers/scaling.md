@@ -65,7 +65,7 @@ Leader election allows having control over resources managed in-Kubernetes via L
 
     See [Kubernetes//Leases](https://kubernetes.io/docs/concepts/architecture/leases/) for introductory definitions.
 
-The common solution to downtime based-problems is to use the `leader-with-lease` pattern, by having allowing another controller replica in "standby mode", ready to takeover immediately without stepping on the toes of the other controller pod. We can do this by creating a `Lease`, and gating on the validity of the lease before doing the real work in the reconciler.
+The common solution to downtime based-problems is to use the `leader-with-lease` pattern, by having another controller replica in "standby mode", ready to takeover immediately without stepping on the toes of the other controller pod. We can do this by creating a `Lease`, and gating on the validity of the lease before doing the real work in the reconciler.
 
 !!! warning "Scaling replicas"
 
