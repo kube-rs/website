@@ -1,6 +1,6 @@
 # Scaling
 
-This chapter is about strategies for scaling controllers for its final lifecycle stage; where the workload is high and the latencies are important.
+This chapter is about strategies for scaling controllers for their final lifecycle stage; where the workload is high and the latencies are important.
 
 ## When to Scale
 
