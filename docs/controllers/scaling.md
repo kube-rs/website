@@ -96,16 +96,20 @@ Know other alternatives? Feel free to raise a PR here with a new list entry.
 
 ### Sharding
 
-If you are unable to meet latency/resource requirements using techniques above, you may need to consider **partitioning/sharding** your resources. Below are two commonly seen approaches for sharding:
+If you are unable to meet latency/resource requirements using techniques above, you may need to consider **partitioning/sharding** your resources. Below are commonly seen approaches for sharding:
 
-* 1 controller deployment per namespace (naive and annoying to deploy)
-* 1 controller replica per shard (precise, easier to scale, but requires labelling work)
+* 1 controller container per pod (sidecar style)
+* 1 controller pod per node (daemonset / agent style)
+* 1 controller deployment per namespace (naive sharding)
+* 1 controller deployment per shard (precice, but requires labelling work)
 
-A famous example of the last pattern is [fluxcd](https://fluxcd.io/). Flux exposes a [sharding.fluxcd.io/key label](https://fluxcd.io/flux/installation/configuration/sharding/) to configure sharding. Flux's Stefan talks about [scaling flux controllers at kubecon 2024](https://www.youtube.com/watch?v=JFLNFJT59DY).
+Several big agents use daemonsets and sidecars in situations that require higher than average performance, and is commonly found in network components, service meshes, and sometimes observability collectors that benefit from co-location with a resource. This choice creates a very broad and responsive sharding strategy, but one that incurs a larger overhead using more containers than is technically necessary.
+
+Explicitly labelled shards is a less common, but powerful option employed by [fluxcd](https://fluxcd.io/). Flux exposes a [sharding.fluxcd.io/key label](https://fluxcd.io/flux/installation/configuration/sharding/) to associate a resource with a shard. Flux's Stefan talks about [scaling flux controllers at KubeCon 2024](https://www.youtube.com/watch?v=JFLNFJT59DY).
 
 !!! note "Leader Election with Shards"
 
-    Leader election can in-theory be used on top of sharding to ensure you have at most one pod managing one shard.
+    Leader election can in-theory be used on top of explicit sharding to ensure you have at most one replica managing one shard by using one lease per shard. This could reduce the number of excess replicas standing-by in a sharded scenario.
 
 A mutating admission policy can help automatically assign/label partitions cluster-wide based on constraints and rebalancing needs.
 
