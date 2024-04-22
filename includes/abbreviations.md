@@ -9,3 +9,6 @@
 *[SBOM]: Software Bill of Materials
 *[LTS]: Long Term Support
 *[CEL]: Common Expression Language
+*[HA]: High Availability
+*[PVC]: Persistent Volume Claim
+*[RPS]: Requests Per Second

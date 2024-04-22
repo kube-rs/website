@@ -73,16 +73,17 @@ nav:
     - controllers/schemas.md
     Advanced:
     - controllers/testing.md
-    - controllers/manifests.md
-    - controllers/observability.md
-    - controllers/optimization.md
     - controllers/admission.md
-    - controllers/security.md
     - controllers/streams.md
     - controllers/generics.md
-    - controllers/scaling.md
     - controllers/internals.md
-
+    Operational:
+    - controllers/observability.md
+    - controllers/optimization.md
+    - controllers/manifests.md
+    - controllers/security.md
+    - controllers/scaling.md
+    - controllers/availability.md
   #- comunity.md
   #- proposal-process.md
   #- mentorship.md
