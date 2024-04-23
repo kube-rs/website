@@ -12,7 +12,7 @@ Despite the common goals often set forth for application deployments, most `kube
 
 This is due to a couple of properties:
 
-- Controllers are queue consumers that not require 100% uptime to meet a 100% SLO
+- Controllers are queue consumers that do not require 100% uptime to meet a 100% SLO
 - Rust images are often very small and will reschedule quickly
 - watch streams re-initialise quickly with the current state on boot
 - [[reconciler#idempotency]] means multiple repeat reconciliations are not problematic
