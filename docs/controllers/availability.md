@@ -32,6 +32,7 @@ If you want to improve __average responsiveness__, then traditional [[scaling]] 
 - Configure controller concurrency to avoid waiting for a reconciler slot
 - Optimize the reconciler, avoid duplicated work
 - Satisfy CPU requirements to avoid cgroup throttling
+- Ensure your [[relations]] are setup right to avoid waiting for the next [requeue](https://docs.rs/kube/latest/kube/runtime/controller/struct.Action.html)
 
 You can plot heatmaps of reconciliation times in grafana using standard [[observability#What Metrics]].
 
