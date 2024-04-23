@@ -67,7 +67,7 @@ Explicitly labelled shards is a less common, but powerful option employed by [fl
 
     A mutating admission policy can help automatically assign/label partitions cluster-wide based on constraints and rebalancing needs.
 
-In cases where the shard boundaries are less clear, ad-hoc leases could be used to lock your shard boundaries. See [[availability#Leader Election]]
+In cases where HA is required, a leases can be used gate access to a particular shard. See [[availability#Leader Election]]
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"

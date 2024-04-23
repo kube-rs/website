@@ -19,14 +19,14 @@ This is due to a couple of properties:
 
 These properties combined creates a low-overhead system that is normally quick to catch-up after being rescheduled, and offers a traditional Kubernetes __eventual consistency__ guarantee.
 
-That said, this setup can struggle under strong consistency requirements:
+That said, this setup can struggle under strong consistency requirements. Ask yourself:
 
 - How fast do you expect your reconciler to react?
-- Do you allow `30s` P95 downtimes from reschedules?
+- Can you allow `30s` P95 downtimes from reschedules?
 
 ## Reactivity
 
-If __average reactivity__ is your biggest concern, then traditional [[scaling]] and [[optimization]] strategies can help:
+If you want to improve __average reactivity__, then traditional [[scaling]] and [[optimization]] strategies can help:
 
 - Configure controller concurrency to avoid waiting for a reconciler slot
 - Optimize the reconciler, avoid duplicated work
@@ -56,7 +56,7 @@ The common solution to downtime based-problems is to use the `leader-with-lease`
 
 The natural expiration of `leases` means that you are required to periodically update them while your main pod (the leader) is active. When your pod is to be replaced, you can initiate a step down (and expire the lease), say after draining your work queue after receiving a `SIGTERM`. If your pod crashes, then the lease will expire naturally (albeit likely more slowly).
 
-<!-- this feels unhelpful maybe
+<!-- this feels distracting to the main point maybe
 ### Defacto Leadership
 
 When running the default 1 replica controller have implictly created a `leader for life`. You never have other contenders for "defacto leadership" except for the short upgrade window:
@@ -83,6 +83,10 @@ Know other alternatives? Feel free to raise a PR here with a new list entry.
 ### Elected Shards
 
 Leader election can in-theory be used on top of explicit [[scaling#sharding]] to ensure you have at most one replica managing one shard by using one lease per shard. This could reduce the number of excess replicas standing-by in a sharded scenario.
+
+<!-- Have examples?
+Feel free to raise a PR here with information.
+-->
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
