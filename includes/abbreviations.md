@@ -12,3 +12,7 @@
 *[HA]: High Availability
 *[PVC]: Persistent Volume Claim
 *[RPS]: Requests Per Second
+*[SLI]: Service Level Indicator
+*[SLA]: Service Level Agreement
+*[SLO]: Service Level Objective
+*[P95]: 95th Percentile

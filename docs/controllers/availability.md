@@ -12,6 +12,7 @@ Despite the common goals often set forth for application deployments, most `kube
 
 This is due to a couple of properties:
 
+- Controllers are queue consumers that not require 100% uptime to meet a 100% SLO
 - Rust images are often very small and will reschedule quickly
 - watch streams re-initialise quickly with the current state on boot
 - [[reconciler#idempotency]] means multiple repeat reconciliations are not problematic
@@ -21,12 +22,12 @@ These properties combined creates a low-overhead system that is normally quick t
 
 That said, this setup can struggle under strong consistency requirements. Ask yourself:
 
-- How fast do you expect your reconciler to react?
-- Is `30s` P95 downtime from reschedules acceptable?
+- How quickly do you expect your reconciler to **respond** to changes on average?
+- Is a `30s` P95 downtime from reschedules acceptable?
 
-## Reactivity
+## Responsiveness
 
-If you want to improve __average reactivity__, then traditional [[scaling]] and [[optimization]] strategies can help:
+If you want to improve __average responsiveness__, then traditional [[scaling]] and [[optimization]] strategies can help:
 
 - Configure controller concurrency to avoid waiting for a reconciler slot
 - Optimize the reconciler, avoid duplicated work
@@ -38,35 +39,29 @@ You can plot heatmaps of reconciliation times in grafana using standard [[observ
 
 ## High Availability
 
-At a certain point, the slowdown caused by pod reschedules is going to dominate the latency metrics. Thus, having more than one replica (and having HA) is a requirement for further reducing tail latencies.
+Scaling a controller beyond one replica for HA is different than for a regular load-balanced traffic receiving application.
 
-Unfortunately, scaling a controller is more complicated than adding another replica because all Kubernetes watches are effectively unsynchronised, competing consumers that are unaware of each other.
+A controller is effectively a consumer of Kubernetes watch events, and these are themselves unsynchronised event streams whose watchers are unaware of each other. Adding another pod - without some form of external locking - will result in duplicated work.
+
+To avoid this, most controllers lean into the eventual consistency model and run with a single replica, accepting higher tail latencies due to reschedules. However, once the performance demands are strong enough, these pod reschedules will dominate the tail of your latency metrics, making scaling necessary.
 
 !!! warning "Scaling Replicas"
 
     It not recommended to set `replicas: 2` for an [[application]] running a normal `Controller` without leaders/shards, as this will cause both controller pods to reconcile the same objects, creating duplicate work and potential race conditions.
 
-To safely operate with more than one pod, you must have __leadership of your domain__ and wait for such leadership to be acquired before commencing.
+To safely operate with more than one pod, you must have __leadership of your domain__ and wait for such leadership to be __acquired__ before commencing. This is the concept of leader election.
 
 ## Leader Election
 
-Leader election (via [Kubernetes//Leases](https://kubernetes.io/docs/concepts/architecture/leases/)) allows having control over resources managed in-Kubernetes via Leases as distributed locking mechanisms.
+Leader election allows having control over resources managed in Kubernetes using [Leases](https://kubernetes.io/docs/concepts/architecture/leases/) as distributed locking mechanisms.
 
 The common solution to downtime based-problems is to use the `leader-with-lease` pattern, by having another controller replica in "standby mode", ready to takeover immediately without stepping on the toes of the other controller pod. We can do this by creating a `Lease`, and gating on the validity of the lease before doing the real work in the reconciler.
 
-The natural expiration of `leases` means that you are required to periodically update them while your main pod (the leader) is active. When your pod is to be replaced, you can initiate a step down (and expire the lease), say after draining your work queue after receiving a `SIGTERM`. If your pod crashes, then the lease will expire naturally (albeit likely more slowly).
+!!! note "Unsynchronised Rollout Surges"
 
-<!-- this feels distracting to the main point maybe
-### Defacto Leadership
+    A 1 replica controller deployment without leader election might create short periods of duplicate work and racey writes during rollouts because of how [rolling updates surge](https://docs.rs/k8s-openapi/latest/k8s_openapi/api/apps/v1/struct.RollingUpdateDeployment.html) by default.
 
-When running the default 1 replica controller have implictly created a `leader for life`. You never have other contenders for "defacto leadership" except for the short upgrade window:
-
-!!! warning "Rollout Safety for Single Replicas"
-
-    Even with 1 replica, you might see racey writes during controller upgrades without locking/leases. A `StatefulSet` with one replica could also give you a downtime based rolling upgrade that implicitly avoids racey writes, but it could also [require manual rollbacks](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#forced-rollback).
-
-Other forms of defacto leadership can come in the form of [shards](./scaling.md#Sharding), but these are generally created for [[scaling]] concerns, and suffer from the same problems during rollout and controller teardown.
--->
+The natural expiration of `leases` means that you are required to periodically update them while your main pod (the leader) is active. When your pod is about be replaced, you can initiate a step down (and expire the lease), ideally after receiving a `SIGTERM` after [draining your active work queue](https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.shutdown_on_signal). If your pod crashes, then a replacement pod must wait for the scheduled lease expiry.
 
 ### Third Party Crates
 

@@ -5,9 +5,10 @@ This chapter is about strategies for scaling controllers and the tradeoffs these
 ## Motivating Questions
 
 - Why is the reconciler lagging? Are there too many resources being reconciled?
+  * How do you find out?
 - What happens when your controller starts managing resource sets so large that it starts significantly impacting your CPU or memory use?
-- Do you give your more resources?
-- Do you add more pods? How can you do this safely?
+  * Do you give your more resources?
+  * Do you add more pods? How can you do this safely?
 
 Scaling an efficient Rust application that spends most of its time waiting for network changes might not seem like a complicated affair, and indeed, you can scale a controller in many ways and achieve good outcomes. But in terms of costs, not all solutions are created equal; are you avoiding improving your algorithm, or are you throwing more expensive machines at the problem?
 
@@ -22,9 +23,10 @@ We recommend trying the following scaling strategies in order:
 In other words, try to improve your algorithm first, and once you've reached a reasonable limit of what you can achieve with that approach, allocate more resources to the problem.
 
 ### Controller Optimizations
-Ensure you look at common controller [[optimization]] to:
+Ensure you look at common controller [[optimization]] to get the most out of your resources:
 
 * minimize network intensive operations
+* avoid caching large manifests unnecessarily, and prune unneeded data
 * cache/memoize expensive work
 * checkpoint progress on `.status` objects to avoid repeating work
 
