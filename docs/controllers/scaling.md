@@ -5,7 +5,7 @@ This chapter is about strategies for scaling controllers and the tradeoffs these
 ## Motivating Questions
 
 - Why is the reconciler lagging? Are there too many resources being reconciled?
-- What happens when your controller starts managing resource sets so large that it starts significantly impacting your cpu or memory use?
+- What happens when your controller starts managing resource sets so large that it starts significantly impacting your CPU or memory use?
 - Do you give your more resources?
 - Do you add more pods? How can you do this safely?
 
@@ -32,10 +32,10 @@ When checkpointing, care should be taken to not accidentally break [[reconciler#
 
 ### Vertical Scaling
 
-* increase cpu/memory limits
+* increase CPU/memory limits
 * configure controller concurrency (as a multiple of CPU limits)
 
-The [controller::Config] by currently[**](https://github.com/kube-rs/kube/issues/1473) defaults to __unlimited concurrency__ and may need tuning for large workloads.
+The [controller::Config] currently[**](https://github.com/kube-rs/kube/issues/1473) defaults to __unlimited concurrency__ and may need tuning for large workloads.
 
 It is __possible__ to compute an optimal `concurrency` number based the CPU `resources` you assign to your container, but this would require specific measurement against your workload.
 

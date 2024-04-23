@@ -22,7 +22,7 @@ These properties combined creates a low-overhead system that is normally quick t
 That said, this setup can struggle under strong consistency requirements. Ask yourself:
 
 - How fast do you expect your reconciler to react?
-- Can you allow `30s` P95 downtimes from reschedules?
+- Is `30s` P95 downtime from reschedules acceptable?
 
 ## Reactivity
 
