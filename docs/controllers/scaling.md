@@ -5,12 +5,9 @@ This chapter is about strategies for scaling controllers and the tradeoffs these
 ## Motivating Questions
 
 - Why is the reconciler lagging? Are there too many resources being reconciled?
-  * How do you find out?
 - What happens when your controller starts managing resource sets so large that it starts significantly impacting your CPU or memory use?
-  * Do you give your more resources?
-  * Do you add more pods? How can you do this safely?
 
-Scaling an efficient Rust application that spends most of its time waiting for network changes might not seem like a complicated affair, and indeed, you can scale a controller in many ways and achieve good outcomes. But in terms of costs, not all solutions are created equal; are you avoiding improving your algorithm, or are you throwing more expensive machines at the problem?
+Scaling an efficient Rust application that spends most of its time waiting for network changes might not seem like a complicated affair, and indeed, you can scale a controller in many ways and achieve good outcomes. But in terms of costs, not all solutions are created equal; are you improving your algorithm, or are you throwing more expensive machines at the problem to cover up inefficiencies?
 
 ## Scaling Strategies
 
@@ -61,9 +58,9 @@ Sharding is splitting your workload into mutually exclusive groups that you gran
 Sharding can also be done in a more explicit way:
 
 * 1 controller deployment per namespace (naive sharding)
-* 1 controller deployment per shard (precice, but requires labelling work)
+* 1 controller deployment per labelled shard (precice, but requires labelling work)
 
-Explicitly labelled shards is a less common, but powerful option employed by [fluxcd](https://fluxcd.io/). Flux exposes a [sharding.fluxcd.io/key label](https://fluxcd.io/flux/installation/configuration/sharding/) to associate a resource with a shard. Flux's Stefan talks about [scaling flux controllers at KubeCon 2024](https://www.youtube.com/watch?v=JFLNFJT59DY).
+Explicitly labelled shards is less common, but is a powerful option. It is used by [fluxcd](https://fluxcd.io/) via their [sharding.fluxcd.io/key label](https://fluxcd.io/flux/installation/configuration/sharding/) to associate a resource with a shard. Flux's Stefan talks about [scaling flux controllers at KubeCon 2024](https://www.youtube.com/watch?v=JFLNFJT59DY).
 
 !!! note "Automatic Labelling"
 
