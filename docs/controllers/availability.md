@@ -44,7 +44,7 @@ Scaling a controller beyond one replica for HA is different than for a regular l
 
 A controller is effectively a consumer of Kubernetes watch events, and these are themselves unsynchronised event streams whose watchers are unaware of each other. Adding another pod - without some form of external locking - will result in duplicated work.
 
-To avoid this, most controllers lean into the eventual consistency model and run with a single replica, accepting higher tail latencies due to reschedules. However, once the performance demands are strong enough, these pod reschedules will dominate the tail of your latency metrics, making scaling necessary.
+To avoid this, most controllers lean into the eventual consistency model and run with a single replica, accepting higher tail latencies due to reschedules. However, if the performance demands are strong enough, these pod reschedules will dominate the tail of your latency metrics, and that multi-replica more attractive.
 
 !!! warning "Scaling Replicas"
 

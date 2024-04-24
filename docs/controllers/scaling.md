@@ -7,7 +7,9 @@ This chapter is about strategies for scaling controllers and the tradeoffs these
 - Why is the reconciler lagging? Are there too many resources being reconciled?
 - What happens when your controller starts managing resource sets so large that it starts significantly impacting your CPU or memory use?
 
-Scaling an efficient Rust application that spends most of its time waiting for network changes might not seem like a complicated affair, and indeed, you can scale a controller in many ways and achieve good outcomes. But in terms of costs, not all solutions are created equal; are you improving your algorithm, or are you throwing more expensive machines at the problem to cover up inefficiencies?
+Scaling an efficient Rust application that spends most of its time waiting for network changes might not seem like a complicated affair, and indeed, you can scale a controller in many ways and achieve good outcomes. But in terms of costs, not all solutions are created equal:
+
+> Can you improve your algorithm, or should you throw more expensive machines at the problem?
 
 ## Scaling Strategies
 
@@ -66,7 +68,7 @@ Explicitly labelled shards is less common, but is a powerful option. It is used 
 
     A mutating admission policy can help automatically assign/label partitions cluster-wide based on constraints and rebalancing needs.
 
-In cases where HA is required, a leases can be used gate access to a particular shard. See [[availability#Leader Election]]
+In cases where HA is required, leases can be used gate access to particular shards. See [[availability#Leader Election]]
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
