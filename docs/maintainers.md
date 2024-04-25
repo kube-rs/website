@@ -5,6 +5,7 @@ The Kube-rs maintainers are:
 * Eirik Albrigtsen <sszynrae@gmail.com> [@clux](https://github.com/clux)
 * Natalie Klestrup Röijezon <nat@nullable.se> [@nightkr](https://github.com/nightkr)
 * Kaz Yoshihara <kazk.dev@gmail.com> [@kazk](https://github.com/kazk)
+* Matei David <dev.matei@pm.me> [@mateiidavid](https://github.com/mateiidavid)
 
 ## Emeriti
 
