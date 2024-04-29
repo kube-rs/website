@@ -12,6 +12,8 @@
 [applier]: https://docs.rs/kube/latest/kube/runtime/fn.applier.html
 [Api]: https://docs.rs/kube/latest/kube/struct.Api.html
 [Client]: https://docs.rs/kube/latest/kube/struct.Client.html
+[Config]: https://docs.rs/kube/latest/kube/struct.Config.html
+[Patch]: https://docs.rs/kube/latest/kube/api/enum.Patch.html
 [CustomResource]: https://docs.rs/kube/latest/kube/derive.CustomResource.html
 [CustomResourceExt]: https://docs.rs/kube/latest/kube/trait.CustomResourceExt.html
 [CustomResourceDefinition]: https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html
@@ -100,3 +102,17 @@
 [AdmissionResponse]: https://docs.rs/kube/latest/kube/core/admission/struct.AdmissionResponse.html
 [AdmissionRequest]: https://docs.rs/kube/latest/kube/core/admission/struct.AdmissionRequest.html
 [kube::core::admission]: https://docs.rs/kube/latest/kube/core/admission/index.html
+[json_patch]: https://docs.rs/json-patch/latest/json_patch/
+[kube-derive]: /crates/kube-derive/
+[kube-client]: /crates/kube-client/
+[kube-runtime]: /crates/kube-runtime/
+[kube-core]: /crates/kube-core/
+[openssl]: https://crates.io/crates/openssl
+[hyper-openssl]: https://crates.io/crates/hyper-openssl
+[rustls]: https://crates.io/crates/rustls
+[hyper-rustls]: https://crates.io/crates/hyper-rustls
+[tokio-tungstenite]: https://crates.io/crates/tokio-tungstenite
+[tame-oauth]: https://crates.io/crates/tame-oauth
+[hyper-socks2]: https://crates.io/crates/hyper-socks2
+[syn]: https://crates.io/crates/syn
+[quote]: https://crates.io/crates/quote
