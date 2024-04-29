@@ -8,11 +8,11 @@ All public features are exposed through `kube` in [kube's Cargo.toml](https://gi
 | Feature     | Enables                            | Default | Significant Inclusions       |
 | ----------- | ---------------------------------- | ------- | ---------------------------- |
 | config      | [Config]                           | yes     | [kube-client] partial        |
-| client      | [Client] + [Api]                   | yes     | [kube-client]                |
+| client      | [Client] + [Api]                   | yes     | [kube-client], [hyper], [tower] |
 | runtime     | [Controller] + [watcher]           | no      | [kube-runtime]               |
-| derive      | [CustomResource]                   | no      | [kube-derive]                |
-| openssl-tls | tls via openssl                    | no      | [openssl] + [hyper-openssl]  |
-| rustls-tls  | tls via rustls                     | [yes]   | [rustls] + [hyper-rustls]    |
+| derive      | [CustomResource]                   | no      | [kube-derive], [syn], [quote]|
+| openssl-tls | tls via openssl                    | no      | [openssl], [hyper-openssl]   |
+| rustls-tls  | tls via rustls                     | [yes]   | [rustls], [hyper-rustls]     |
 | ws          | [Execute], [Attach], [Portforward] | no      | [tokio-tungstenite]          |
 | gzip        | gzip compressed transport          | no      | [tower-http] feature         |
 | jsonpatch   | [Patch] using jsonpatch            | no      | [json_patch]                 |
