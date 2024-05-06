@@ -27,7 +27,7 @@ This policy is intended to match **stable channel support** within **major cloud
 Compare with: [EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html), [AKS](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar), [GKE](https://cloud.google.com/kubernetes-engine/docs/release-schedule), [upstream Kubernetes](https://endoflife.date/kubernetes).
 
 
-It is displayed in the main README as a badge: [![Tested against Kubernetes 1.24 and above](https://img.shields.io/badge/MK8SV-1.24-326ce5.svg)](https://kube.rs/kubernetes-version)
+It is displayed in the main README as a badge: [![Tested against Kubernetes 1.25 and above](https://img.shields.io/badge/MK8SV-1.25-326ce5.svg)](https://kube.rs/kubernetes-version)
 
 ## Picking Versions
 
