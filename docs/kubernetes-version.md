@@ -11,6 +11,7 @@ The **minimum** indicates the lower bound of our testing range, and the **latest
 
 | kube version   | MK8SV   | Latest  | Generated Source  |
 | -------------- | ------- | ------- | ----------------- |
+| [0.91.0](https://github.com/kube-rs/kube/releases/tag/0.91.0)  |  `1.25` | [`1.30`](https://kubernetes.io/blog/2024/04/17/kubernetes-v1-30-release/) | [k8s-openapi@0.22.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.22.0) |
 | [0.88.0](https://github.com/kube-rs/kube/releases/tag/0.88.0)  |  `1.24` | [`1.29`](https://kubernetes.io/blog/2023/12/13/kubernetes-v1-29-release/) | [k8s-openapi@0.21.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.21.0) |
 | [0.87.1](https://github.com/kube-rs/kube/releases/tag/0.87.1)  |  `1.23` | [`1.28`](https://kubernetes.io/blog/2023/08/15/kubernetes-v1-28-release/) | [k8s-openapi@0.20.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.20.0) |
 | [0.85.0](https://github.com/kube-rs/kube/releases/tag/0.85.0)  |  `1.22` | [`1.27`](https://kubernetes.io/blog/2023/04/11/kubernetes-v1-27-release/) | [k8s-openapi@0.19.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.19.0) |
