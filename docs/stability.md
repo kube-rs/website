@@ -9,7 +9,7 @@ Our support level is determined by our continuous integration.
 
 [Github Actions](https://github.com/kube-rs/kube/actions/workflows/ci.yml) continually builds and tests `kube` against the [LTS supported environments](https://github.com/actions/virtual-environments#available-environments) for **Ubuntu**, and **macOS**, and **Windows**:
 
-| Support                        | Source         | Guarantee        | LTS Cycle  |
+| Support                        | Source         | Guarantee        | Upstream Policy |
 | ------------------------------ | -------------- | ---------------- | ---------- |
 | :material-check-all: supported | Linux          | `ubuntu-latest`  | [2 years](https://ubuntu.com/about/release-cycle)    |
 | :material-check-all: supported | Windows        | `windows-latest` | [3 years](https://docs.microsoft.com/en-us/windows-server/get-started/windows-server-release-info)    |

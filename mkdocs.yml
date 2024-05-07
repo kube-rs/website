@@ -47,21 +47,23 @@ theme:
 # mkdocs serve will tell us about uncovered documents or broken links
 nav:
 - Information:
-  #- index.md
-  - getting-started.md
-  #- quick-tutorial.md
-  - changelog.md
-  - security.md
-  - release-process.md
-  - rust-version.md
-  - kubernetes-version.md
-  - stability.md
-  - architecture.md
-  - troubleshooting.md
-  - adopters.md
-  - guides.md
-  - upgrading.md
-  - features.md
+    Usage:
+    #- index.md
+    - getting-started.md
+    #- quick-tutorial.md
+    - changelog.md
+    - features.md
+    - upgrading.md
+    - troubleshooting.md
+    Policies:
+    - security.md
+    - stability.md
+    - rust-version.md
+    - kubernetes-version.md
+    - release-process.md
+    Third Party:
+    - adopters.md
+    - guides.md
 
 - Controllers:
     Concepts:
@@ -107,6 +109,7 @@ nav:
   - contributing.md
   - website.md
   - tools.md
+  - architecture.md
 
 markdown_extensions:
   - attr_list # https://squidfunk.github.io/mkdocs-material/reference/images/
