@@ -22,6 +22,7 @@
 - [Shulker](https://github.com/jeremylvln/shulker) - a Kubernetes operator for mananing complex and dynamic Minecraft infrastructures
 - [rūnō](https://github.com/aljoshare/runo) - A Secret Generator for Kubernetes written in Rust
 - [Akri](https://github.com/project-akri/akri) - A Kubernetes resource interface for the edge
+- [Kubewarden (CNCF)](https://www.kubewarden.io/) - A Kubernetes policy engine powered by WebAssembly
 
 ## Companies
 
