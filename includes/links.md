@@ -114,5 +114,6 @@
 [tokio-tungstenite]: https://crates.io/crates/tokio-tungstenite
 [tame-oauth]: https://crates.io/crates/tame-oauth
 [hyper-socks2]: https://crates.io/crates/hyper-socks2
+[hyper-proxy2]: https://crates.io/crates/hyper-proxy2
 [syn]: https://crates.io/crates/syn
 [quote]: https://crates.io/crates/quote
