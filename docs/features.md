@@ -18,7 +18,7 @@ All public features are exposed through `kube` in [kube's Cargo.toml](https://gi
 | jsonpatch   | [Patch] using jsonpatch            | no      | [json_patch]                 |
 | admission   | [admission] module                 | no      | [json_patch]                 |
 | socks5      | local cluster [socks5] proxying    | no      | [hyper-socks2]               |
-| http-proxy  | local cluster http proxying        | no      | [hyper-proxy2]
+| http-proxy  | local cluster http proxying        | no      | [hyper-http-proxy]
 | oauth       | local cluster oauth for GCP        | no      | [tame-oauth]                 |
 | oidc        | local cluster [oidc] auth          | no      | none                         |
 
