@@ -16,3 +16,4 @@
 *[SLA]: Service Level Agreement
 *[SLO]: Service Level Objective
 *[P95]: 95th Percentile
+*[YMMV]: Your Mileage May Vary
