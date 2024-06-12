@@ -79,7 +79,7 @@ Up until 0.91 this was handled in [`Store::apply_watcher_event@0.91`](https://gi
 Thus, on a relist/restart:
 
 1. watcher pages were [buffered internally](https://github.com/kube-rs/kube/blob/5dbae3a18c14a225d2d993b9effd16147fef420e/kube-runtime/src/watcher.rs#L119-L124)
-2. entered `Restarted` arm, where each object gotcloned while creating `new_objs`
+2. entered `Restarted` arm, where each object got cloned while creating `new_objs`
 3. store (containing the complete old data) swapped at the very end
 
 so you have a moment with **3x** peak memory use (**2x** should have been the max).
