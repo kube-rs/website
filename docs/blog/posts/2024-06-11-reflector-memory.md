@@ -156,11 +156,11 @@ __So far__, we have seen controllers with a basically unchanged profile, some wi
 
 ## Thoughts for the future
 
-The fact that you can get >80% percent improvements from not using stores does hint at a further future optimization, allowing users to opt-out of the "store completeness" guarantee.
+The 2x overhead here does hint at a potential future optimization; allowing users to opt-out of the "store completeness" guarantee.
 
 !!! note "Store Tradeoffs"
 
-    It is possibly to build custom stores that avoids the buffering of objects on restarts by dropping the store completeness guarantee. This is not practical yet for `Controller` uses, due to requirements on `Store` types, but perhaps this could be made generic/opt-out in the future.
+    It is possibly to build custom stores that avoids the buffering of objects on restarts by dropping the store completeness guarantee. This is not practical yet for `Controller` uses, due to requirements on `Store` types, but perhaps this could be made generic/opt-out in the future. It could be a potential flattener of the peak usage.
 
 As a step in the right direction, we would first like to get better visibility of our memory profile with some automated benchmarking. See [kube#1505](https://github.com/kube-rs/kube/issues/1505) for details.
 
