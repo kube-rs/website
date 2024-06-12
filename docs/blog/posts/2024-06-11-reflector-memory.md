@@ -152,13 +152,15 @@ The initial [synthetic benchmarks](https://github.com/kube-rs/kube/pull/1494#iss
 
     Whether the ad-hoc synthetic benchmarks are in any way realistic going forwards remains to be seen. How much you can get likely depends on a range of factors from allocator choice to usage patterns.
 
-__So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, and one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) (ironically, the one I used to test the change). The default [Config::page_size] of 500 does seem to undermine the optimization somewhat. Try setting the page size to 50 to get a bigger effect.
+__So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, and one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) from testing.
 
-YMMV, particularly if you are doing a lot of other stuff, but please [reach out](https://discord.gg/tokio) with more results.
+When using the standard `ListWatch` [InitialListStrategy], the default [Config::page_size] of `500` will undermine this optimization, because individual pages are still kept in the watcher while they are being sent out one-by-one. Setting the page size to `50` has been necessary for me to get anything close to the benchmarks.
+
+So for now; YMMV. Try setting the `page_size` and please [reach out](https://discord.gg/tokio) with more results!
 
 ## Thoughts for the future
 
-The 2x overhead here does hint at a potential future optimization; allowing users to opt-out of the "store completeness" guarantee.
+The peak 2x overhead here does hint at a potential future optimization; allowing users to opt-out of the _store completeness_ guarantee.
 
 !!! note "Store Tradeoffs"
 
