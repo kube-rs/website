@@ -146,9 +146,9 @@ Thus, on a restart, objects are passed one-by-one up to the store, and buffered 
 
 ## Results
 
-The initial setup saw **60% improvements** to [synthetic benchmarks](https://github.com/kube-rs/kube/pull/1494#issue-2292501600) when using stores, and **upwards of 80%** when not using stores (when there's nothing to cache), with further incremental improvements when using the `StreamingList` strategy
+The initial setup saw 60% improvements to [synthetic benchmarks](https://github.com/kube-rs/kube/pull/1494#issue-2292501600) when using stores, and 80% when not using stores (when there's nothing to cache), with further incremental improvements when using the `StreamingList` strategy
 
-Real world benefits are expected to be smaller. So far we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, but I did get one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) (ironically, the one I used to test the change). So YMMW, particularly if you are doing a lot of other stuff, but please [reach out](https://discord.gg/tokio) with more results.
+Real world benefits are expected to be smaller. __So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, but I have gotten one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) (ironically, the one I used to test the change). So YMMV, particularly if you are doing a lot of other stuff, but please [reach out](https://discord.gg/tokio) with more results.
 
 ## Thoughts for the future
 
