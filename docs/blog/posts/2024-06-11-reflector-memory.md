@@ -152,11 +152,31 @@ The initial [synthetic benchmarks](https://github.com/kube-rs/kube/pull/1494#iss
 
     Whether the ad-hoc synthetic benchmarks are in any way realistic going forwards remains to be seen. How much you can get likely depends on a range of factors from allocator choice to usage patterns.
 
-__So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, and one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) from testing.
+__So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) from testing, the same controller dropping 80% with page tuning (see below).
 
-When using the standard `ListWatch` [InitialListStrategy], the default [Config::page_size] of `500` will undermine this optimization, because individual pages are still kept in the watcher while they are being sent out one-by-one. Setting the page size to `50` has been necessary for me to get anything close to the benchmarks.
+If you are using the standard `ListWatch` [InitialListStrategy], the default [Config::page_size] of `500` will undermine this optimization, because individual pages are still kept in the watcher while they are being sent out one-by-one. Setting the page size to `50` has been necessary for me to get anything close to the benchmarks.
 
-So for now; YMMV. Try setting the `page_size` and please [reach out](https://discord.gg/tokio) with more results!
+So for now; YMMV. Try setting the `page_size`, and [chat about](https://discord.gg/tokio) / [share](https://github.com/kube-rs/kube/discussions) your results!
+
+### Examples
+Two examples from my own deployment testing today.
+
+#### Optimized Metadata Controller
+A metadata controller watching 2000 objects (all in stores), doing 6000 reconciles an hour, using **9MB of RAM**.
+
+![memory drop from a metadata controller having 2000 objects in its stores](mem-lc-drop.png)
+
+Yellow == `0.91.0`, green/red = `0.92.0` with defaults, orange = `0.92.0` with reduced page size (50).
+
+This has seen the biggest change, dropping ~85% of its memory usage, but it also is also doing all the biggest [[optimization]] tricks (`metadata_watcher`, page_size 50, pruning of managed fields), and it has basically no other cached data.
+
+#### KS Controller
+A controller for [flux kustomizations](https://fluxcd.io/flux/components/kustomize/kustomizations/) storing and reconciling about 200 `ks` objects without any significant optimization techniques.
+![memory drop from a ks controller with 200 larger objects in its stores](mem-dn-drop.png)
+
+LHS == `0.91.0`, middle = `0.92.0` with defaults (many spot instance pods), RHS from 16:00 is `0.92.0` with reduced page size (50).
+
+This controller saw a ~30% improvement overall, but not until reducing the page size. I assume this did not see any default improvement because the 200 objects fit comfortably within a single page and were cached internally in the `watcher` as before.
 
 ## Thoughts for the future
 
@@ -178,7 +198,7 @@ If you are using a custom store **please see the new [watcher::Event]** and make
 - `Deleted` -> `Delete`
 - `Restarted` -> change to `InitApply` with 2 new arms:
     * Create new arms for `Init` marking start (allocate a temporary buffer)
-    * buffer objects from `InitApply`
+    * buffer objects from `InitApply` (you get one object at a time, no need to loop)
     * Swap store in `InitDone` and deallocate the old buffer
 
 See the above `Store::apply_watcher_event` code for pointers.
