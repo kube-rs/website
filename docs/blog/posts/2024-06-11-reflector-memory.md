@@ -20,7 +20,7 @@ Why does this change improve all cases? Why did we buffer in the first place?
 
 The memory profile of any application using `kube::runtime` is often dominated by the memory usage from buffers of the Kubernetes objects that is needed to be watched. The main offender is the [reflector], with a literal `type Cache<K> = Arc<RwLock<AHashMap<ObjectRef<K>, Arc<K>>>>` hiding internally as the lookup used by [Store]s and [Controller]s.
 
-We have lots of advice on __reduce the size of this cache__. The [[optimization]] guide shows how to:
+We have lots of advice on how to __reduce the size of this cache__. The [[optimization]] guide shows how to:
 
 - **minimize what you watch** :: by constraining watch parameters with selectors
 - **minimize what you ask for** :: use [metadata_watcher] on watches that does not need the .spec
