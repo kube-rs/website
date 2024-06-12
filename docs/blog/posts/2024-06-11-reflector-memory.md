@@ -97,7 +97,7 @@ On top of that, the buffer in the `watcher` was not always released (quote from 
 > The default system allocator never returns the memory to the OS after the burst, even if the objects are dropped. Since the initial list fetch happens sporadically you get a higher RSS usage together with the memory spike. Solving the burst will solve this problem, and reflectors and watchers can be started in parallel without worrying of OOM killers.
 > The allocator does not return the memory to the OS since it treats it as a cache. This is mitigated by using jemalloc with some tuning, however, you still get the memory burst so our solution was to use jemalloc + start the watchers sequentially. As you can imagine it's not ideal.
 
-So in the end you have memory performance that is actually holding on to between 2x and 3x the actual store size at all times.
+So in the end you might actually be holding on to between 2x and 3x the actual store size at all times.
 
 !!! note "watcher guarantee was designed for the store guarantee"
 
@@ -150,9 +150,11 @@ The initial [synthetic benchmarks](https://github.com/kube-rs/kube/pull/1494#iss
 
 !!! warning "Ad-hoc Benchmarks"
 
-    Whether the ad-hoc synthetic benchmarks are in any way realistic going forwards remains to be seen. How much you can get likely depends on a range of factors from allocator to usage patterns.
+    Whether the ad-hoc synthetic benchmarks are in any way realistic going forwards remains to be seen. How much you can get likely depends on a range of factors from allocator choice to usage patterns.
 
-__So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, but I have gotten one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) (ironically, the one I used to test the change). So YMMV, particularly if you are doing a lot of other stuff, but please [reach out](https://discord.gg/tokio) with more results.
+__So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, and one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) (ironically, the one I used to test the change). The default [Config::page_size] of 500 does seem to undermine the optimization somewhat. Try setting the page size to 50 to get a bigger effect.
+
+YMMV, particularly if you are doing a lot of other stuff, but please [reach out](https://discord.gg/tokio) with more results.
 
 ## Thoughts for the future
 
