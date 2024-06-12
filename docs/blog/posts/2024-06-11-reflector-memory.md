@@ -8,7 +8,7 @@ description: >
 
 # Watcher Memory Improvements
 
-In 0.92.0 [watcher] dropped its internal buffering of state and started to fully delegating any potential buffering to the associated [Store].
+In [0.92.0](https://github.com/kube-rs/kube/releases/tag/0.92.0) [watcher] dropped its internal buffering of state and started to fully delegating any potential buffering to the associated [Store].
 
 This has resulted in a pretty big memory improvement for direct users of [watcher], but also (somewhat unintuitively) for users of reflectors and stores.
 
