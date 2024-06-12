@@ -26,9 +26,17 @@ We have lots of advice on how to __reduce the size of this cache__. The [[optimi
 - **minimize what you ask for** :: use [metadata_watcher] on watches that does not need the .spec
 - **minimize what you store** :: by dropping fields before sending to stores
 
-These are quick and easy steps improve the memory profile that is worth checking out (the benefits of doing these will further increase in 0.92)
+These are quick and easy steps improve the memory profile that is worth checking out (the benefits of doing these will further increase in 0.92).
 
 Improving what is stored in the `Cache` above is important, but it is not the full picture...
+
+## The Watch API
+
+The Kubernetes watch API is an interesting beast. You have no guarantees you'll get every event, and you must be able to restart from a potentially new checkpoint without telling you what changes happened in the downtime. This is mentioned briefly in [Kubernetes API concepts](https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes) as an implication of its `410 Gone` responses.
+
+When `410 Gone` responses happen we need to trigger a re-list, and wait for all data to come through before we are back in a "live watching" mode that is caught up with reality. This type of API consumption is problematic when you need to do work with reflectors/caches where you are generally storing __complete__ snapshots in memory for a worker task. Controllers are effectively forced to treat every event as a potential change, and chase [[reconciler#idempotency]] as a work-around for not having guaranteed delivery.
+
+Let's focus on caches. To simplify these problems for users we have created certain guarantees in the abstractions of `kube::runtime`.
 
 ## Guarantees
 
@@ -43,14 +51,14 @@ This property meant that stores could in-turn provide their own guarantee very e
 
 !!! note "Store completeness"
 
-    [Store] always presents the full state once initialised. It present previous full state when initialised and relisting.
-    There is no down-time for a store and its `Cache` is replaced __atomically__ in a single locked step.
+    [Store] always presents the full state once initialised. During a relist, previous state is presented.
+    There is no down-time for a store during relists, and its `Cache` is replaced __atomically__ in a single locked step.
 
-This property is needed for Controllers who rely on complete information and will even wait for stores to become ready via [Store::wait_until_ready].
+This property is needed for Controllers who rely on complete information and will kick in once the future from [Store::wait_until_ready] resolves.
 
 ## Consequences
 
-If we do all the buffering on the watcher side, then achieving the store completeness guarantee is a rather trivial task to accomplish.
+If we do all the buffering on the `watcher` side, then achieving the store completeness guarantee is a rather trivial task to accomplish.
 
 Up until 0.91 this was handled in [`Store::apply_watcher_event@0.91`](https://github.com/kube-rs/kube/blob/5dbae3a18c14a225d2d993b9effd16147fef420e/kube-runtime/src/reflector/store.rs#L96-L121) as:
 
@@ -82,7 +90,7 @@ Thus, on a relist/restart:
 2. entered `Restarted` arm, where each object got cloned while creating `new_objs`
 3. store (containing the complete old data) swapped at the very end
 
-so you have a moment with **3x** peak memory use (**2x** should have been the max).
+so you have a moment with **3x** potential peak memory use (**2x** should have been the max).
 
 On top of that, the buffer in the `watcher` was not always released (quote from [discord](https://discord.com/channels/500028886025895936/1234736869317673022)):
 
@@ -90,6 +98,10 @@ On top of that, the buffer in the `watcher` was not always released (quote from 
 > The allocator does not return the memory to the OS since it treats it as a cache. This is mitigated by using jemalloc with some tuning, however, you still get the memory burst so our solution was to use jemalloc + start the watchers sequentially. As you can imagine it's not ideal.
 
 So in the end you have memory performance that is actually holding on to between 2x and 3x the actual store size at all times.
+
+!!! note "watcher guarantee was designed for the store guarantee"
+
+    If you were using `watcher` without `reflector`, you were the most affected by this excessive caching. You might not have needed __watcher atomicity__, as it was primarily designed to facilitate __store completeness__.
 
 ## Change in 0.92
 
@@ -130,13 +142,13 @@ Thus, on a restart, objects are passed one-by-one up to the store, and buffered 
 
 !!! note "Preparing for StreamingLists"
 
-    Note that the new partial `InitApply` event only pass up __individual__ objects, not pages. This is to prepare for the [1.27 Alpha StreamingLists](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists) feature which also passed individual events. Once this becomes available for even our minimum [[kubernetes-version]] we can move to this to avoid smaller individual buffers by getting individual objects rather than pages (of default 500 objects). In the mean time, we send pages through item by item to avoid a breaking change in the future (and also to avoid exposing a confusing concept of flattened/unflattened streams).
+    Note that the new partial `InitApply` event only pass up __individual__ objects, not pages. This is to prepare for the [1.27 Alpha StreamingLists](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists) feature which also passed individual events. Once this becomes available for even our minimum [[kubernetes-version]] we can make this the default - reducing page buffers further - exposing the literal api results rather than pages (of [default 500 objects](https://docs.rs/kube/0.91.0/kube/runtime/watcher/struct.Config.html#structfield.page_size)). In the mean time, we send pages through item-by-item to avoid a breaking change in the future (and also to avoid exposing the confusing concept of flattened/unflattened streams).
 
 ## Results
 
 The initial setup saw **60% improvements** to [synthetic benchmarks](https://github.com/kube-rs/kube/pull/1494#issue-2292501600) when using stores, and **upwards of 80%** when not using stores (when there's nothing to cache), with further incremental improvements when using the `StreamingList` strategy
 
-I have seen [50% drops myself in real-world controllers](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967). YMMW, but please [reach out](https://discord.gg/tokio) with more results.
+I have seen [50% drops myself in real-world controllers](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967). YMMW, particularly if you are doing a lot of other stuff, but please [reach out](https://discord.gg/tokio) with more results.
 
 ## Thoughts for the future
 
