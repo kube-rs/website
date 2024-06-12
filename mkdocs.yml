@@ -110,6 +110,8 @@ nav:
   - website.md
   - tools.md
   - architecture.md
+- Blog:
+  - blog/index.md
 
 markdown_extensions:
   - attr_list # https://squidfunk.github.io/mkdocs-material/reference/images/
@@ -132,8 +134,8 @@ markdown_extensions:
   - pymdownx.betterem:
       smart_enable: all
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
@@ -155,6 +157,7 @@ plugins:
   - search
   - roamlinks
     #- autolinks
+  - blog
   - exclude:
       glob:
         - "*.tmp"

@@ -29,6 +29,7 @@
 [DynamicObject]: https://docs.rs/kube/latest/kube/core/struct.DynamicObject.html
 [PartialObjectMeta]: https://docs.rs/kube/latest/kube/core/struct.PartialObjectMeta.html
 [Store]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.Store.html
+[Store::wait_until_ready]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.Store.html#method.wait_until_ready
 [reflector]: https://docs.rs/kube/latest/kube/runtime/fn.reflector.html
 [watcher]: https://docs.rs/kube/latest/kube/runtime/fn.watcher.html
 [metadata_watcher]: https://docs.rs/kube/latest/kube/runtime/fn.metadata_watcher.html
