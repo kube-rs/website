@@ -10,9 +10,9 @@ description: >
 
 In [0.92.0](https://github.com/kube-rs/kube/releases/tag/0.92.0), the [watcher] dropped its internal buffering of state and started to fully delegating any potential buffering to the associated [Store].
 
-This has resulted in a pretty big memory improvement for direct users of [watcher], but also (somewhat unintuitively) for users of reflectors and stores.
+This can cause a decent memory use reduction for direct users of [watcher], but also (somewhat unintuitively) for users of reflectors and stores.
 
-Why does this change improve all cases? Why did we buffer in the first place?
+In this post, we explore the setup, current solutions, and some future work.
 
 <!-- more -->
 
@@ -146,9 +146,13 @@ Thus, on a restart, objects are passed one-by-one up to the store, and buffered 
 
 ## Results
 
-The initial setup saw 60% improvements to [synthetic benchmarks](https://github.com/kube-rs/kube/pull/1494#issue-2292501600) when using stores, and 80% when not using stores (when there's nothing to cache), with further incremental improvements when using the `StreamingList` strategy
+The initial [synthetic benchmarks](https://github.com/kube-rs/kube/pull/1494#issue-2292501600) saw 60% reductions when using stores, and 80% when not using stores (when there's nothing to cache), with further incremental improvements when using the `StreamingList` strategy.
 
-Real world benefits are expected to be smaller. __So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, but I have gotten one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) (ironically, the one I used to test the change). So YMMV, particularly if you are doing a lot of other stuff, but please [reach out](https://discord.gg/tokio) with more results.
+!!! warning "Ad-hoc Benchmarks"
+
+    Whether the ad-hoc synthetic benchmarks are in any way realistic going forwards remains to be seen. How much you can get likely depends on a range of factors from allocator to usage patterns.
+
+__So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, but I have gotten one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) (ironically, the one I used to test the change). So YMMV, particularly if you are doing a lot of other stuff, but please [reach out](https://discord.gg/tokio) with more results.
 
 ## Thoughts for the future
 
