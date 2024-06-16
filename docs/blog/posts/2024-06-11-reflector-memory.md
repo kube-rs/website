@@ -159,7 +159,7 @@ If you are using the standard `ListWatch` [InitialListStrategy], the default [Co
 So for now; YMMV. Try setting the `page_size`, and [chat about](https://discord.gg/tokio) / [share](https://github.com/kube-rs/kube/discussions) your results!
 
 ### Examples
-Two examples from my own deployment testing today.
+Two examples from my own deployment testing today (plots of kubelet cpu metrics from [compute dashboards](https://github.com/kubernetes-monitoring/kubernetes-mixin)).
 
 #### Optimized Metadata Controller
 A metadata controller watching 2000 objects (all in stores), doing 6000 reconciles an hour, using **9MB of RAM**.
