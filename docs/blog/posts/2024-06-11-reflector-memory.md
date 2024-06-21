@@ -12,7 +12,7 @@ In [0.92.0](https://github.com/kube-rs/kube/releases/tag/0.92.0), the [watcher] 
 
 This can cause a decent memory use reduction for direct users of [watcher], but also (somewhat unintuitively) for users of reflectors and stores.
 
-In this post, we explore the setup, current solutions, and some future work.
+In this post, we explore the setup, current solutions, and some future work. It has been updated in light of [0.92.1](https://github.com/kube-rs/kube/releases/tag/0.92.1).
 
 <!-- more -->
 
@@ -38,7 +38,7 @@ When `410 Gone` responses happen we need to trigger a re-list, and wait for all 
 
 Let's focus on caches. To simplify these problems for users we have created certain guarantees in the abstractions of `kube::runtime`.
 
-## Guarantees
+## Runtime Guarantees
 
 The [watcher] up until 0.92.0 has maintained a guarantee we have casually referred to as __watcher atomicity__:
 
@@ -56,11 +56,11 @@ This property meant that stores could in-turn provide their own guarantee very e
 
 This property is needed for Controllers who rely on complete information and will kick in once the future from [Store::wait_until_ready] resolves.
 
-## Consequences
+### Store Consequences
 
 If we do all the buffering on the `watcher` side, then achieving the store completeness guarantee is a rather trivial task to accomplish.
 
-Up until 0.91 this was handled in [`Store::apply_watcher_event@0.91`](https://github.com/kube-rs/kube/blob/5dbae3a18c14a225d2d993b9effd16147fef420e/kube-runtime/src/reflector/store.rs#L96-L121) as:
+Up until 0.91 this was handled in [`Store::apply_watcher_event@0.91`](https://github.com/kube-rs/kube/blob/5dbae3a18c14a225d2d993b9effd16147fef420e/kube-runtime/src/reflector/store.rs#L96-L121) as with a `*self.store.write() = new_objs` on the old `Restarted` event:
 
 ```rust
 // 0.91 source:
@@ -103,6 +103,12 @@ So in the end you might actually be holding on to between 2x and 3x the actual s
 
     If you were using `watcher` without `reflector`, you were the most affected by this excessive caching. You might not have needed __watcher atomicity__, as it was primarily designed to facilitate __store completeness__.
 
+### Watcher Consequences
+
+If you were just watching data on 0.91.0 (not using stores), the buffering is completely necessary if you just want to react to events about individual objects without considering the wider dataset.
+
+Your peak memory use for a single watcher (with all other things considered negligible) is going to scale with the size of the __complete dataset__ because `watcher` was buffering ALL pages, whereas it really __should__ only scale with the __page size__ that you ask for objects returned in.
+
 ## Change in 0.92
 
 The change in 0.92.0 is primarily to **stop buffering events in the `watcher`**, and present __new watcher events__ that allows a store to achieve the Store completeness guarantee.
@@ -138,7 +144,7 @@ As it stands the [`Store::apply_watcher_event@0.92`](https://github.com/kube-rs/
         }
 ```
 
-Thus, on a restart, objects are passed one-by-one up to the store, and buffered therein. When all objects are received, the buffers are swapped (meaning you use at most 2x the data). The blank buffer re-assignment [also forces de-allocation](https://github.com/kube-rs/kube/pull/1494#discussion_r1602840218) of the temporary `self.buffer`.
+Thus, on a restart, objects are passed one-by-one up to the store, and buffered therein. When all objects are received, the buffers are swapped (meaning you use at most 2x the data). The blank buffer re-assignment also forces de-allocation[*](https://github.com/kube-rs/kube/pull/1494#discussion_r1602840218) of the temporary `self.buffer`.
 
 !!! note "Preparing for StreamingLists"
 
@@ -146,37 +152,42 @@ Thus, on a restart, objects are passed one-by-one up to the store, and buffered 
 
 ## Results
 
-The initial [synthetic benchmarks](https://github.com/kube-rs/kube/pull/1494#issue-2292501600) saw 60% reductions when using stores, and 80% when not using stores (when there's nothing to cache), with further incremental improvements when using the `StreamingList` strategy.
+The __initial__ [synthetic benchmarks](https://github.com/kube-rs/kube/pull/1494#issue-2292501600) saw 60% reductions when using stores, and 80% when not using stores (when there's nothing to cache), with further incremental improvements when using the `StreamingList` strategy.
 
 !!! warning "Ad-hoc Benchmarks"
 
-    Whether the ad-hoc synthetic benchmarks are in any way realistic going forwards remains to be seen. How much you can get likely depends on a range of factors from allocator choice to usage patterns.
+    The ad-hoc synthetic benchmarks are likely unrealistic for real world scenarios. The original 0.92.0 release had a bug [affecting benchmarks](https://github.com/kube-rs/kube/pull/1525#issuecomment-2179415844), so many of the linked posts may be invalid / out-of-date. How much you can get out of this will depend on a range of factors from allocator choice to usage patterns.
 
-__So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) from testing, the same controller dropping 80% with page tuning (see below).
+__So far__, we have seen controllers with a basically unchanged profile, some with small improvements in the 10-20% range, one [50% drop in a real-world controller](https://github.com/kube-rs/kube/pull/1494#issuecomment-2126694967) from testing (EDIT: which is still sustained after the 0.92.1 bugfix with page size).
 
-If you are using the standard `ListWatch` [InitialListStrategy], the default [Config::page_size] of `500` will undermine this optimization, because individual pages are still kept in the watcher while they are being sent out one-by-one. Setting the page size to `50` has been necessary for me to get anything close to the benchmarks.
+In the current default `ListWatch` [InitialListStrategy], the implicit default [Config::page_size] of `500` will undermine this optimization somewhat, because individual pages are still kept in the watcher while they are being sent out one-by-one. Setting the page size to `50` was necessary for me to get anything close to the benchmarks.
+
+!!! note "Page Size Marginal Gains"
+
+    Lowering the page size below 50 did see further marginal gains (~5%ish from limited testing), but this will also increase API calls (/list next page). It will be interesting to see how well the streaming lists change will fare in the end (as it effectively functions as setting the page size to 1 as far as internal buffering is concerned).
 
 So for now; YMMV. Try setting the `page_size`, and [chat about](https://discord.gg/tokio) / [share](https://github.com/kube-rs/kube/discussions) your results!
 
 ### Examples
-Two examples from my own deployment testing today (plots of kubelet metrics from [compute dashboards](https://github.com/kubernetes-monitoring/kubernetes-mixin)).
+Two example results from my own deployment testing (by checking memory use after initialisation 5m in using standard kubelet metrics) showed uneven gains.
+
+!!! warning "Update after 0.92.1"
+
+    This post has been edited in light of [0.92.1](https://github.com/kube-rs/kube/releases/tag/0.92.1) which casted the 0.92.0 release in overly favourable light. 0.92.0 dropped pages and this [impacted the measurements](https://github.com/kube-rs/kube/pull/1525#issuecomment-2179415844).
 
 #### Optimized Metadata Controller
-A metadata controller watching 2000 objects (all in stores), doing 6000 reconciles an hour, using **9MB of RAM**.
+A metadata controller watching 2000 objects (all in stores), doing 6000 reconciles an hour.
 
-![memory drop from a metadata controller having 2000 objects in its stores](mem-lc-drop.png)
+> **45MB** memory on 0.91.0, **~20MB** on 0.92.1.
 
-Yellow == `0.91.0`, green/red = `0.92.0` with defaults, orange = `0.92.0` with reduced page size (50).
-
-This has seen the biggest change, dropping ~85% of its memory usage, but it also is also doing all the biggest [[optimization]] tricks (`metadata_watcher`, page_size 50, pruning of managed fields), and it has basically no other cached data.
+This saw the biggest improvement, dropping ~50% of its memory usage. This is also a tiny controller with basically no other cached data though, it is doing all the biggest [[optimization]] tricks (`metadata_watcher`, page_size 50, pruning of managed fields) so the page buffering actually constituted the majority of the memory use (a perhaps uncommon situation).
 
 #### KS Controller
 A controller for [flux kustomizations](https://fluxcd.io/flux/components/kustomize/kustomizations/) storing and reconciling about 200 `ks` objects without any significant optimization techniques.
-![memory drop from a ks controller with 200 larger objects in its stores](mem-dn-drop.png)
 
-LHS == `0.91.0`, middle = `0.92.0` with defaults (many spot instance pods), RHS from 16:00 is `0.92.0` with reduced page size (50).
+> **~65MB** memory on 0.91.0, **~65MB** on 0.92.1.
 
-This controller saw a ~30% improvement overall, but not until reducing the page size. I assume this did not see any default improvement because the 200 objects fit comfortably within a single page and were cached internally in the `watcher` as before.
+No improvements overall on this one despite setting page size down to 50.
 
 ## Thoughts for the future
 
@@ -187,6 +198,8 @@ The peak 2x overhead here does hint at a potential future optimization; allowing
     It is possibly to build custom stores that avoids the buffering of objects on restarts by dropping the store completeness guarantee. This is not practical yet for `Controller` uses, due to requirements on `Store` types, but perhaps this could be made generic/opt-out in the future. It could be a potential flattener of the peak usage.
 
 As a step in the right direction, we would first like to get better visibility of our memory profile with some automated benchmarking. See [kube#1505](https://github.com/kube-rs/kube/issues/1505) for details.
+
+It would also be good to better understand the choices of allocators here and their implications for some of these designs.
 
 ## Breaking Change
 
