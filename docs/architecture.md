@@ -43,7 +43,7 @@ We generally use k8s-openapi's Rust bindings for Kubernetes' builtin types types
 - [github.com:k8s-openapi](https://github.com/Arnavion/k8s-openapi/)
 - [docs.rs:k8s-openapi](https://docs.rs/k8s-openapi/*/k8s_openapi/)
 
-We also maintain an experimental set of Protobuf bindings, see [k8s-pb](https://github.com/kazk/k8s-pb).
+We also maintain an experimental set of Protobuf bindings, see [k8s-pb](https://github.com/kube-rs/k8s-pb).
 
 ## Crate Overviews
 ### kube-core
