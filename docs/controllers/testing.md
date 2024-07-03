@@ -21,8 +21,8 @@ The basic unit `#[test]`. Typically composed of individual test function in a __
 
 We will defer to various official guides on good unit test writing in rust:
 
-- [rust by example - unit tests](https://doc.rust-lang.org/rust-by-example/testing/unit_testing.html)
-- [rust book - writing tests](https://doc.rust-lang.org/book/ch11-01-writing-tests.html)
+- [Rust By Example - Unit testing](https://doc.rust-lang.org/rust-by-example/testing/unit_testing.html)
+- [Rust Book - How to Write Tests](https://doc.rust-lang.org/book/ch11-01-writing-tests.html)
 
 ### Benefits
 
