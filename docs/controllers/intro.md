@@ -4,7 +4,7 @@ This is a larger guide to showcase how to build controllers, and is a WIP with a
 
 ## Overview
 
-A controller a long-running program that ensures the kubernetes state of an object, matches the state of the world.
+A controller is a long-running program that ensures the Kubernetes state of an object matches the state of the world.
 
 As users update the desired state, the controller sees the change and schedules a reconciliation, which will update the state of the world:
 
@@ -17,13 +17,13 @@ flowchart TD
     R -- update state --> K
 ```
 
-any unsuccessful reconciliations are retried or requeued, so a controller should **eventually** apply the desired state to the world.
+Any unsuccessful reconciliations are retried or requeued, so a controller should **eventually** apply the desired state to the world.
 
 Writing a controller requires **three** pieces:
 
 - an **object** dictating what the world should see
 - an **reconciler** function that ensures the state of one object is applied to the world
-- an **application** living in kubernetes watching the object and related objects
+- an **application** living in Kubernetes watching the object and related objects
 
 ## The Object
 
@@ -62,7 +62,7 @@ async fn reconcile(object: Arc<MyObject>, data: Arc<Data>) -> Result<Action, Err
 As a controller writer, your job is to complete the logic that align the world with what is inside the `object`.
 The core reconciler must at **minimum** contain **mutating api calls** to what your `object` is meant to manage, and in some situations, handle annotations management for [ownership](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/) or [garbage collection](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/).
 
-Writing a good **idempotent reconciler** is the most difficult part of the whole affair, and its difficulty is the reason we generally provide diagnostics and observability:
+Writing a good **idempotent reconciler** is the most difficult part of the whole affair, and its difficulty is the reason we generally provide diagnostics and observability.
 
 See the [[reconciler]] document for more information.
 
@@ -99,12 +99,10 @@ The terminology between **controllers** and **operators** are quite similar:
 
 Which is further reworded now under their new [agglomerate banner](https://cloud.redhat.com/learn/topics/operators).
 
-They key **differences** between the two is that **operators** generally a specific type of controller, sometimes more than one in a single application. A controller would at the very least need to:
+They key **differences** between the two is that **operators** generally a specific type of controller, sometimes more than one in a single application. To be classified as an operator, a controller would at the very least need to:
 
 - manage custom resource definition(s)
 - maintain single app focus
-
-to be classified as an operator.
 
 The term **operator** is a flashier term that makes the **common use-case** for user-written CRD controllers more understandable. If you have a CRD, you likely want to write a controller for it ([otherwise why](https://kubernetes.io/docs/concepts/configuration/configmap/) go through the effort of making a custom resource?).
 
