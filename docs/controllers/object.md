@@ -34,7 +34,7 @@ A separate [k8s-pb] repository for our [future protobuf serialization structs](h
 ## Custom Resources
 ### Derived Custom Resource
 
-The operator use case is heavily based on you writing your own struct, and a schema, and [extending the kuberntes api](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/) with it.
+The operator use case is heavily based on you writing your own struct, and a schema, and [extending the Kubernetes api](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/) with it.
 
 This **has** historically required a lot of boilerplate for both the api information and the (now required) [schema](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#validation-rules), but this is a lot simpler with kube thanks to the [CustomResource] derive [proc_macro].
 
