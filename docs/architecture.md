@@ -36,7 +36,7 @@ The Rust ecosystem does not exist in a vaccum as we take heavy inspirations from
 We do occasionally diverge on matters where following the go side is worse for the rust language, but when it comes to choosing names and finding out where some modules / functionality should reside; a precedent in `client-go`, `apimachinery`, `controller-runtime` and `kubebuilder` goes a long way.
 
 ## Generated Structs
-We do not maintain the kubernetes types generated from the `swagger.json` or the protos at present moment, and we do not handle client-side validation of fields relating to these types (that's left to the api-server).
+We do not maintain the Kubernetes types generated from the `swagger.json` or the protos at present moment, and we do not handle client-side validation of fields relating to these types (that's left to the api-server).
 
 We generally use k8s-openapi's Rust bindings for Kubernetes' builtin types types, see:
 
@@ -109,7 +109,7 @@ Finally, the `Client` manages other key aspects of IO the protocol such as:
 - `Client::connect` performs an [HTTP Upgrade](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Upgrade) for specialised verbs
 - `Client::request` handles 90% of all requests
 - `Client::request_events` handles streaming `watch` events using `tokio_utils`'s `FramedRead` codec
-- `Client::request_status` handles `Either<T, Status>` responses from kubernetes
+- `Client::request_status` handles `Either<T, Status>` responses from Kubernetes
 
 #### api
 The generic `Api` type and its methods.
@@ -123,7 +123,7 @@ For dynamic types (`Object` and `DynamicObject`) it has slightly more complicate
 The `core_methods` and most `subresource` methods generally follow this recipe:
 
 - create `Request`
-- store the kubernetes verb in the [`http::Extensions`] object
+- store the Kubernetes verb in the [`http::Extensions`] object
 - call the request with the `Client` and tell it what type(s) to deserialize into
 
 Some subresource methods (behind the `ws` feature) use the `remote_command` module's `AttachedProcess` interface expecting a duplex stream to deal with specialised websocket verbs (`exec` and `attach`) and is calling `Client::connect` first to get that stream.
@@ -132,7 +132,7 @@ Some subresource methods (behind the `ws` feature) use the `remote_command` modu
 Deals with dynamic discovery of what apis are available on the api-server.
 Normally this can be used to discover custom resources, but also certain standard resources that vary between providers.
 
-The `Discovery` client can be used to do a full recursive sweep of api-groups into all api resources (through `filter`/`exclude` -> `run`) and then the users can periodically re-`run` to keep the cache up to date (as kubernetes is being upgraded behind the scenes).
+The `Discovery` client can be used to do a full recursive sweep of api-groups into all api resources (through `filter`/`exclude` -> `run`) and then the users can periodically re-`run` to keep the cache up to date (as Kubernetes is being upgraded behind the scenes).
 
 The `discovery` module also contains a way to run smaller queries through the `oneshot` module; e.g. resolving resource name when having group version kind, resolving every resource within one specific group, or even one group at a pinned version.
 

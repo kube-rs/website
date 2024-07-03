@@ -4,7 +4,7 @@ This is a larger guide to showcase how to build controllers, and is a WIP with a
 
 ## Overview
 
-A controller is a long-running program that ensures the kubernetes state of an object matches the state of the world.
+A controller is a long-running program that ensures the Kubernetes state of an object matches the state of the world.
 
 As users update the desired state, the controller sees the change and schedules a reconciliation, which will update the state of the world:
 
@@ -23,7 +23,7 @@ Writing a controller requires **three** pieces:
 
 - an **object** dictating what the world should see
 - an **reconciler** function that ensures the state of one object is applied to the world
-- an **application** living in kubernetes watching the object and related objects
+- an **application** living in Kubernetes watching the object and related objects
 
 ## The Object
 

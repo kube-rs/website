@@ -1,6 +1,6 @@
 # The Object
 
-A controller always needs a __source of truth__ for **what the world should look like**, and this object **always lives inside kubernetes**.
+A controller always needs a __source of truth__ for **what the world should look like**, and this object **always lives inside Kubernetes**.
 
 Depending on how the object was created/imported or performance optimization reasons, you can pick one of the following object archetypes:
 
