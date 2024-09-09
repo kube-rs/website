@@ -31,6 +31,25 @@ If you have a native Kubernetes type, **you generally want to start with [k8s-op
 
 A separate [k8s-pb] repository for our [future protobuf serialization structs](https://github.com/kube-rs/kube/issues/725) also exists, and while it will slot into this category and should hotswappable with [k8s-openapi], it is **not yet usable** here.
 
+### Derived Resource
+
+A similar way of doing this is to have your own struct, but inherit the typing (api parameters) for a known openapi type. This allows customising the type / impls for memory reasons / particular constraints, and also is also a way of doing partial typing.
+
+```rust
+use k8s_openapi::api::core::v1::ConfigMap;
+// ConfigMap Variant that inherits from k8s-openapi
+#[derive(Resource, Serialize, Deserialize, Debug, Clone)]
+#[resource(inherit = ConfigMap)]
+struct CaConfigMap {
+    metadata: ObjectMeta,
+    data: CaConfigMapData, // Custom Data struct implementation
+}
+
+let cm = Api::<CaConfigMap>::all(client);
+```
+
+See the [cert_check example](https://github.com/kube-rs/kube/blob/main/examples/cert_check.rs) for more details.
+
 ## Custom Resources
 ### Derived Custom Resource
 
@@ -241,6 +260,10 @@ We have to recursively re-implement every part of [Pod] that we care about, but 
 
 This is functionally similar way to deriving `CustomResource` on an incomplete struct, but using (possibly) dynamic api parameters.
 
+!!! warning "Dynamic Partial Typing vs Derived Typing"
+
+    Dynamic partial typing is an older, cumbersome method that struggles with core apis (that does not follow the spec/status) model. If you actually have a type, consider using the newer [derived typed resources](#derived-resource) setup to avoid using the dynamic api.
+
 ### Dynamic new_with constructors
 
 !!! warning "Partial or dynamic typing always needs additional type information"
@@ -251,13 +274,16 @@ This is functionally similar way to deriving `CustomResource` on an incomplete s
 
 All the fully typed methods all have a **consistent usage pattern** once the types have been generated. The dynamic and partial objects have more niche use cases and require a little more work such as alternate constructors.
 
-| typing                    | Source                               | Implementation              |
-| ------------------------- | ------------------------------------ |---------------------------- |
-| :material-check-all: full | [k8s-openapi]                        | `use k8s-openapi::X`        |
-| :material-check-all: full | kube::[CustomResource]               | `#[derive(CustomResource)]` |
-| :material-check-all: full | [kopium]                             | `kopium crd > gen.rs`       |
-| :material-check: partial  | kube::core::[Object]                 | partial handwrite           |
-| :material-close: none     | kube::core::[DynamicObject]          | fully dynamic               |
+| typing                    | Source                      | Implementation                             |
+| ------------------------- | --------------------------- |------------------------------------------- |
+| :material-check-all: full | [k8s-openapi]               | `use k8s-openapi::X`                       |
+| :material-check-all: full | [Derive-CustomResource]     | `#[derive(CustomResource)]`                |
+| :material-check-all: full | [kopium]                    | `kopium crd > gen.rs`                      |
+| :material-check-all: full | [Derive-Resource]           | `#[derive(Resource)]` + partial handwrite  |
+| :material-close: none     | kube::core::[Object]        | partial handwrite                          |
+| :material-close: none     | kube::core::[DynamicObject] | fully dynamic                              |
+
+Where the last two requires the dynamic `_with` constructors.
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"

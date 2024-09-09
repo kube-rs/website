@@ -15,6 +15,8 @@
 [Config]: https://docs.rs/kube/latest/kube/struct.Config.html
 [Patch]: https://docs.rs/kube/latest/kube/api/enum.Patch.html
 [CustomResource]: https://docs.rs/kube/latest/kube/derive.CustomResource.html
+[Derive-CustomResource]: https://docs.rs/kube/latest/kube/derive.CustomResource.html
+[Derive-Resource]: https://docs.rs/kube/latest/kube/derive.Resource.html
 [CustomResourceExt]: https://docs.rs/kube/latest/kube/trait.CustomResourceExt.html
 [CustomResourceDefinition]: https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html
 [Resource]: https://docs.rs/kube/latest/kube/trait.Resource.html
