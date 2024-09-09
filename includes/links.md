@@ -22,6 +22,7 @@
 [Resource]: https://docs.rs/kube/latest/kube/trait.Resource.html
 [ResourceExt]: https://docs.rs/kube/latest/kube/trait.ResourceExt.html
 [ApiResource]: https://docs.rs/kube/latest/kube/core/struct.ApiResource.html
+[DeserializeGuard]: https://docs.rs/kube/latest/kube/core/struct.DeserializeGuard.html
 [ListParams]: https://docs.rs/kube/latest/kube/api/struct.ListParams.html
 [watcher::Config]: https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html
 [watcher::Error]: https://docs.rs/kube/latest/kube/runtime/watcher/enum.Error.html

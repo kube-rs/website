@@ -48,7 +48,9 @@ struct CaConfigMap {
 let cm = Api::<CaConfigMap>::all(client);
 ```
 
-See the [cert_check example](https://github.com/kube-rs/kube/blob/main/examples/cert_check.rs) for more details.
+This can additionally be combined with [DeserializeGuard] for deserialize safety.
+
+See the [errorbound_configmap](https://github.com/kube-rs/kube/blob/main/examples/errorbounded_configmap_watcher.rs), and [cert_check example](https://github.com/kube-rs/kube/blob/main/examples/cert_check.rs) for more details.
 
 ## Custom Resources
 ### Derived Custom Resource
