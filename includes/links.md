@@ -117,6 +117,7 @@
 [hyper-openssl]: https://crates.io/crates/hyper-openssl
 [rustls]: https://crates.io/crates/rustls
 [hyper-rustls]: https://crates.io/crates/hyper-rustls
+[aws-lc-rs]: https://crates.io/crates/aws-lc-rs
 [tokio-tungstenite]: https://crates.io/crates/tokio-tungstenite
 [tame-oauth]: https://crates.io/crates/tame-oauth
 [hyper-socks2]: https://crates.io/crates/hyper-socks2
