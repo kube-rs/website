@@ -6,7 +6,16 @@
 <!-- DO NOT touch the headers, UNRELEAS'D line, or compare url manually - they are sed'd -->
 <!-- next-header -->
 ## Unreleased
- * see https://github.com/kube-rs/kube/compare/0.94.1...main
+ * see https://github.com/kube-rs/kube/compare/0.94.2...main
+
+## [0.94.2](https://github.com/kube-rs/kube/releases/tag/0.94.2) / 2024-09-13
+<!-- Release notes generated using configuration in .github/release.yml at 0.94.2 -->
+
+## What's Changed
+Fixes a runtime regression in [`watch_object`](https://docs.rs/kube/latest/kube/runtime/watcher/fn.watch_object.html).
+
+### Fixed
+* Ensure `watch_object` handles objects removed before init by @markdingram in https://github.com/kube-rs/kube/pull/1577
 
 ## [0.94.1](https://github.com/kube-rs/kube/releases/tag/0.94.1) / 2024-09-09
 <!-- Release notes generated using configuration in .github/release.yml at 0.94.1 -->
