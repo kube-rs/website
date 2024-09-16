@@ -76,7 +76,7 @@ pub struct DocumentStatus {
 }
 ```
 
-This will generate a `pub struct Document` in this scope which implements [Resource]. In other words, to use it with the a controller is at this point analogous to a fully typed resource:
+This will generate a `pub struct Document` in this scope which implements [Resource]. In other words, to use it with the controller is at this point analogous to a fully typed resource:
 
 ```rs
 let docs = Api::<Document>::all(client);
