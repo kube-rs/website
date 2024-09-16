@@ -27,13 +27,13 @@ Controller::new(pods, watcher::Config::default())
 
 This is the simplest flow and works right out of the box because the openapi implementation ensures we have all the api information via the [Resource] traits.
 
-If you have a native Kubernetes type, **you generally want to start with [k8s-openapi]**. If will likely do exactly what you want without further issues. **That said**, if both your clusters and your chosen object are large, then you can **consider optimizing** further by changing to a [partially typed resource](#partially-typed-resource) for smaller memory profile.
+If you have a native Kubernetes type, **you generally want to start with [k8s-openapi]**. It will likely do exactly what you want without further issues. **That said**, if both your clusters and your chosen object are large, then you can **consider optimizing** further by changing to a [partially typed resource](#partially-typed-resource) for smaller memory profile.
 
 A separate [k8s-pb] repository for our [future protobuf serialization structs](https://github.com/kube-rs/kube/issues/725) also exists, and while it will slot into this category and should hotswappable with [k8s-openapi], it is **not yet usable** here.
 
 ### Derived Resource
 
-A similar way of doing this is to have your own struct, but inherit the typing (api parameters) for a known openapi type. This allows customising the type / impls for memory reasons / particular constraints, and also is also a way of doing partial typing.
+A similar way of doing this is to have your own struct, but inherit the typing (api parameters) from a known openapi type. This allows customising the type / impls for memory reasons / particular constraints, and is also a way of doing partial typing.
 
 ```rust
 use k8s_openapi::api::core::v1::ConfigMap;
@@ -76,7 +76,7 @@ pub struct DocumentStatus {
 }
 ```
 
-This will generate a `pub struct Document` in this scope which implements [Resource]. In other words, to use it with the a controller is at this point analogous to a fully typed resource:
+This will generate a `pub struct Document` in this scope which implements [Resource]. In other words, to use it with the controller is at this point analogous to a fully typed resource:
 
 ```rs
 let docs = Api::<Document>::all(client);
@@ -183,7 +183,7 @@ Controller::new(prs, watcher::Config::default())
 
     Kopium is a relatively new project and it is [neither feature complete nor bug free at the moment](https://github.com/kube-rs/kopium/issues). While feedback has been very positive, and people have so far contributed fixes for several major customresources; **expect some snags**.
 
-These generated structs are sometimes published for easier consumption consumption. The [kube-custom-resources-rs](https://github.com/metio/kube-custom-resources-rs) crate contains a catalog of generated code from compatible schemas.
+These generated structs are sometimes published for easier consumption. The [kube-custom-resources-rs](https://github.com/metio/kube-custom-resources-rs) crate contains a catalog of generated code from compatible schemas.
 
 ## Dynamic Typing
 
@@ -234,7 +234,7 @@ This can be a quick way to control memory use, or to shield your app against the
 
     An easier way to control memory use of stores is via [[optimization#Pruning Fields]].
 
-As an **example**; a handwritten implementation of [Pod] by overriding its **spec** and **status** and placing it inside [Object], then **stealing** its type information from `k8s-openapi`:
+As an **example**: a handwritten implementation of [Pod] by overriding its **spec** and **status** and placing it inside [Object], then **stealing** its type information from `k8s-openapi`:
 
 ```rust
 use kube::api::{Api, ApiResource, NotUsed, Object};
