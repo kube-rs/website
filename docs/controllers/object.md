@@ -183,7 +183,7 @@ Controller::new(prs, watcher::Config::default())
 
     Kopium is a relatively new project and it is [neither feature complete nor bug free at the moment](https://github.com/kube-rs/kopium/issues). While feedback has been very positive, and people have so far contributed fixes for several major customresources; **expect some snags**.
 
-These generated structs are sometimes published for easier consumption consumption. The [kube-custom-resources-rs](https://github.com/metio/kube-custom-resources-rs) crate contains a catalog of generated code from compatible schemas.
+These generated structs are sometimes published for easier consumption. The [kube-custom-resources-rs](https://github.com/metio/kube-custom-resources-rs) crate contains a catalog of generated code from compatible schemas.
 
 ## Dynamic Typing
 
