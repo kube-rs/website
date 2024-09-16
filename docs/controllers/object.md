@@ -33,7 +33,7 @@ A separate [k8s-pb] repository for our [future protobuf serialization structs](h
 
 ### Derived Resource
 
-A similar way of doing this is to have your own struct, but inherit the typing (api parameters) for a known openapi type. This allows customising the type / impls for memory reasons / particular constraints, and also is also a way of doing partial typing.
+A similar way of doing this is to have your own struct, but inherit the typing (api parameters) from a known openapi type. This allows customising the type / impls for memory reasons / particular constraints, and is also a way of doing partial typing.
 
 ```rust
 use k8s_openapi::api::core::v1::ConfigMap;
