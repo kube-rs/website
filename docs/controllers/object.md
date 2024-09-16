@@ -27,7 +27,7 @@ Controller::new(pods, watcher::Config::default())
 
 This is the simplest flow and works right out of the box because the openapi implementation ensures we have all the api information via the [Resource] traits.
 
-If you have a native Kubernetes type, **you generally want to start with [k8s-openapi]**. If will likely do exactly what you want without further issues. **That said**, if both your clusters and your chosen object are large, then you can **consider optimizing** further by changing to a [partially typed resource](#partially-typed-resource) for smaller memory profile.
+If you have a native Kubernetes type, **you generally want to start with [k8s-openapi]**. It will likely do exactly what you want without further issues. **That said**, if both your clusters and your chosen object are large, then you can **consider optimizing** further by changing to a [partially typed resource](#partially-typed-resource) for smaller memory profile.
 
 A separate [k8s-pb] repository for our [future protobuf serialization structs](https://github.com/kube-rs/kube/issues/725) also exists, and while it will slot into this category and should hotswappable with [k8s-openapi], it is **not yet usable** here.
 
