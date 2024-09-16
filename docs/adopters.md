@@ -24,6 +24,7 @@
 - [Akri](https://github.com/project-akri/akri) - A Kubernetes resource interface for the edge
 - [Kubewarden (CNCF)](https://www.kubewarden.io/) - A Kubernetes policy engine powered by WebAssembly
 - [SimKube](https://github.com/acrlabs/simkube) - A record-and-replay simulation engine for Kubernetes
+- [kty](https://kty.dev) - The terminal for Kubernetes
 
 ## Companies
 
