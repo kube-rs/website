@@ -234,7 +234,7 @@ This can be a quick way to control memory use, or to shield your app against the
 
     An easier way to control memory use of stores is via [[optimization#Pruning Fields]].
 
-As an **example**; a handwritten implementation of [Pod] by overriding its **spec** and **status** and placing it inside [Object], then **stealing** its type information from `k8s-openapi`:
+As an **example**: a handwritten implementation of [Pod] by overriding its **spec** and **status** and placing it inside [Object], then **stealing** its type information from `k8s-openapi`:
 
 ```rust
 use kube::api::{Api, ApiResource, NotUsed, Object};
