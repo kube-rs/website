@@ -13,6 +13,7 @@ List of third party guides and tutorials for using the `kube-rs` that holds up t
 
 | Title | Source | Content |
 | ----- | ------ | ------- |
+| [Kubernetes Controllers in Rust: Fast, Safe, Sane](https://www.youtube.com/watch?v=rXS-3hFYVjc) | KubeCon EU 2024 | Controller building from Linkerd POV |
 | [Rust operators for Kubernetes](https://www.youtube.com/watch?v=65pyIeLtd5Y) | PlatformCon 2023 | Rust benefits + kubebuilder comparisons |
 | [Introduction to rust operators for Kubernetes](https://www.youtube.com/watch?v=feBYxeO-3cY) | Cloud Native Skunkworks 2023 | Introductory runtime structuring |
 | [Lightning Talk: Talking to Kubernetes with Rust](https://www.youtube.com/watch?v=Kp6GQjZixPE) | KubeCon EU 2023 | Introductory; api usage |
