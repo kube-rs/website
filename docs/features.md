@@ -22,6 +22,7 @@ All public features are exposed through `kube` in [kube's Cargo.toml](https://gi
 | http-proxy  | local cluster http proxying        | no      | [hyper-http-proxy]           |
 | oauth       | local cluster oauth for GCP        | no      | [tame-oauth]                 |
 | oidc        | local cluster [oidc] auth          | no      | none                         |
+| webpki-roots| Mozilla's root certificates        | no      | [webpki-roots]               |
 
 !!! note "Client dependencies"
 

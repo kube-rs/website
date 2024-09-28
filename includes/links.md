@@ -125,3 +125,4 @@
 [hyper-http-proxy]: https://crates.io/crates/hyper-http-proxy
 [syn]: https://crates.io/crates/syn
 [quote]: https://crates.io/crates/quote
+[webpki-roots]: https://github.com/rustls/webpki-roots
