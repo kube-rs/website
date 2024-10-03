@@ -66,7 +66,7 @@ But note this changes the stream signature slightly; returning a wrapped [Partia
 - **decoded stream** :: a stream that's been through [EventDecode] via one of `WatchStreamExt::touched_objects`, `WatchStreamExt::applied_objects`
 - **event stream** :: a raw [watcher] stream producing [watcher::Event] objects
 
-The significant difference between them is that the **user** and the [Controller] generally wants to interact with an **decoded stream**, but a [reflector] needs an **event stream** to be able to safely replace its contents.
+The significant difference between them is that the **user** and the [Controller] generally wants to interact with a **decoded stream**, but a [reflector] needs an **event stream** to be able to safely replace its contents.
 
 ### WatchStreamExt
 The [WatchStreamExt] trait is a `Stream` extension trait (ala [StreamExt]) with Kubernetes specific helper methods that can be chained onto a watcher stream;
@@ -138,7 +138,7 @@ Controller::for_stream(main_stream, reader)
     .watches_stream(watched_custom_stream, cfg)
 ```
 
-where the various stream variables would be created from either [watcher], or [metadata_watcher] with some filters applied.
+where the various stream variables would be created from either [watcher], or [metadata_watcher] with a decoder applied.
 
 !!! warning "The controller streams interface is unstable"
 
