@@ -36,7 +36,7 @@
 [watcher]: https://docs.rs/kube/latest/kube/runtime/fn.watcher.html
 [metadata_watcher]: https://docs.rs/kube/latest/kube/runtime/fn.metadata_watcher.html
 [watcher::Event]: https://docs.rs/kube/latest/kube/runtime/watcher/enum.Event.html
-[EventFlatten]: https://docs.rs/kube/latest/kube/runtime/utils/struct.EventFlatten.html
+[EventDecode]: https://docs.rs/kube/latest/kube/runtime/utils/struct.EventDecode.html
 [Recorder]: https://docs.rs/kube/latest/kube/runtime/events/struct.Recorder.html
 [Event::modify]: https://docs.rs/kube/latest/kube/runtime/watcher/enum.Event.html#method.modify
 [StreamExt]: https://docs.rs/futures/latest/futures/stream/trait.StreamExt.html

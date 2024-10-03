@@ -63,10 +63,10 @@ But note this changes the stream signature slightly; returning a wrapped [Partia
 ### Terminology
 
 - **watcher stream** :: a stream that is started by one of the watcher [[#stream-entrypoints]]
-- **unpacked stream** :: a stream that's been through [EventFilter] via one of `WatchStreamExt::touched_objects`, `WatchStreamExt::applied_objects`
+- **decoded stream** :: a stream that's been through [EventDecode] via one of `WatchStreamExt::touched_objects`, `WatchStreamExt::applied_objects`
 - **event stream** :: a raw [watcher] stream producing [watcher::Event] objects
 
-The significant difference between them is that the **user** and the [Controller] generally wants to interact with an **unpacked stream**, but a [reflector] needs an **event stream** to be able to safely replace its contents.
+The significant difference between them is that the **user** and the [Controller] generally wants to interact with an **decoded stream**, but a [reflector] needs an **event stream** to be able to safely replace its contents.
 
 ### WatchStreamExt
 The [WatchStreamExt] trait is a `Stream` extension trait (ala [StreamExt]) with Kubernetes specific helper methods that can be chained onto a watcher stream;
@@ -82,7 +82,7 @@ watcher(api, watcher::Config::default())
 These methods can require one of:
 
 - **event stream** (where the input stream `Item = Result<Event<K>, ...>`
-- **unpacked stream** (where `Item = Result<K, ...>`, the last ones in the chain)
+- **decoded stream** (where `Item = Result<K, ...>`, the last ones in the chain)
 
 It is impossible to apply them in an incompatible configuration.
 
@@ -90,7 +90,7 @@ It is impossible to apply them in an incompatible configuration.
 It is possible to modify or filter the input streams before passing them on. This can usually either done to limit data in memory by pruning, or to filter events to a downstream controller so that it either triggers less frequently.
 
 ### Predicates
-Using [predicates], we can **filter out** events from a stream where the **last value** of a particular property is **unchanged**. This is done internally by storing hashes of the given property(ies), and can be chained onto an **unpacked** stream:
+Using [predicates], we can **filter out** events from a stream where the **last value** of a particular property is **unchanged**. This is done internally by storing hashes of the given property(ies), and can be chained onto an **decoded** stream:
 
 ```rust
 let api: Api<Deployment> = Api::all(client);
@@ -168,7 +168,7 @@ Controller::new(api, Config::default())
 To configure one of the input streams manually you need to:
 
 1. create a watcher stream with backoff
-2. unpack the stream
+2. decode the stream
 3. call the stream-equivalent `Controller` interface
 
 Note that the `Controller` will poll all the passed (or implicitly created) watcher streams as a whole when you poll the output stream from the controller.
