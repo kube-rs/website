@@ -3,7 +3,7 @@
 This document showcases common techniques for instrumentation:
 
 - **logs** (via [tracing] + [tracing-subscriber] + [EnvFilter])
-- **traces** (via [tracing] + [tracing-subscriber] + [opentelemetry-otlp] + [tonic])
+- **traces** (via [tracing] + [tracing-subscriber] + [opentelemetry-otlp] + [opentelemetry] + [opentelemetry_sdk])
 - **metrics** (via [tikv/prometheus](https://github.com/tikv/rust-prometheus) exposed via [actix-web])
 
 and follows the approach of [controller-rs].
@@ -31,8 +31,7 @@ let env_filter = EnvFilter::try_from_default_env()
 This can be set as the global collector using:
 
 ```rust
-let collector = Registry::default().with(logger).with(env_filter);
-tracing::subscriber::set_global_default(collector).unwrap();
+Registry::default().with(logger).with(env_filter).init();
 ```
 
 We will change how the `collector` is built if using **tracing**, but for now, this is sufficient for adding logging.
@@ -42,56 +41,66 @@ We will change how the `collector` is built if using **tracing**, but for now, t
 Following on from logging section, we add extra dependencies to let us push traces to an **opentelemetry** collector (sending over gRPC with [tonic]):
 
 ```sh
-cargo add opentelemetry --features=trace,rt-tokio
-cargo add opentelemetry-otlp --features=tokio
-cargo add tonic
+cargo add opentelemetry --features=trace
+cargo add opentelemetry_sdk --features=rt-tokio
+cargo add opentelemetry-otlp
 ```
 
 !!! warning "Telemetry Dependencies"
 
-    This simple use of `cargo add` above assumes the above dependencies always work well at all given versions, but this is not always true. You might see multiple versions of `tonic` in `cargo tree` (which won't work), and due to different release cycles and pins, you might not be able to upgrade opentelemetry dependencies immediately. For working combinations see for instance the [pins in controller-rs](https://github.com/kube-rs/controller-rs/blob/main/Cargo.toml).
+    This simple use of `cargo add` above assumes the above dependencies always work well at all given versions, but this is not always true. You might see multiple versions of `opentelemetry` libs / `tonic` in `cargo tree` (which might not work), and due to different release cycles and pins, you might not be able to upgrade opentelemetry dependencies immediately. For working combinations see for instance the [pins in controller-rs](https://github.com/kube-rs/controller-rs/blob/main/Cargo.toml) + [examples in tracing-opentelemetry](https://github.com/tokio-rs/tracing-opentelemetry/tree/v0.1.x/examples).
 
 Setting up the layer and configuring the `collector` follows fundamentally the same process:
 
 ```rust
-let telemetry = tracing_opentelemetry::layer().with_tracer(init_tracer().await);
+let otel = tracing_opentelemetry::OpenTelemetryLayer::new(init_tracer());
 ```
 
 Note 3 layers now:
 
 ```rust
-let collector = Registry::default().with(telemetry).with(logger).with(env_filter);
-tracing::subscriber::set_global_default(collector).unwrap();
+Registry::default().with(env_filter).with(logger).with(otel).init();
 ```
 
-However, tracing requires us to have a configurable location of **where to send spans**, so creating the actual `tracer` requires a bit more work:
+However, tracing requires us to have a configurable location of **where to send spans**, the provders needs to be globally registered, and you likely want to set some resource attributes, so creating the actual `tracer` requires a bit more work:
 
 ```rust
-async fn init_tracer() -> opentelemetry::sdk::trace::Tracer {
-    let otlp_endpoint = std::env::var("OPENTELEMETRY_ENDPOINT_URL")
-        .expect("Need a otel tracing collector configured");
+fn init_tracer() -> opentelemetry_sdk::trace::Tracer {
+    use opentelemetry::trace::TracerProvider;
+    use opentelemetry_otlp::WithExportConfig;
+    use opentelemetry_sdk::{runtime, trace::Config};
 
-    let channel = tonic::transport::Channel::from_shared(otlp_endpoint)
-        .unwrap()
-        .connect()
-        .await
-        .unwrap();
+    let endpoint = std::env::var("OPENTELEMETRY_ENDPOINT_URL").expect("Needs an otel collector");
+    let exporter = opentelemetry_otlp::new_exporter().tonic().with_endpoint(endpoint);
 
-    opentelemetry_otlp::new_pipeline()
+    let provider = opentelemetry_otlp::new_pipeline()
         .tracing()
-        .with_exporter(opentelemetry_otlp::new_exporter().tonic().with_channel(channel))
-        .with_trace_config(opentelemetry::sdk::trace::config().with_resource(
-            opentelemetry::sdk::Resource::new(vec![opentelemetry::KeyValue::new(
-                "service.name",
-                "ctlr", // TODO: change to controller name
-            )]),
-        ))
-        .install_batch(opentelemetry::runtime::Tokio)
-        .unwrap()
+        .with_exporter(exporter)
+        .with_trace_config(Config::default().with_resource(resource()))
+        .install_batch(runtime::Tokio)
+        .expect("valid tracer");
+
+    opentelemetry::global::set_tracer_provider(provider.clone());
+    provider.tracer("tracing-otel-subscriber")
 }
 ```
 
-Note the gRPC address (e.g. `OPENTELEMETRY_ENDPOINT_URL=https://0.0.0.0:55680`) must be explicitly wrapped in a `tonic::Channel`, and this forces an explicit dependency on [tonic].
+Note the gRPC address (e.g. `OPENTELEMETRY_ENDPOINT_URL=https://0.0.0.0:55680`) must point to an otlp port on otel collector / tempo / etc. This can point to `0.0.0.0:PORT` if you portforward to it when doing `cargo run` locally, but in the cluster it should be the cluster dns as e.g. `http://promstack-tempo.monitoring.svc:431`.
+
+For some starting resource attributes;
+
+```rust
+use opentelemetry_sdk::Resource;
+fn resource() -> Resource {
+    use opentelemetry::KeyValue;
+    Resource::new([
+        KeyValue::new("service.name", env!("CARGO_PKG_NAME")),
+        KeyValue::new("service.version", env!("CARGO_PKG_VERSION")),
+    ])
+}
+```
+
+which can be extended better using the [opentelemetry_semantic_conventions](https://docs.rs/opentelemetry-semantic-conventions/0.26.0/opentelemetry_semantic_conventions/resource/index.html).
 
 ### Instrumenting
 
@@ -102,7 +111,7 @@ At this point, you can start adding `#[instrument]` attributes onto functions yo
 async fn reconcile(foo: Arc<Foo>, ctx: Arc<Data>) -> Result<Action, Error>
 ```
 
-Note that the `reconcile` span should be **the root span** in the context of a controller. A reconciliation starting is the root of the chain: nothing called into the controller to reconcile an object, this happens regularly automatically.
+Note that the `reconcile` span should generally be **the root span** in the context of a controller. A reconciliation starting is generally the root of the chain, and since the `reconcile` fn is invoked by the runtime, nothing significant sits above it.
 
 !!! warning "Higher levels spans"
 
@@ -116,7 +125,9 @@ To link logs and traces we take advantage that tracing data is being outputted t
 #[instrument(skip(ctx), fields(trace_id))]
 async fn reconcile(foo: Arc<Foo>, ctx: Arc<Data>) -> Result<Action, Error> {
     let trace_id = get_trace_id();
-    Span::current().record("trace_id", &field::display(&trace_id));
+    if trace_id != TraceId::INVALID {
+        Span::current().record("trace_id", &field::display(&trace_id));
+    }
     todo!("reconcile implementation")
 }
 ```
@@ -129,7 +140,6 @@ Extracting the `trace_id` requires a helper function atm:
 pub fn get_trace_id() -> opentelemetry::trace::TraceId {
     use opentelemetry::trace::TraceContextExt as _;
     use tracing_opentelemetry::OpenTelemetrySpanExt as _;
-
     tracing::Span::current()
         .context()
         .span()
@@ -144,15 +154,18 @@ and it is the only reason for needing to directly add [opentelemetry] as a depen
 
 This is the most verbose part of instrumentation because it introduces the need for a [[webserver]], along with data modelling choices and library choices.
 
-We will use [tikv's prometheus library](https://github.com/tikv/rust-prometheus) as its the most battle tested library available:
+There are multiple libraries that you can use here;
+
+- [tikv's prometheus library](https://github.com/tikv/rust-prometheus) :: most battle tested library available, lacks newer features
+- [prometheus/client_rust](https://crates.io/crates/prometheus-client) :: official, newish. supports exemplars.
+- [measured](https://crates.io/crates/measured) :: very new, client-side cardinality control and memory optimisations
+
+While [controller-rs uses client_rust](https://github.com/kube-rs/controller-rs/blob/main/src/metrics.rs) to support exemplars,
+this tutorial will use `tikv/rust-prometheus` for now:
 
 ```sh
 cargo add prometheus
 ```
-
-!!! warning "Limitations"
-
-    The `prometheus` crate outlined herein does not support exemplars nor the openmetrics standard, at current writing. For newer features we will likely look toward the [new official client](https://github.com/prometheus/client_rust), or the [metrics crate suite](https://github.com/metrics-rs/metrics).
 
 ### Registering
 
@@ -269,9 +282,9 @@ impl Error {
 }
 ```
 
-!!! note "Future exemplar work"
+!!! note "Exemplars linking Logs and Traces"
 
-    If we had exemplar support, we could have attached our `trace_id` to the histogram metric - through `count_and_measure` - to be able to cross-browse from grafana metric panels into a trace-viewer.
+    In controller-rs (using prometheus_client) we attached our `trace_id` to the histogram metric - through `count_and_measure` - to be able to cross-browse from grafana metric panels into a trace-viewer. See [this comment](https://github.com/kube-rs/controller-rs/pull/72#issuecomment-2335150121) for more info.
 
 ### Exposing
 
