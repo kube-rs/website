@@ -19,3 +19,9 @@ List of third party guides and tutorials for using the `kube-rs` that holds up t
 | [Lightning Talk: Talking to Kubernetes with Rust](https://www.youtube.com/watch?v=Kp6GQjZixPE) | KubeCon EU 2023 | Introductory; api usage |
 | [Why the future of the cloud will be built on Rust](https://www.youtube.com/watch?v=BWL4889RKhU) | Cloud Native Rust Day 2021 | Cloud History + Linkerd + Rust Ecosystem Overview |
 | [The Hidden Generics in Kubernetes' API](https://www.youtube.com/watch?v=JmwnRcc2m2A) | KubeCon Virtual 2020 | Early stage kube-rs presentation on apimachinery + client-go translation |
+
+## AI Agents
+
+| Title | Provider | Description |
+| ----- | ------ | ------- |
+| [kube-rs Guru](https://gurubase.io/g/kube-rs) | Gurubase.io | kube-rs Guru is a kube-rs focused AI to answer user queries based on the data on kube-rs documentation. |
