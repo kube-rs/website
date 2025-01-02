@@ -1,6 +1,6 @@
 # Rust Version
 
-Builds on CI always run against the most stable rust version, but we also support stable versions down to a specified **Minimum Supported Rust Version** (MSRV).
+Builds on CI always run against the most recent stable rust version, but we also support stable versions down to a specified **Minimum Supported Rust Version** (MSRV).
 
 ## Minimum Supported Rust Version
 
