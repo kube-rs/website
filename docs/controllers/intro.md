@@ -29,9 +29,9 @@ Writing a controller requires **three** pieces:
 
 The main object is the source of truth for what the world should be like, and it takes the form of a Kubernetes object like a:
 
-- [Pod](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/api/core/v1/struct.Pod.html)
-- [Deployment](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/api/apps/v1/struct.Deployment.html)
-- ..[any native Kubernetes Resource](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/trait.Resource.html#implementors)
+- [Pod](https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.Pod.html)
+- [Deployment](https://docs.rs/k8s-openapi/latest/k8s_openapi/api/apps/v1/struct.Deployment.html)
+- ..[any native Kubernetes Resource](https://docs.rs/k8s-openapi/latest/k8s_openapi/trait.Resource.html#implementors)
 - a partially typed or dynamically typed Kubernetes Resource
 - an object from [api discovery](https://docs.rs/kube/latest/kube/discovery/index.html)
 - a [Custom Resource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
