@@ -14,7 +14,7 @@ We will outline how they interact with controllers and the basics of how to set 
 
 ## Typed Resource
 
-This is the most common, and simplest case. Your source of truth is an existing [Kubernetes object found in the openapi spec](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/trait.Resource.html#implementors).
+This is the most common, and simplest case. Your source of truth is an existing [Kubernetes object found in the openapi spec](https://docs.rs/k8s-openapi/latest/k8s_openapi/trait.Resource.html#implementors).
 
 To use a typed Kubernetes resource as a source of truth in a [Controller], import it from [k8s-openapi], and create an [Api] from it, then pass it to the [Controller].
 
