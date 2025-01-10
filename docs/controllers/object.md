@@ -14,7 +14,7 @@ We will outline how they interact with controllers and the basics of how to set 
 
 ## Typed Resource
 
-This is the most common, and simplest case. Your source of truth is an existing [Kubernetes object found in the openapi spec](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/trait.Resource.html#implementors).
+This is the most common, and simplest case. Your source of truth is an existing [Kubernetes object found in the openapi spec](https://docs.rs/k8s-openapi/latest/k8s_openapi/trait.Resource.html#implementors).
 
 To use a typed Kubernetes resource as a source of truth in a [Controller], import it from [k8s-openapi], and create an [Api] from it, then pass it to the [Controller].
 
@@ -110,7 +110,7 @@ Here, a separate `crdgen` bin entry would install your custom resource using `ca
 
 !!! warning "CRD Installation"
 
-    Be careful with installing CRDs inside a controller at starup. It is customary to provide a generated yaml file so consumers can install a CRD out of band to better support [gitops](https://fluxcd.io/flux/components/helm/helmreleases/#crds) and [helm](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/). See [[security#crd-access]].
+    Be careful with installing CRDs inside a controller at startup. It is customary to provide a generated yaml file so consumers can install a CRD out of band to better support [gitops](https://fluxcd.io/flux/components/helm/helmreleases/#crds) and [helm](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/). See [[security#crd-access]].
 
 ### Imported Custom Resource
 
@@ -198,7 +198,7 @@ Untyped resources are using [DynamicObject]; an umbrella container for arbitrary
 
 The [DynamicObject] consists of **just the unavoidable properties** like `apiVersion`, `kind`, and `metadata`, whereas the entire spec is loaded onto an arbitrary [serde_json::Value] via [flattening].
 
-The benefits you get is that:
+The benefits you get are that:
 
 - you avoid having to write out fields manually
 - you **can** achieve tolerance against multiple versions of your object
@@ -270,7 +270,7 @@ This is functionally similar way to deriving `CustomResource` on an incomplete s
 
 !!! warning "Partial or dynamic typing always needs additional type information"
 
-    All usage of `DynamicObject` or `Object` require the use of alternate constructors for multiple interfaces such as [Api] and [Controller]. These constructors have an additional `_with` suffix to carry an associated type for the [Resource] trait.
+    All usage of `DynamicObject` or `Object` requires the use of alternate constructors for multiple interfaces such as [Api] and [Controller]. These constructors have an additional `_with` suffix to carry an associated type for the [Resource] trait.
 
 ## Summary
 
