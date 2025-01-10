@@ -29,9 +29,9 @@ Writing a controller requires **three** pieces:
 
 The main object is the source of truth for what the world should be like, and it takes the form of a Kubernetes object like a:
 
-- [Pod](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/api/core/v1/struct.Pod.html)
-- [Deployment](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/api/apps/v1/struct.Deployment.html)
-- ..[any native Kubernetes Resource](https://arnavion.github.io/k8s-openapi/v0.14.x/k8s_openapi/trait.Resource.html#implementors)
+- [Pod](https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.Pod.html)
+- [Deployment](https://docs.rs/k8s-openapi/latest/k8s_openapi/api/apps/v1/struct.Deployment.html)
+- ..[any native Kubernetes Resource](https://docs.rs/k8s-openapi/latest/k8s_openapi/trait.Resource.html#implementors)
 - a partially typed or dynamically typed Kubernetes Resource
 - an object from [api discovery](https://docs.rs/kube/latest/kube/discovery/index.html)
 - a [Custom Resource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
@@ -46,9 +46,9 @@ See the [[object]] document for how to use the various types.
 
 ## The Reconciler
 
-The reconconciler is the part of the controller that ensures the world is up to date.
+The reconciler is the part of the controller that ensures the world is up to date.
 
-It takes the form of an `async fn` taking the object along with some context, and performs the alignment between the state of world and the `object`.
+It takes the form of an `async fn` taking the object along with some context, and performs the alignment between the state of the world and the `object`.
 
 In its simplest form, this is what a reconciler (that does nothing) looks like:
 
@@ -81,7 +81,7 @@ The core features inside the application are:
 
 The system must be **fault-tolerant**, and thus must be able to recover from **crashes**, **downtime**, and resuming even having **missed messages**.
 
-Setting up a blank controller in rust satisfying these constraints is fairly simple, and can be done with minimal boilerplate (no generated files need be inlined in your project).
+Setting up a blank controller in rust satisfying these constraints is fairly simple, and can be done with minimal boilerplate (no generated files need to be inlined in your project).
 
 See the [[application]] document for the high-level details.
 
@@ -99,7 +99,7 @@ The terminology between **controllers** and **operators** are quite similar:
 
 Which is further reworded now under their new [agglomerate banner](https://cloud.redhat.com/learn/topics/operators).
 
-They key **differences** between the two is that **operators** generally a specific type of controller, sometimes more than one in a single application. To be classified as an operator, a controller would at the very least need to:
+The key **difference** between the two is that **operators** are generally a specific type of controller, sometimes more than one in a single application. To be classified as an operator, a controller would at the very least need to:
 
 - manage custom resource definition(s)
 - maintain single app focus
