@@ -1,8 +1,8 @@
 # The Application
 
-The **application** is a Rust application manages a [Controller]. It needs a [[reconciler]] that will be called with entries of your chosen [[object]], and a few dependencies to deal with async streams, error handling, and upstream Kubernetes structs.
+The **application** is a Rust application that manages a [Controller]. It needs a [[reconciler]] that will be called with entries of your chosen [[object]], and a few dependencies to deal with async streams, error handling, and upstream Kubernetes structs.
 
-This document shows how to create a __minimal__ application, with the builtin `Pod` type as the main object, and a no-op reconciler.
+This document shows how to create a __minimal__ application, with the built-in `Pod` type as the main object, and a no-op reconciler.
 
 ## Requirements
 
@@ -75,7 +75,7 @@ For the purposes of this demo we will import [Pod]:
 use k8s_openapi::api::core::v1::Pod;
 ```
 
-### Seting up the controller
+### Setting up the controller
 
 This is where we will start defining our `main` and glue everything together:
 
@@ -121,7 +121,7 @@ To make this reconciler useful, we can reuse the one created in the [[reconciler
 
 ## Checkpoint
 
-If you copy-pasted everything above, and fixed imports, you should have a `main.rs` with this:
+If you copy-pasted everything above and fixed imports, you should have a `main.rs` with this:
 
 ```rust
 use std::{sync::Arc, time::Duration};
@@ -202,7 +202,7 @@ If you now edit a pod (via `kubectl edit pod traefik-xxx` and make a change), or
 
 !!! note "Where to Go From Here"
 
-    You have created the [[application]] using a trivial reconciler and a builtin object. See the [[object]] and [[reconciler]] chapters to change it into something more useful. The documents under __Concepts__ on the left navigation menu shows the core concepts that are instrumental to help create the right abstraction.
+    You have created the [[application]] using a trivial reconciler and a built-in object. See the [[object]] and [[reconciler]] chapters to change it into something more useful. The documents under __Concepts__ on the left navigation menu shows the core concepts that are instrumental to help create the right abstraction.
 
 ### Useful Dependencies
 
