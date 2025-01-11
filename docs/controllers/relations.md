@@ -1,7 +1,7 @@
 
 # Related Objects
 
-A [Controller] needs to specify related resources if changes to them is meant to trigger the [[reconciler]].
+A [Controller] needs to specify related resources if changes to them are meant to trigger the [[reconciler]].
 
 These relations are generally set up with [Controller::owns], but we will go through the different variants below.
 
@@ -47,7 +47,7 @@ Controller::new(main, watcher::Config::default())
 ```
 <!-- TODO: ReconcileRequest::from sets reason to Unknow, needs a method to set reason, ReconcileReason -> controller::Reason -->
 
-In this case we are extracing an object reference from the spec of our object. Regardless of how you get the information, your mapper must return an iterator of [ObjectRef] for the root object(s) that must be reconciled as a result of the change.
+In this case, we are extracting an object reference from the spec of our object. Regardless of how you get the information, your mapper must return an iterator of [ObjectRef] for the root object(s) that must be reconciled as a result of the change.
 
 As a theoretical example; every [HPA](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) object bundles a scale ref to the workload, so you could use this to build a Controller for `Deployment` using HPA as a watched object.
 
@@ -62,7 +62,7 @@ Free-form relations to external apis often serve to lift an external resource in
 ### External Watches
 If you want changes on an external API to cause changes in the cluster, you will need to a way to stream changes from the external api.
 
-The _change events_ must be be provided as a `Stream<Item = ObjectRef>` and passed to [Controller::reconcile_on]. As an example:
+The _change events_ must be provided as a `Stream<Item = ObjectRef>` and passed to [Controller::reconcile_on]. As an example:
 
 ```rust
 struct ExternalObject {
@@ -76,7 +76,7 @@ Controller::new(Api::<MyCr>::namespaced(client, &ns), Config::default())
     .reconcile_on(external_stream)
 ```
 
-In this case we have some opaque `fn watch_external_objects()` which here returns `-> impl Stream<Item = ExternalObject>`. It is meant to return changes from the external API. Whenever a new item is found on the stream, the controller will reconcile the matching cluster object.
+In this case, we have some opaque `fn watch_external_objects()` which here returns `-> impl Stream<Item = ExternalObject>`. It is meant to return changes from the external API. Whenever a new item is found on the stream, the controller will reconcile the matching cluster object.
 
 (The example assumes __matching names__ between the external resource and cluster resource, and a __fixed namespace__ for the cluster resources.)
 
@@ -85,7 +85,7 @@ In this case we have some opaque `fn watch_external_objects()` which here return
     If you do not have a streaming interface (like if you are doing periodic HTTP GETs), you can wrap your data in a `Stream` via either [async_stream](https://docs.rs/async-stream/latest/async_stream/) or by using channels (say [tokio::sync::mpsc](https://docs.rs/tokio/latest/tokio/sync/mpsc/index.html), using the [Receiver](https://docs.rs/tokio/latest/tokio/sync/mpsc/struct.Receiver.html) side as a stream).
 
 ### External Writes
-If you want to populate an external API from a cluster resource, the you must update the external api from your [[reconciler]] (using the necessary client libraries for that API).
+If you want to populate an external API from a cluster resource, you must update the external api from your [[reconciler]] (using the necessary client libraries for that API).
 
 To avoid build-up of generated objects on the external side, you will want to use [[gc#finalizers]], to ensure the external resource gets _safely_ cleaned up on `kubectl delete`.
 

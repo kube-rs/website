@@ -6,7 +6,7 @@ The reconciler is the **user-defined function** in charge of reconciling the **s
 async fn reconcile(o: Arc<K>, ctx: Arc<T>) -> Result<Action, Error>
 ```
 
-It is always **called** with the [[object]] type that you instantiate the [Controller] with, independent of what auxillary objects you may be watching:
+It is always **called** with the [[object]] type that you instantiate the [Controller] with, independent of what auxiliary objects you may be watching:
 
 ```mermaid
 graph TD
@@ -42,7 +42,7 @@ The state of the world is your main Kubernetes object along with **anything** yo
 
 !!! info "The World >= Kubernetes"
 
-    While your **main** object **must** reside **within Kubernetes**, it is possibly to manage/act on changes **outside Kubernetes**.
+    While your **main** object **must** reside **within Kubernetes**, it is possible to manage/act on changes **outside Kubernetes**.
 
 You do not have to configure the world, as any [side effect](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) you perform implicitly becomes the world for your controller. It is, however, beneficial to specify any [[relations]] your object has with the world to ensure `reconcile` is correctly invoked:
 
@@ -72,7 +72,7 @@ Notice that the [ReconcileReason] is **not included** in the signature of `recon
 
 As a result, the reason is just a __best-effort property__ (that we only include for telemetry). You should not attempt to write logic against the reason in your reconciler.
 
-Instead, you must write a **defensive reconciler** and handle missed messages, and paritial runs:
+Instead, you must write a **defensive reconciler** and handle missed messages, and partial runs:
 
 - assume nothing about why reconciliation started
 - assume the reconciler could have failed at any question mark
@@ -86,7 +86,7 @@ A function is said to be **idempotent** if it can be applied multiple times with
 
 !!! warning "A reconciler must be [idempotent]"
 
-    If a reconciler is triggered twice for the same object, it must cause the same outcome. Care must be taken to ensure operations are not dependent on all-or-nothing approaches, and the flow of the reconciler must be able to recover from errors occurring in a previous reconcile runs.
+    If a reconciler is triggered twice for the same object, it must cause the same outcome. Care must be taken to ensure operations are not dependent on all-or-nothing approaches, and the flow of the reconciler must be able to recover from errors occurring in previous reconcile runs.
 
 Let us create a reconciler for a custom `PodManager` resource that will:
 
@@ -112,7 +112,7 @@ Now, what happens if the timestamp creation fails after the pod got created? The
 
     If your reconciler **errored** half-way through a run; the only way you would know **what failed**, is if you check everything.
 
-Therefore the correct way to do these two actions it to do them independently:
+Therefore the correct way to do these two actions is to do them independently:
 
 ```rust
 if pod_missing {

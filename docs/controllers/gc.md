@@ -48,10 +48,10 @@ This is explained in more detail in [Kubernetes.io :: Finalizers](https://kubern
 
     You should mark objects with a finalizer if it needs external cleanup to run in the event it is deleted.
 
-The main way to use finalizers with controllers is to define a unique finalizer name (many controllers can finalize an object) and make the [finalizer] helper manage it. The finalizer helper is desingned to be used within a reconciler and split the work depending on the state we are in:
+The main way to use finalizers with controllers is to define a unique finalizer name (many controllers can finalize an object) and make the [finalizer] helper manage it. The finalizer helper is designed to be used within a reconciler and split the work depending on the state we are in:
 
-- have a deletion happened, and we need to cleanup? we are in the `Event::Cleanup` arm
-- no deletion has been recorded? we are in the normal `Event::Apply` arm
+- Has a deletion occurred, and do we need to clean up? If so, we are in the `Event::Cleanup` arm
+- Has no deletion been recorded? Then we are in the normal `Event::Apply` arm
 
 !!! warning "Finalizers can prevent objects from being deleted"
 
@@ -61,7 +61,7 @@ The main way to use finalizers with controllers is to define a unique finalizer 
 
 In the [secret_syncer example](https://github.com/kube-rs/kube/blob/main/examples/secret_syncer.rs), the controller manages an artificially external secret resource (in reality the example puts it in Kubernetes, but please ignore that) on changes to a `ConfigMap`.
 
-Because we cannot normally watch external resources through Kubernetes watches, we have not setup any [[relations]] for the secret. Instead we use the [finalizer] helper in a reconciler (here as a lambda), and delegate to two more specific reconcilers:
+Because we cannot normally watch external resources through Kubernetes watches, we have not setup any [[relations]] for the secret. Instead, we use the [finalizer] helper in a reconciler (here as a lambda), and delegate to two more specific reconcilers:
 
 ```rust
 |cm, _| {

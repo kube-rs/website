@@ -100,7 +100,7 @@ See [examples/crd_derive_custom_schema](https://github.com/kube-rs/kube/blob/823
 
 ### Overriding Members
 
-When you are implementing or deriving `JsonSchema`, you can overriding specific parts of a `JsonSchema` schema using [`#[schemars(schema_with)]`](https://graham.cool/schemars/examples/7-custom_serialization/). Some specific examples:
+When you are implementing or deriving `JsonSchema`, you can override specific parts of a `JsonSchema` schema using [`#[schemars(schema_with)]`](https://graham.cool/schemars/examples/7-custom_serialization/). Some specific examples:
 
 - [overriding merge strategy on a vec](https://github.com/kube-rs/kube/blob/823f4b8db3852e6bdd271e72c56b8c40d6f962a8/examples/crd_derive_schema.rs#L85-L102)
 - [overriding x-kubernetes properties on a condition](https://github.com/kube-rs/kube/blob/823f4b8db3852e6bdd271e72c56b8c40d6f962a8/examples/crd_derive.rs#L60-L85)
@@ -114,9 +114,9 @@ When using `#[kube(schema = "disabled)]`, you are telling [[kube-derive]] not to
 
     Setting this option means the [CustomResourceDefinition] provided by [CustomResourceExt] will require modification.
 
-Any manual schemas must be attached on the generated [CustomResourceDefinition] before use. An example of this can be found in [examples/crd_derive_no_schema](https://github.com/kube-rs/kube/blob/main/examples/crd_derive_no_schema.rs).
+Any manual schemas must be attached to the generated [CustomResourceDefinition] before use. An example of this can be found in [examples/crd_derive_no_schema](https://github.com/kube-rs/kube/blob/main/examples/crd_derive_no_schema.rs).
 
-The main reason for going down this approach is if you are porting a controller with a CRD from another language and you want to 100% conformance to the existing schema out of the gate.
+The main reason for going down this approach is if you are porting a controller with a CRD from another language and you want 100% conformance to the existing schema out of the gate.
 
 This method allows eliding the `#[derive(JsonSchema)]` instruction, and possibly also `schemars` from the dependency tree if you are careful with features.
 
@@ -138,7 +138,7 @@ This approach will let you use the [1.25 Common Expression Language feature](htt
 There are currently no recommended ways of doing client-side validation with this approach, but there are new [cel parser/interpreter crates](https://crates.io/search?q=cel) and a [cel expression playground](https://playcel.undistro.io/) that might be useful here.
 
 ### Deriving via Garde
-Using [garde] is a nice for the simple case because it allows doing both client-side validation, and server-side validation, with the caveat that it only works on both sides for **basic validation rules** as [schemars can only pick up on some of them](https://graham.cool/schemars/deriving/attributes/#supported-validator-attributes).
+Using [garde] is nice for the simple case because it allows doing both client-side validation, and server-side validation, with the caveat that it only works on both sides for **basic validation rules** as [schemars can only pick up on some of them](https://graham.cool/schemars/deriving/attributes/#supported-validator-attributes).
 
 See [CustomResource#schema-validation](https://docs.rs/kube/latest/kube/derive.CustomResource.html#schema-validation).
 
