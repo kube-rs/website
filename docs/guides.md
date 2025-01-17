@@ -22,6 +22,13 @@ List of third party guides and tutorials for using the `kube-rs` that holds up t
 
 ## AI Agents
 
+!!! warning "Generative AI Generates Errors"
+
+    Please be skeptical with output from AI tools or agents. They sound confident, while frequently presenting severely misleading errors, and often erase the sources. Do not be surprised if its solutions turn out to be total nonsense.
+
+    Rust documentation and kube documentation is already extensive. Consider searching [docs.rs/kube](https://docs.rs/kube/latest/kube/), [kube.rs](https://kube.rs/), and [kube/discussions](https://github.com/kube-rs/kube/discussions) for important context.
+
+
 | Title | Provider | Description |
 | ----- | ------ | ------- |
 | [kube-rs Guru](https://gurubase.io/g/kube-rs) | Gurubase.io | kube-rs Guru is a kube-rs focused AI to answer user queries based on the data on kube-rs documentation. |
