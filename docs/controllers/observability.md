@@ -48,7 +48,7 @@ cargo add opentelemetry-otlp
 
 !!! warning "Telemetry Dependencies"
 
-    This simple use of `cargo add` above assumes the above dependencies always work well at all given versions, but this is not always true. You might see multiple versions of `opentelemetry` libs / `tonic` in `cargo tree` (which might not work), and due to different release cycles and pins, you might not be able to upgrade opentelemetry dependencies immediately. For working combinations see for instance the [pins in controller-rs](https://github.com/kube-rs/controller-rs/blob/main/Cargo.toml) + [examples in tracing-opentelemetry](https://github.com/tokio-rs/tracing-opentelemetry/tree/v0.1.x/examples).
+    This simple use of `cargo add` above assumes the above dependencies may not always work well at latest versions. You might receive multiple versions of `opentelemetry` libs / `tonic` in `cargo tree` (which might not work), and due to different release cycles and pins, you might not be able to upgrade opentelemetry dependencies immediately. For working combinations see for instance the [pins in controller-rs](https://github.com/kube-rs/controller-rs/blob/main/Cargo.toml) + [examples in tracing-opentelemetry](https://github.com/tokio-rs/tracing-opentelemetry/tree/v0.1.x/examples).
 
 Setting up the layer and configuring the `collector` follows fundamentally the same process:
 
@@ -56,10 +56,11 @@ Setting up the layer and configuring the `collector` follows fundamentally the s
 let otel = tracing_opentelemetry::OpenTelemetryLayer::new(init_tracer());
 ```
 
-Note 3 layers now:
+Change our registry setup to use 3 layers:
 
-```rust
-Registry::default().with(env_filter).with(logger).with(otel).init();
+```diff
+-Registry::default().with(logger).with(env_filter).init();
++Registry::default().with(env_filter).with(logger).with(otel).init();
 ```
 
 However, tracing requires us to have a configurable location of **where to send spans**, the provders needs to be globally registered, and you likely want to set some resource attributes, so creating the actual `tracer` requires a bit more work:
@@ -67,18 +68,20 @@ However, tracing requires us to have a configurable location of **where to send 
 ```rust
 fn init_tracer() -> opentelemetry_sdk::trace::Tracer {
     use opentelemetry::trace::TracerProvider;
-    use opentelemetry_otlp::WithExportConfig;
+    use opentelemetry_otlp::{SpanExporter, WithExportConfig};
     use opentelemetry_sdk::{runtime, trace::Config};
 
     let endpoint = std::env::var("OPENTELEMETRY_ENDPOINT_URL").expect("Needs an otel collector");
-    let exporter = opentelemetry_otlp::new_exporter().tonic().with_endpoint(endpoint);
+    let exporter = SpanExporter::builder()
+        .with_tonic()
+        .with_endpoint(endpoint)
+        .build()
+        .unwrap();
 
-    let provider = opentelemetry_otlp::new_pipeline()
-        .tracing()
-        .with_exporter(exporter)
-        .with_trace_config(Config::default().with_resource(resource()))
-        .install_batch(runtime::Tokio)
-        .expect("valid tracer");
+    let provider = sdktrace::TracerProvider::builder()
+        .with_batch_exporter(exporter, runtime::Tokio)
+        .with_resource(resource())
+        .build();
 
     opentelemetry::global::set_tracer_provider(provider.clone());
     provider.tracer("tracing-otel-subscriber")
@@ -102,9 +105,10 @@ fn resource() -> Resource {
 
 which can be extended better using the [opentelemetry_semantic_conventions](https://docs.rs/opentelemetry-semantic-conventions/0.26.0/opentelemetry_semantic_conventions/resource/index.html).
 
-### Instrumenting
+For a full setup example for this code see [controller-rs/telemetry.rs](https://github.com/kube-rs/controller-rs/blob/main/src/telemetry.rs).
 
-At this point, you can start adding `#[instrument]` attributes onto functions you want, in particular `reconcile`:
+### Instrumenting
+Once you have initialised your registry, you can start adding `#[instrument]` attributes onto functions you want. Let's do `reconcile`:
 
 ```rust
 #[instrument(skip(ctx))]
@@ -126,7 +130,7 @@ To link logs and traces we take advantage that tracing data is being outputted t
 async fn reconcile(foo: Arc<Foo>, ctx: Arc<Data>) -> Result<Action, Error> {
     let trace_id = get_trace_id();
     if trace_id != TraceId::INVALID {
-        Span::current().record("trace_id", &field::display(&trace_id));
+        Span::current().record("trace_id", field::display(&trace_id));
     }
     todo!("reconcile implementation")
 }
