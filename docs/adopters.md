@@ -25,6 +25,8 @@
 - [Kubewarden (CNCF)](https://www.kubewarden.io/) - A Kubernetes policy engine powered by WebAssembly
 - [SimKube](https://github.com/acrlabs/simkube) - A record-and-replay simulation engine for Kubernetes
 - [kty](https://kty.dev) - The terminal for Kubernetes
+- [CAAPF](https://github.com/rancher-sandbox/cluster-api-addon-provider-fleet) - Cluster API Fleet addon provider (Fleet GitOps integration with cluster management solution)
+- [crust-gather](https://github.com/crust-gather/crust-gather) - Collect your cluster state and serve it via a kubectl compatible API server
 
 ## Companies
 
