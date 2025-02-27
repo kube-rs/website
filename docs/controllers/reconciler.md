@@ -70,7 +70,7 @@ Notice that the [ReconcileReason] is **not included** in the signature of `recon
 
     If your controller has downtime you can miss messages. Additionally, the Kubernetes watch api does not guarantee delivery. You will likely miss some messages, and when this happens, Kubernetes will coalesce the ones you have not received into one single message. <!-- TODO; link to desync explanations (watch desyncs can happen and you never know you will have skipped an update) -->
 
-As a result, the reason is just a __best-effort property__ (that we only include for telemetry). You should not attempt to write logic against the reason in your reconciler.
+As a result, the [ReconcileReason] is a __debugging best-effort property__ (for telemetry). You should not attempt to write logic against the reason in your reconciler.
 
 Instead, you must write a **defensive reconciler** and handle missed messages, and partial runs:
 
