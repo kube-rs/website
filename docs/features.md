@@ -13,6 +13,7 @@ All public features are exposed through `kube` in [kube's Cargo.toml](https://gi
 | derive      | [CustomResource]                   | no      | [kube-derive], [syn], [quote]|
 | openssl-tls | tls via openssl                    | no      | [openssl], [hyper-openssl]   |
 | rustls-tls  | tls via rustls                     | [yes]   | [rustls], [hyper-rustls]     |
+| ring        | rustls via ring                    | yes     | [ring]                       |
 | aws-lc-rs   | rustls via aws-lc-rs               | no      | [aws-lc-rs]                  |
 | ws          | [Execute], [Attach], [Portforward] | no      | [tokio-tungstenite]          |
 | gzip        | gzip compressed transport          | no      | [tower-http] feature         |
