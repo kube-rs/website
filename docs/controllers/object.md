@@ -106,7 +106,7 @@ fn main() {
 }
 ```
 
-Here, a separate `crdgen` bin entry would install your custom resource using `cargo run --bin crdgen | kubectl -f -`.
+Here, a separate `crdgen` bin entry would install your custom resource using `cargo run --bin crdgen | kubectl apply -f -`.
 
 !!! warning "CRD Installation"
 
