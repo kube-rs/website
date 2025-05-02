@@ -55,6 +55,7 @@ nav:
     - features.md
     - upgrading.md
     - troubleshooting.md
+    - profiling.md
     Policies:
     - security.md
     - stability.md
