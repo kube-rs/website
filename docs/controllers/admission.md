@@ -58,11 +58,54 @@ fn string_legality(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::
 
 and this can be attached with a `#[schemars(schema_with = "string_legality)]` field attribute on some `Option<String>` (here). See [#1372](https://github.com/kube-rs/kube/pull/1372/files) too see interactions with errors and a larger struct and other validations.
 
-!!! note "Future work"
+## `x_kube` validation
 
-    Currently overriding the schema to include `x-kubernetes-validations` is awkward on larger types since you have override `items` (say) and other properties `schemars` usually generates. We hope [this can be made more ergonomic with future improvements to the overall ecosystem](https://github.com/kube-rs/kube/issues/1367). Help is welcome.
+To simplify the generation of CRD schemas, `kube-rs` offers a dedicated attribute macro accessible via the `KubeSchema` derive. This implementation allows users to declaratively extend each field with validation rules tailored to their specific requirements. Additionally, users have the option to specify additional `x-kubernetes` extension flags, such as the SSA merge strategy, which facilitates the structuring of lists and maps in a specific format.
+
+Here are some examples to showcase these capabilities.
+
+### `x_kube(validation = …)` attribute
+
+```rust
+#[derive(KubeSchema)]
+pub struct FooSpec {
+    #[x_kube(
+         validation = Rule::new("self != 'illegal'").message(Message::Expression("'string cannot be illegal'".into())).reason(Reason::FieldValueForbidden),
+         validation = Rule::new("self != 'not legal'").reason(Reason::FieldValueInvalid),
+         validation = "self == expected",
+         validation = ("self == expected", "with error message"),
+    )]
+    cel_validated: String,
+}
+```
+
+!!! note "`JsonSchema` vs `KubeSchema`"
+
+    This macro generates `schemars` `JsonSchema` derive macro for the provided structure. Keep in mind that using the `KubeSchema` derive macro replaces `JsonSchema` derive, and specifying both will cause a conflict.*
+
+The `x_kube(validation = ...)` macro uses a `Rule` structure underneath. A `Rule` can be constructed with builder pattern, allowing users to extend the validation with a `message` to distinguish specific validation error and alternative [reasons](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#field-reason) via `reason`, as well as a `field_path` for detailed json path to the invalid field value.
+
+Alternatively, the rule macro can be constructed from a string or a tuple of two strings. The first string represents the validation rule, and the second string is the message assigned to the rule.
 
 To write CEL expressions consider using the [CEL playground](https://playcel.undistro.io/). There are more examples in the [CRD Validation Rules announcement blog](https://kubernetes.io/blog/2022/09/23/crd-validation-rules-beta/) and under [kubernetes.io crd validation-rules](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#validation-rules).
+
+### `x_kube(merge_strategy = …)` attribute
+
+```rust
+
+#[derive(KubeSchema)]
+pub struct FooSpec {
+	#[x_kube(merge_strategy = ListType::Map("key"))]
+    merge: []FooItem,
+}
+
+pub struct FooItem {
+	key: String
+	value: String
+}
+```
+
+This example generates a `x-kubernetes-list-type=map` and `x-kubernetes-list-map-keys=["key"]` attributes with the field. This instructs the API server to treat the underlying list as a map and ensures that `key` field is used as a unique key for the internal map, preventing conflicts during submission of duplicate keys provided by different manager. For more details refer to [merge-strategy](https://kubernetes.io/docs/reference/using-api/server-side-apply/#merge-strategy) in k8s docs.
 
 ## Validation Using Webhooks
 AKA writing an [admission controller](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/).
