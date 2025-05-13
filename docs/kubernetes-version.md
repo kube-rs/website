@@ -12,6 +12,7 @@ The **minimum** indicates the lower bound of our testing range, and the **latest
 
 | kube version   | MK8SV   | Latest  | Generated Source  |
 | -------------- | ------- | ------- | ----------------- |
+| [1.0.0](https://github.com/kube-rs/kube/releases/tag/1.0.0)  |  `1.30`[*](https://github.com/kube-rs/kube/pull/1756) | [`1.33`](https://kubernetes.io/blog/2025/04/23/kubernetes-v1-33-release/) | [k8s-openapi@0.25.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0250-2025-05-11) |
 | [0.98.0](https://github.com/kube-rs/kube/releases/tag/0.98.0)  |  `1.28` | [`1.32`](https://kubernetes.io/blog/2024/12/11/kubernetes-v1-32-release/) | [k8s-openapi@0.24.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.24.0) |
 | [0.95.0](https://github.com/kube-rs/kube/releases/tag/0.95.0)  |  `1.26` | [`1.31`](https://kubernetes.io/blog/2024/08/13/kubernetes-v1-31-release/) | [k8s-openapi@0.23.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.23.0) |
 | [0.91.0](https://github.com/kube-rs/kube/releases/tag/0.91.0)  |  `1.25` | [`1.30`](https://kubernetes.io/blog/2024/04/17/kubernetes-v1-30-release/) | [k8s-openapi@0.22.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.22.0) |
@@ -29,8 +30,7 @@ The **minimum** indicates the lower bound of our testing range, and the **latest
 This policy is intended to match **stable channel support** within **major cloud providers**.
 Compare with: [EKS](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html), [AKS](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar), [GKE](https://cloud.google.com/kubernetes-engine/docs/release-schedule), [upstream Kubernetes](https://endoflife.date/kubernetes).
 
-
-It is displayed in the main README as a badge: [![Tested against Kubernetes 1.26 and above](https://img.shields.io/badge/MK8SV-1.26-326ce5.svg)](https://kube.rs/kubernetes-version)
+It is displayed in the main README as a badge: [![Tested against Kubernetes 1.26 and above](https://img.shields.io/badge/MK8SV-1.30-326ce5.svg)](https://kube.rs/kubernetes-version)
 
 ## Picking Versions
 
