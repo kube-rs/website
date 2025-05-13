@@ -92,16 +92,15 @@ To write CEL expressions consider using the [CEL playground](https://playcel.und
 ### `x_kube(merge_strategy = …)` attribute
 
 ```rust
-
 #[derive(KubeSchema)]
 pub struct FooSpec {
-	#[x_kube(merge_strategy = ListType::Map("key"))]
-    merge: []FooItem,
+    #[x_kube(merge_strategy = ListType::Map("key"))]
+    merge: Vec<FooItem>,
 }
 
 pub struct FooItem {
-	key: String
-	value: String
+    key: String,
+    value: String,
 }
 ```
 
