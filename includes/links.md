@@ -103,6 +103,9 @@
 [Server-Side Apply]: https://kubernetes.io/docs/reference/using-api/server-side-apply/
 [k3d]: https://k3d.io/
 [JsonSchema]: https://docs.rs/schemars/latest/schemars/trait.JsonSchema.html
+[KubeSchema]: https://docs.rs/kube/latest/kube/derive.KubeSchema.html
+[Rule]: https://docs.rs/kube/latest/kube/core/struct.Rule.html
+[MergeStrategy]: https://docs.rs/kube/latest/kube/core/cel/enum.MergeStrategy.html
 [env_logger]: https://docs.rs/env_logger/latest/env_logger/
 [AdmissionReview]: https://docs.rs/kube/latest/kube/core/admission/struct.AdmissionReview.html
 [AdmissionResponse]: https://docs.rs/kube/latest/kube/core/admission/struct.AdmissionResponse.html

@@ -41,7 +41,7 @@ If your controller [[object]] is a CRD you own, then this is the recommended way
     This requires __Kubernetes >=1.25__ (where the feature is Beta), or Kubernetes >= 1.29 (where the [feature is GA](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.29.md)).
 
 
-To include validation rules in the schemas you must add `x-kubernetes-validations` entries by [[schemas#overriding-members]] for the necessary types manually (or inject them more manually):
+To include validation rules in the schemas you must add `x-kubernetes-validations` entries by [[schemas#overriding-members]] for the necessary types manually (or use the `x-kube` validation attribute). The manual way (which does not depend on `KubeSchema`):
 
 ```rust
 fn string_legality(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
@@ -56,15 +56,21 @@ fn string_legality(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::
 }
 ```
 
-and this can be attached with a `#[schemars(schema_with = "string_legality)]` field attribute on some `Option<String>` (here). See [#1372](https://github.com/kube-rs/kube/pull/1372/files) too see interactions with errors and a larger struct and other validations.
+this fn can be attached with a `#[schemars(schema_with = "string_legality)]` field attribute on some `Option<String>` (in this example). See [#1372](https://github.com/kube-rs/kube/pull/1372/files) too see interactions with errors and a larger struct and other validations.
 
 ## `x_kube` validation
 
-To simplify the generation of CRD schemas, `kube-rs` offers a dedicated attribute macro accessible via the `KubeSchema` derive. This implementation allows users to declaratively extend each field with validation rules tailored to their specific requirements. Additionally, users have the option to specify additional `x-kubernetes` extension flags, such as the SSA merge strategy, which facilitates the structuring of lists and maps in a specific format.
+To reduce manual schema overriding for CRDs, the alternate [KubeSchema] derive macro can be used instead of [JsonSchema].
 
-Here are some examples to showcase these capabilities.
+!!! note "`JsonSchema` vs `KubeSchema`"
+
+    This macro generates `schemars` `JsonSchema` derive macro for the provided structure. Keep in mind that using the `KubeSchema` derive macro replaces `JsonSchema` derive, and specifying both will cause a conflict.*
+
+
+This implementation allows users to declaratively extend each field with validation rules (along with other `x-kubernetes` schema properties).
 
 ### `x_kube(validation = …)` attribute
+This attribute can be used to set one or more `validation` rules on a field. Rules can be created via one of; an explicit [Rule] / a string expression / a (string, reason) string pair;
 
 ```rust
 #[derive(KubeSchema)]
@@ -79,17 +85,15 @@ pub struct FooSpec {
 }
 ```
 
-!!! note "`JsonSchema` vs `KubeSchema`"
+The `x_kube(validation = ...)` macro uses the [Rule] structure underneath. This can be constructed using the builder pattern, allowing users to extend the validation with a `message` to distinguish specific validation error and alternative [reasons](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#field-reason) via `reason`, as well as a `field_path` for detailed json path to the invalid field value.
 
-    This macro generates `schemars` `JsonSchema` derive macro for the provided structure. Keep in mind that using the `KubeSchema` derive macro replaces `JsonSchema` derive, and specifying both will cause a conflict.*
-
-The `x_kube(validation = ...)` macro uses a `Rule` structure underneath. A `Rule` can be constructed with builder pattern, allowing users to extend the validation with a `message` to distinguish specific validation error and alternative [reasons](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#field-reason) via `reason`, as well as a `field_path` for detailed json path to the invalid field value.
-
-Alternatively, the rule macro can be constructed from a string or a tuple of two strings. The first string represents the validation rule, and the second string is the message assigned to the rule.
+Alternatively, the rule can be constructed implicitly from a string or a tuple of two strings. The first string represents the validation rule, and the second string is the message assigned to the rule.
 
 To write CEL expressions consider using the [CEL playground](https://playcel.undistro.io/). There are more examples in the [CRD Validation Rules announcement blog](https://kubernetes.io/blog/2022/09/23/crd-validation-rules-beta/) and under [kubernetes.io crd validation-rules](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#validation-rules).
 
 ### `x_kube(merge_strategy = …)` attribute
+
+This `x-kubernetes` extension flag controls the [Kubernetes SSA merge strategy](https://kubernetes.io/docs/reference/using-api/server-side-apply/#merge-strategy) from our [MergeStrategy] enum and facilitates the structuring of lists and maps in a specific format.
 
 ```rust
 #[derive(KubeSchema)]
@@ -104,7 +108,7 @@ pub struct FooItem {
 }
 ```
 
-This example generates a `x-kubernetes-list-type=map` and `x-kubernetes-list-map-keys=["key"]` attributes with the field. This instructs the API server to treat the underlying list as a map and ensures that `key` field is used as a unique key for the internal map, preventing conflicts during submission of duplicate keys provided by different manager. For more details refer to [merge-strategy](https://kubernetes.io/docs/reference/using-api/server-side-apply/#merge-strategy) in k8s docs.
+This example generates a `x-kubernetes-list-type=map` and `x-kubernetes-list-map-keys=["key"]` attributes with the field. This instructs the API server to treat the underlying list as a map and ensures that `key` field is used as a unique key for the internal map, preventing conflicts on submission of duplicate keys by different managers.
 
 ## Validation Using Webhooks
 AKA writing an [admission controller](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/).
