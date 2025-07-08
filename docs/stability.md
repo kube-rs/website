@@ -47,7 +47,7 @@ New variants **should** have a new name, and the old variant **should** remain w
 
 !!! note "Deprecation Duration"
 
-    Deprecated functionality **must** stick around for at least **3 releases**.
+    Deprecated functionality **must** stick around for at least **3 feature releases**.
 
 For instance, we deprecated [`runtime::utils::try_flatten_applied`](https://github.com/kube-rs/kube/blob/d0bf02f9c0783a3087b83633f2fa899d8539e91d/kube-runtime/src/utils/mod.rs#L29-L40) in `0.72.0`:
 
@@ -76,7 +76,7 @@ When adding new, experimental functionality, we export them through optional fea
 These features are **opt-in** using [cargo features](https://doc.rust-lang.org/cargo/reference/features.html), and can be enabled from your `Cargo.toml`:
 
 ```toml
-kube = { version = "0.80.0", features = ["runtime", "unstable-runtime"] }
+kube = { version = "1", features = ["runtime", "unstable-runtime"] }
 ```
 
 Functionality released under unstable features **can change between any version** and are **not subject** to **any** of the usual **guarantees**.

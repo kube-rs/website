@@ -16,13 +16,13 @@ We will use the [tracing] library for logging because it allows us reusing the s
 
 ```sh
 cargo add tracing
-cargo add tracing-subscriber --features=json,env-filter
+cargo add tracing-subscriber --features=env-filter
 ```
 
 We will configure this in `main` by creating a `json` log layer with an [EnvFilter] picking up on the common `RUST_LOG` environment variable:
 
 ```rust
-let logger = tracing_subscriber::fmt::layer().json();
+let logger = tracing_subscriber::fmt::layer().compact();
 let env_filter = EnvFilter::try_from_default_env()
     .or_else(|_| EnvFilter::try_new("info"))
     .unwrap();
@@ -31,7 +31,7 @@ let env_filter = EnvFilter::try_from_default_env()
 This can be set as the global collector using:
 
 ```rust
-Registry::default().with(logger).with(env_filter).init();
+Registry::default().with(env_filter).with(logger).init();
 ```
 
 We will change how the `collector` is built if using **tracing**, but for now, this is sufficient for adding logging.
@@ -43,7 +43,7 @@ Following on from logging section, we add extra dependencies to let us push trac
 ```sh
 cargo add opentelemetry --features=trace
 cargo add opentelemetry_sdk --features=rt-tokio
-cargo add opentelemetry-otlp
+cargo add opentelemetry-otlp --no-default-features --features=trace,grpc-tonic
 ```
 
 !!! warning "Telemetry Dependencies"
@@ -66,11 +66,11 @@ Change our registry setup to use 3 layers:
 However, tracing requires us to have a configurable location of **where to send spans**, the provders needs to be globally registered, and you likely want to set some resource attributes, so creating the actual `tracer` requires a bit more work:
 
 ```rust
-fn init_tracer() -> opentelemetry_sdk::trace::Tracer {
-    use opentelemetry::trace::TracerProvider;
-    use opentelemetry_otlp::{SpanExporter, WithExportConfig};
-    use opentelemetry_sdk::{runtime, trace::Config};
+use opentelemetry::trace::TracerProvider;
+use opentelemetry_sdk::trace::{SdkTracer, SdkTracerProvider};
 
+fn init_tracer() -> SdkTracer {
+    use opentelemetry_otlp::{SpanExporter, WithExportConfig};
     let endpoint = std::env::var("OPENTELEMETRY_ENDPOINT_URL").expect("Needs an otel collector");
     let exporter = SpanExporter::builder()
         .with_tonic()
@@ -78,12 +78,11 @@ fn init_tracer() -> opentelemetry_sdk::trace::Tracer {
         .build()
         .unwrap();
 
-    let provider = sdktrace::TracerProvider::builder()
-        .with_batch_exporter(exporter, runtime::Tokio)
+    let provider = SdkTracerProvider::builder()
         .with_resource(resource())
+        .with_batch_exporter(exporter)
         .build();
 
-    opentelemetry::global::set_tracer_provider(provider.clone());
     provider.tracer("tracing-otel-subscriber")
 }
 ```
@@ -96,10 +95,10 @@ For some starting resource attributes;
 use opentelemetry_sdk::Resource;
 fn resource() -> Resource {
     use opentelemetry::KeyValue;
-    Resource::new([
-        KeyValue::new("service.name", env!("CARGO_PKG_NAME")),
-        KeyValue::new("service.version", env!("CARGO_PKG_VERSION")),
-    ])
+    Resource::builder()
+        .with_service_name(env!("CARGO_PKG_NAME"))
+        .with_attribute(KeyValue::new("service.version", env!("CARGO_PKG_VERSION")))
+        .build()
 }
 ```
 
