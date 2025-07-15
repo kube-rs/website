@@ -1,12 +1,13 @@
 # Upgrading
 
-You can upgrade `kube` and it's sibling crate `k8s-openapi` using normal Rust methods to upgrade.
+You can upgrade `kube` using normal Rust methods to upgrade, as long as you stick to semver compatible versions of `k8s-openapi` and `schemars` (if using custom resource derive).
 
-!!! warning "`kube` and `k8s-openapi` are siblings"
+!!! warning "Peer dependencies"
 
-    `kube` depends on `k8s-openapi`, but users need to select the Kubernetes version on `k8s-openapi`. Whenever `k8s-openapi` releases a new version, `kube` releases a new version shortly after.
+    `kube` depends on a handful of unstable crates at certain versions, but new versions of these crates have not always propagated into kube.
+    To avoid build issues, `k8s-openapi` and `schemars` must NOT exist at multiple semver incompatible versions in your dependency tree.
 
-We recommend you bump both `kube` and `k8s-openapi` crates at the same time to avoid build issues.
+We recommend you bump `kube`, `k8s-openapi` and `schemars` crates at the same time to avoid build issues.
 
 Consider bumping the [[kubernetes-version]] feature pin on `k8s-openapi` unless you are using its `latest` feature.
 
@@ -15,12 +16,16 @@ Consider bumping the [[kubernetes-version]] feature pin on `k8s-openapi` unless 
 Using `cargo upgrade` via [cargo-edit]:
 
 ```sh
-cargo upgrade -p kube -p k8s-openapi -i
+cargo upgrade -p kube -p k8s-openapi -p schemars -i
 ```
+
+!!! warning "Schemars 1"
+
+  The major version of schemars 1 is expected to be released in the next Kubernetes version (1.34) in kube 2.0. Until then, if you need schemars 1, [pinning to git](https://github.com/kube-rs/kube/issues/1774#issuecomment-3072681555) is an option. Schemars 1 will not work with kube 1.
 
 ## Dependabot
 
-[Configure](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file) the `cargo` ecosystem on dependabot and [group](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups) `kube` and `k8s-openapi` upgrades together:
+[Configure](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file) the `cargo` ecosystem on dependabot and [group](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups) codependent crates:
 
 ```yaml
   - package-ecosystem: "cargo"
@@ -32,6 +37,7 @@ cargo upgrade -p kube -p k8s-openapi -i
         patterns:
           - kube
           - k8s-openapi
+          - schemars
 ```
 
 ## Renovate
@@ -44,6 +50,7 @@ packageRules: [
             matchPackagePrefixes: [
                 "kube",
                 "k8s",
+                "schemars",
             ],
             groupName: "kubernetes crates",
             matchManagers: [
