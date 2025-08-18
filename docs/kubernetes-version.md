@@ -10,19 +10,20 @@ Our Kubernetes version compatibility is following a similar strategy to the one 
 
 The **minimum** indicates the lower bound of our testing range, and the **latest** is the maximum Kubernetes version selectable as a target version. The minimum has evolved like this:
 
-| kube version   | MK8SV   | Latest  | Generated Source  |
-| -------------- | ------- | ------- | ----------------- |
-| [1.0.0](https://github.com/kube-rs/kube/releases/tag/1.0.0)  |  `1.30`[*](https://github.com/kube-rs/kube/pull/1756) | [`1.33`](https://kubernetes.io/blog/2025/04/23/kubernetes-v1-33-release/) | [k8s-openapi@0.25.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0250-2025-05-11) |
-| [0.98.0](https://github.com/kube-rs/kube/releases/tag/0.98.0)  |  `1.28` | [`1.32`](https://kubernetes.io/blog/2024/12/11/kubernetes-v1-32-release/) | [k8s-openapi@0.24.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.24.0) |
-| [0.95.0](https://github.com/kube-rs/kube/releases/tag/0.95.0)  |  `1.26` | [`1.31`](https://kubernetes.io/blog/2024/08/13/kubernetes-v1-31-release/) | [k8s-openapi@0.23.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.23.0) |
-| [0.91.0](https://github.com/kube-rs/kube/releases/tag/0.91.0)  |  `1.25` | [`1.30`](https://kubernetes.io/blog/2024/04/17/kubernetes-v1-30-release/) | [k8s-openapi@0.22.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.22.0) |
-| [0.88.0](https://github.com/kube-rs/kube/releases/tag/0.88.0)  |  `1.24` | [`1.29`](https://kubernetes.io/blog/2023/12/13/kubernetes-v1-29-release/) | [k8s-openapi@0.21.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.21.0) |
-| [0.87.1](https://github.com/kube-rs/kube/releases/tag/0.87.1)  |  `1.23` | [`1.28`](https://kubernetes.io/blog/2023/08/15/kubernetes-v1-28-release/) | [k8s-openapi@0.20.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.20.0) |
-| [0.85.0](https://github.com/kube-rs/kube/releases/tag/0.85.0)  |  `1.22` | [`1.27`](https://kubernetes.io/blog/2023/04/11/kubernetes-v1-27-release/) | [k8s-openapi@0.19.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.19.0) |
-| [0.78.0](https://github.com/kube-rs/kube/releases/tag/0.78.0)  |  `1.21` | [`1.26`](https://kubernetes.io/blog/2022/12/09/kubernetes-v1-26-release/) | [k8s-openapi@0.17.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.17.0) |
-| [0.75.0](https://github.com/kube-rs/kube/releases/tag/0.75.0)  |  `1.20` | [`1.25`](https://kubernetes.io/blog/2022/08/23/kubernetes-v1-25-release/) | [k8s-openapi@0.16.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.16.0) |
-| [0.73.0](https://github.com/kube-rs/kube/releases/tag/0.73.0)  |  `1.19` | [`1.24`](https://kubernetes.io/blog/2022/05/03/kubernetes-1-24-release-announcement/) | [k8s-openapi@0.15.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.15.0) |
-| [0.67.0](https://github.com/kube-rs/kube/releases/tag/0.67.0)  |  `1.18` | [`1.23`](https://kubernetes.io/blog/2021/12/07/kubernetes-1-23-release-announcement/) | [k8s-openapi@0.14.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.14.0) |
+| kube version   | MK8SV   | Latest  | Generated Source  | Requirements    |
+| -------------- | ------- | ------- | ----------------- | -------- |
+| `main`     |  X      | 1.34    | k8s-openapi@main  | [schemars@1](https://github.com/GREsau/schemars/releases/tag/v1.0.0) |
+| [1.0.0](https://github.com/kube-rs/kube/releases/tag/1.0.0)  |  `1.30`[*](https://github.com/kube-rs/kube/pull/1756) | [`1.33`](https://kubernetes.io/blog/2025/04/23/kubernetes-v1-33-release/) | [k8s-openapi@0.25.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0250-2025-05-11) | [schemars@0.8](https://github.com/GREsau/schemars/releases/tag/v0.8.22) |
+| [0.98.0](https://github.com/kube-rs/kube/releases/tag/0.98.0)  |  `1.28` | [`1.32`](https://kubernetes.io/blog/2024/12/11/kubernetes-v1-32-release/) | [k8s-openapi@0.24.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.24.0) | |
+| [0.95.0](https://github.com/kube-rs/kube/releases/tag/0.95.0)  |  `1.26` | [`1.31`](https://kubernetes.io/blog/2024/08/13/kubernetes-v1-31-release/) | [k8s-openapi@0.23.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.23.0) | |
+| [0.91.0](https://github.com/kube-rs/kube/releases/tag/0.91.0)  |  `1.25` | [`1.30`](https://kubernetes.io/blog/2024/04/17/kubernetes-v1-30-release/) | [k8s-openapi@0.22.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.22.0) | |
+| [0.88.0](https://github.com/kube-rs/kube/releases/tag/0.88.0)  |  `1.24` | [`1.29`](https://kubernetes.io/blog/2023/12/13/kubernetes-v1-29-release/) | [k8s-openapi@0.21.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.21.0) | |
+| [0.87.1](https://github.com/kube-rs/kube/releases/tag/0.87.1)  |  `1.23` | [`1.28`](https://kubernetes.io/blog/2023/08/15/kubernetes-v1-28-release/) | [k8s-openapi@0.20.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.20.0) | |
+| [0.85.0](https://github.com/kube-rs/kube/releases/tag/0.85.0)  |  `1.22` | [`1.27`](https://kubernetes.io/blog/2023/04/11/kubernetes-v1-27-release/) | [k8s-openapi@0.19.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.19.0) | |
+| [0.78.0](https://github.com/kube-rs/kube/releases/tag/0.78.0)  |  `1.21` | [`1.26`](https://kubernetes.io/blog/2022/12/09/kubernetes-v1-26-release/) | [k8s-openapi@0.17.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.17.0) | |
+| [0.75.0](https://github.com/kube-rs/kube/releases/tag/0.75.0)  |  `1.20` | [`1.25`](https://kubernetes.io/blog/2022/08/23/kubernetes-v1-25-release/) | [k8s-openapi@0.16.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.16.0) | |
+| [0.73.0](https://github.com/kube-rs/kube/releases/tag/0.73.0)  |  `1.19` | [`1.24`](https://kubernetes.io/blog/2022/05/03/kubernetes-1-24-release-announcement/) | [k8s-openapi@0.15.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.15.0) | |
+| [0.67.0](https://github.com/kube-rs/kube/releases/tag/0.67.0)  |  `1.18` | [`1.23`](https://kubernetes.io/blog/2021/12/07/kubernetes-1-23-release-announcement/) | [k8s-openapi@0.14.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.14.0) | |
 
 <!-- NB: k8s-openapi 0.18 did not introduce a new Kubernetes version: https://github.com/Arnavion/k8s-openapi/releases/tag/v0.18.0 so its bump is not listed -->
 
