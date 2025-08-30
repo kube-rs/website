@@ -6,6 +6,7 @@ The Kube-rs maintainers are:
 * Natalie Klestrup Röijezon <nat@nullable.se> [@nightkr](https://github.com/nightkr)
 * Kaz Yoshihara <kazk.dev@gmail.com> [@kazk](https://github.com/kazk)
 * Matei David <dev.matei@pm.me> [@mateiidavid](https://github.com/mateiidavid)
+* Danil Grigorev <daniil.grigorev.dev@gmail.com> [@Danil-Grigorev](https://github.com/danil-grigorev)
 
 ## Emeriti
 
