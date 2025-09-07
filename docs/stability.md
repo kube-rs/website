@@ -28,7 +28,7 @@ then also print table of tested Kubernetes distros such as k3s, EKS, GKE, AKS --
 
 ## Interface Changes
 
-Public interfaces from `kube` is allowed to change between **minor** versions, provided github release & [[changelog]] provides adequate guidance on the change, and the amount of user facing changes is minimized and trivialised. In particular:
+Public interfaces from `kube` is allowed to change between **semver breaking** versions, provided github release & [[changelog]] provides adequate guidance on the change, and the amount of user facing changes is minimized and trivialised. In particular:
 
 - PRs that perform breaking changes **must** have the `changelog-change` label
 - changes needed to user code **should** have a [diff code comment](https://github.com/kube-rs/kube/releases/tag/0.73.0) on the change
@@ -47,9 +47,11 @@ New variants **should** have a new name, and the old variant **should** remain w
 
 !!! note "Deprecation Duration"
 
-    Deprecated functionality **must** stick around for at least **3 feature releases**.
+    Deprecated functionality **must** stick around for at least **3 major releases**.
 
-For instance, we deprecated [`runtime::utils::try_flatten_applied`](https://github.com/kube-rs/kube/blob/d0bf02f9c0783a3087b83633f2fa899d8539e91d/kube-runtime/src/utils/mod.rs#L29-L40) in `0.72.0`:
+For instance, if we deprecate a method in `1.0.0` (the major released for Kubernetes 1.33), then the deprecated method must still exist in future `1.X` releases as well as `2.X` (the major release for Kubernetes 1.34) and `3.X` (the major release for Kubernetes 1.35). We should only remove this method for a `4.0` release.
+
+Deprecations should use a deprecated attribute with a note of removal. Ala [`runtime::utils::try_flatten_applied`](https://github.com/kube-rs/kube/blob/d0bf02f9c0783a3087b83633f2fa899d8539e91d/kube-runtime/src/utils/mod.rs#L29-L40) which was slated for removal in `0.75.0`.
 
 ```rust
 /// Flattens each item in the list following the rules of [`watcher::Event::into_iter_applied`].
@@ -108,11 +110,25 @@ kube/Cargo.toml
 31:unstable-runtime = ["kube-runtime/unstable-runtime"]
 ```
 
-## Major Release 1.0
+## Major Release Cycle
 
-While our codebase is heavily stabilising, and we officially satisfy the [upstream requirements for stability](https://github.com/kubernetes/design-proposals-archive/blob/main/api-machinery/csi-new-client-library-procedure.md#client-support-level), we have not released a `1.0.0` version yet. **Why is that?**
+Our codebase has generally stabilised, we officially satisfy the [upstream requirements for stability](https://github.com/kubernetes/design-proposals-archive/blob/main/api-machinery/csi-new-client-library-procedure.md#client-support-level), and we have started releasing major versions. However, we still have sub-1.0 dependencies. How does this work?
 
-Firstly, there are a handful of major features we would like to have in place first as they could influence some of our main interfaces:
+1. Any future minor bump of sub-1.0 dependencies that have a public/peer boundary (such as k8s-openapi, schemars) will coincide with a new `kube` major version.
+2. Every 3 months there's a new Kubernetes version resulting in a new semver breaking `k8s-openapi`.
+
+!!! note "Major Release Policy"
+
+    To align breaking changes to a predictable cycle, we aim to ship these semver breaking upgrades for new Kubernetes versions as a major kube version. Additional care to limit any non-mandatory, internal breaking changes still follow our normal guidelines above.
+
+This means that occasionally we are behind on some unstable dependencies, but this should be rectified in the new version. Any relevant required upgrades will be listed in the [version table](https://kube.rs/kubernetes-version/).
+
+We feel this currently best reflects the state of reality; `kube` mirrors a large part of the api surface of Kubernetes, so our major releases should correspond to large changes in Kubernetes.
+
+Currently this means having to do semver breaking releases, but this might not remain true forever.
+
+## Future Features
+There are also some features that we have wanted to get properly in place, but they are so far proving elusive. These are
 
 1. [protobuf serialization layer](https://github.com/kube-rs/kube/issues/725) is WIP
    a). This is likely to force new features (possibly making `k8s-openapi` opt-in)
@@ -124,15 +140,7 @@ Firstly, there are a handful of major features we would like to have in place fi
    a). This is being tested out through unstable features
    b). Controller signatures might need tweaking to accommodate these
 
-Secondly, our api surface mirrors a huge chunk from from upstream Kubernetes (which does have some freedom to change). Breaking changes on such a large surface does occasionally happen, but increasingly on peripheral and experimental parts of the codebase.
-
-Thirdly, some external concerns:
-
-- we depend on pre-1.0 libraries and upgrading these under semver would technically force major bumps
-- the public async iterator interface is [still being stabilised in rust](https://github.com/rust-lang/rust/issues/79024)
-
-Because of these conditions we do not have a planned release date for `1.0.0`, but it is [being discussed separately](https://github.com/kube-rs/kube/issues/923).
-
+If/when these land, they are likely to live under unstable features for a while, and only properly introduced as breaking changes in major versions.
 
 ## Summary
 As a brief summary to these policies and constraints, our approach to stability is to:
