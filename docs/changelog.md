@@ -6,7 +6,19 @@
 <!-- DO NOT touch the headers, UNRELEAS'D line, or compare url manually - they are sed'd -->
 <!-- next-header -->
 ## Unreleased
- * see https://github.com/kube-rs/kube/compare/2.0.0...main
+ * see https://github.com/kube-rs/kube/compare/2.0.1...main
+
+## [2.0.1](https://github.com/kube-rs/kube/releases/tag/2.0.1) / 2025-09-12
+<!-- Release notes generated using configuration in .github/release.yml at 2.0.1 -->
+
+## What's Changed
+Fixes an accidental inclusion of a constraint added to `Api::log_stream` introduced in the 2.0.0 Rust 2024 upgrade.
+
+### Fixed
+* Remove unused use<'_> from log_stream() by @pgerber in https://github.com/kube-rs/kube/pull/1824
+
+
+## 2.0.1 / 2025-09-12
 
 ## [2.0.0](https://github.com/kube-rs/kube/releases/tag/2.0.0) / 2025-09-08
 <!-- Release notes generated using configuration in .github/release.yml at 2.0.0 -->
@@ -22,7 +34,7 @@ Please [upgrade schemars along with kube](https://kube.rs/upgrading/) for this v
 Minimum versions: [MSRV](https://kube.rs/rust-version/) 1.85.0 (for [edition 2024](https://github.com/kube-rs/kube/pull/1785)), [MK8SV](https://kube.rs/kubernetes-version/): 1.30 ([unchanged](https://github.com/kube-rs/kube/pull/1756)).
 
 ## Highlights
-This version is contains fixes, dependency clearups, and dependency updates. Noteworthy additions are `TryFrom` impls for `Kubeconfig` users in #1801, and a namespace accessor in `Api` in #1788
+This version is contains fixes, dependency clearups, and dependency updates. Noteworthy additions are `TryFrom` impls for `Kubeconfig` users in [#1801](https://github.com/kube-rs/kube/issues/1801), and a namespace accessor in `Api` in [#1788](https://github.com/kube-rs/kube/issues/1788)
 
 ## New Major
 A new semver major for unstable, public facing dependency updates. As per the new [release cycle](https://kube.rs/stability/#major-release-cycle), it is aligned with the Kubernetes release.
