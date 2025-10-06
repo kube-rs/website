@@ -238,10 +238,6 @@ let changed_deploys = watcher(deploys, watcher::Config::default())
     .predicate_filter(predicates::generation);
 ```
 
-!!! warning "Predicates are unstable"
-
-    Predicates are a new feature in some flux with the last change in 0.84. They require one of the `unstable-runtime` feature flags.
-
 ### Debouncing Repetitions
 
 After kube 0.86 (via [#1265](https://github.com/kube-rs/kube/pull/1265)) it is possible to [debounce](https://en.wiktionary.org/wiki/debounce) to filter out reconcile calls that happen quick succession (only taking the latest). A debounce time can be set on the [controller::Config], and will __introduce a delay__ between the observed event and the eventual reconcile call, triggering __only after__ no relevant events have been seen for the debounce period.
