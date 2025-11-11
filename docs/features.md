@@ -19,8 +19,8 @@ All public features are exposed through `kube` in [kube's Cargo.toml](https://gi
 | gzip        | gzip compressed transport          | no      | [tower-http] feature         |
 | jsonpatch   | [Patch] using jsonpatch            | no      | [json_patch]                 |
 | admission   | [admission] module                 | no      | [json_patch]                 |
-| socks5      | local cluster [socks5] proxying    | no      | [hyper-socks2]               |
-| http-proxy  | local cluster http proxying        | no      | [hyper-http-proxy]           |
+| socks5      | local cluster [socks5] proxying    | no      | [hyper-util]'s `client-proxy` feature |
+| http-proxy  | local cluster http proxying        | no      | [hyper-util]'s `client-proxy` feature |
 | oauth       | local cluster oauth for GCP        | no      | [tame-oauth]                 |
 | oidc        | local cluster [oidc] auth          | no      | none                         |
 | webpki-roots| Mozilla's root certificates        | no      | [webpki-roots]               |
