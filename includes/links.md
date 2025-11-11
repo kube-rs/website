@@ -124,9 +124,7 @@
 [ring]: https://crates.io/crates/ring
 [tokio-tungstenite]: https://crates.io/crates/tokio-tungstenite
 [tame-oauth]: https://crates.io/crates/tame-oauth
-[hyper-socks2]: https://crates.io/crates/hyper-socks2
-[hyper-proxy2]: https://crates.io/crates/hyper-proxy2
-[hyper-http-proxy]: https://crates.io/crates/hyper-http-proxy
+[hyper-util]: https://crates.io/crates/hyper-util
 [syn]: https://crates.io/crates/syn
 [quote]: https://crates.io/crates/quote
 [webpki-roots]: https://github.com/rustls/webpki-roots
