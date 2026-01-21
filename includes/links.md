@@ -9,6 +9,7 @@
 [Controller::run]: https://docs.rs/kube/latest/kube/runtime/struct.Controller.html#method.run
 [ReconcileReason]: https://docs.rs/kube/latest/kube/runtime/controller/enum.ReconcileReason.html
 [ObjectRef]: https://docs.rs/kube/latest/kube/runtime/reflector/struct.ObjectRef.html
+[ObjectReference]: https://docs.rs/k8s-openapi/latest/k8s_openapi/api/core/v1/struct.ObjectReference.html
 [applier]: https://docs.rs/kube/latest/kube/runtime/fn.applier.html
 [Api]: https://docs.rs/kube/latest/kube/struct.Api.html
 [Client]: https://docs.rs/kube/latest/kube/struct.Client.html
