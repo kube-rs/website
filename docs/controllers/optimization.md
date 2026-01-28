@@ -113,10 +113,11 @@ Such a setup can involve running the metadata watcher with the cheaper/less cons
 let deploys: Api<Deployment> = Api::all(client);
 let cfg = watcher::Config::default().any_semantic();
 let (reader, writer) = reflector::store();
+let pred_cfg = PredicateConfig::default();
 let stream = reflector(writer, metadata_watcher(api, cfg))
     .default_backoff()
     .applied_objects()
-    .predicate_filter(predicates::generation);
+    .predicate_filter(predicates::generation, pred_cfg);
 
 Controller::for_stream(stream, reader)...
 
@@ -132,23 +133,37 @@ async fn reconcile(partial: Arc<PartialObjectMeta<Deployment>>, ctx: Arc<Context
 
 This will also help avoid [[#Repeatedly Triggering Yourself]].
 
-### Reduce the List Spike
+### Avoiding the List Spike
 
-Every permanent watch loop setup against kube-apiserver generally requires an initial __listing__ of objects (usually in the form of a `list` api call), followed by a long `watch`starting at the given `resourceVersion` from the initial list. On big clusters this listing was until recently quite memory intensive (for both the apiserver and the controller).
+Because **continuous watch loops** (i.e. watchers) against the kube-apiserver requires an **initial listing of objects**, the watchers **peak memory footprint** is going to be dictated by how large those chunks of objects are when they arrive.
 
-Pagination for this initial list was added for `0.84.0` - with a new default **default page size** matching client-go's `500`. This can be reduced further when working on large objects if needed:
+There are **two** methods to reduce this overhead (for both the apiserver and your controller), depending on what Kubernetes version you have.
+
+### Page Size
+
+On Kubernetes versions **<1.33**, the initial __listing__ of objects comes in the form of a `list` call, followed by a long `watch` starting at the given `resourceVersion` from the initial list.
+
+On big clusters this listing is quite memory intensive (for both the apiserver and the controller), having lasting effects in form of map and vector [capacities](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.capacity) getting set to values proportional to the [`Config::page_size`](https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html#structfield.page_size).
+
+The **default list page size** matches client-go's `500`, but this can be reduced further when working on large objects;
 
 ```rust
 let cfg = watcher::Config::default().page_size(50);
 ```
 
-A more efficient alternative was added in `0.86.0` and **avoids paging entirely** using the streaming [WatchList feature](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists). This is supported through [Config::initial_list_strategy](https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html#structfield.initial_list_strategy), and can be sanity tested in the [pod_watcher example](https://github.com/kube-rs/kube/blob/c8e98285362e1d0739c56baf27aaab703051dcd4/examples/pod_watcher.rs#L15-L21) on a cluster with the [feature gate](https://github.com/kube-rs/kube/blob/c8e98285362e1d0739c56baf27aaab703051dcd4/justfile#L91) enabled.
+### Streaming Lists
+
+On Kubernetes >=1.33, the [Kubernetes Streaming List](https://kubernetes.io/blog/2025/05/09/kubernetes-v1-33-streaming-list-responses/) feature is generally available, and gives you all the initial objects as a stream meaning you do not have to allocate a vector per page.
+
+These savings __can__ be significant (>50% reductions seen on lighter apps), but your savings may vary. When interacting with reflectors, you are storing the objects anyway, so if you were already setting page sizes low, you may not see much of an improvement.
+
+This is currently **not** our default because it is still [beta upstream](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists), but you can opt-in early for a bigger memory saving.
 
 ```rust
 let cfg = watcher::Config::default().streaming_lists();
 ```
 
-Both these methods should reduce the **peak memory footprint** of both the apiserver and your controller at the times the controller needs to do a re-list.
+Note that this watch mode **avoids paging entirely**, and is a convenience helper to set the [Config::initial_list_strategy](https://docs.rs/kube/latest/kube/runtime/watcher/struct.Config.html#structfield.initial_list_strategy) to `StreamingList`.
 
 ## Reflector Optimization
 
@@ -288,14 +303,15 @@ Not everything is possible to optimize yet. Some tracking issues:
 
 As a short summary, here are the main listed optimization and the effect you should expect to see from utilising them.
 
-| Optimization Type      | Target Reduction   |
-| ---------------------- | ------------------ |
-| metadata_watcher       | IO + Memory        |
-| watcher selectors      | IO + Memory        |
-| watcher page size      | Peak Memory        |
-| reconciler concurrency | Peak Usage         |
-| pruning                | Memory Usage       |
-| predicates             | Memory + Code Size |
+| Optimization Type             | Target Reduction   |
+| ----------------------------- | ------------------ |
+| metadata_watcher              | IO + Memory        |
+| watcher selectors             | IO + Memory        |
+| watcher streaming list >=1.33 | Memory             |
+| watcher page size <1.33       | Memory             |
+| reconciler concurrency        | Spikes             |
+| pruning                       | Memory             |
+| predicates                    | IO + CPU           |
 
 It is important to note that **most of these are watcher tweaks**.
 The target reductions above can all be granted by passing more precise streams to your controller, or by tweaking controller input parameters.

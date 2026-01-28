@@ -76,7 +76,7 @@ watcher(api, watcher::Config::default())
     .default_backoff()
     .modify(|x| { x.managed_fields_mut().clear(); })
     .applied_objects()
-    .predicate_filter(predicates::generation)
+    .predicate_filter(predicates::generation, pred_config)
 ```
 
 These methods can require one of:
@@ -94,9 +94,10 @@ Using [predicates], we can **filter out** events from a stream where the **last 
 
 ```rust
 let api: Api<Deployment> = Api::all(client);
+let pred_cfg = PredicateConfig::default();
 let stream = watcher(api, cfg)
     .applied_objects()
-    .predicate_filter(predicates::generation);
+    .predicate_filter(predicates::generation, pred_cfg);
 ```
 
 in this case, deployments with the last previously seen `.metadata.generation` hash will be filtered out from the stream.
@@ -108,7 +109,7 @@ We can additionally wrap a [reflector] around the raw watcher stream before doin
 ```rust
 let stream = reflector(writer, watcher(api, cfg))
     .applied_objects()
-    .predicate_filter(predicates::generation);
+    .predicate_filter(predicates::generation, pred_cfg);
 ```
 
 ### Event Modification
@@ -260,7 +261,7 @@ let (reader, writer) = reflector::store();
 let cr_stream = reflector(writer, watcher(api_cr, cfg_cr))
     .default_backoff()
     .applied_objects()
-    .predicate_filter(predicates::generation);
+    .predicate_filter(predicates::generation, Default::default());
 
 let owned_stream = metadata_watcher(api_owned, cfg_owned)
     .default_backoff()
