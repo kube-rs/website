@@ -32,12 +32,12 @@ graph TD
 
 ## Watcher Errors and Backoff
 
-Watcher errors are **soft errors** — the [watcher] retries on all failures (including 403s, network issues) because external circumstances may improve. They should never be silently discarded. See the [troubleshooting page](../troubleshooting.md#watcher-errors) for diagnostic examples.
+Watcher errors are **soft errors** — the [watcher] retries on all failures (including 403s, network issues) because external circumstances may improve. They should never be **silently** discarded. See the [troubleshooting page](../troubleshooting.md#watcher-errors) for diagnostic examples.
 
 The critical requirement is attaching a backoff to the watcher stream:
 
 ```rust
-// ✗ First error terminates the stream → controller stops
+// ✗ Without backoff, errors cause a tight retry loop
 let stream = watcher(api, wc);
 
 // ✓ Exponential backoff with automatic retry
@@ -117,9 +117,23 @@ fn error_policy(obj: Arc<MyResource>, err: &Error, ctx: Arc<Context>) -> Action 
 
 ## Client-level Retry
 
-kube-client does not include built-in retry for regular API calls. If a `create()`, `patch()`, or `get()` fails, the error is returned as-is.
+By default, kube-client does not retry regular API calls. If a `create()`, `patch()`, or `get()` fails, the error is returned as-is.
 
-For automatic retry, you can use [tower]'s retry middleware. However, not all errors are retryable:
+Since version 3, kube provides a built-in [`RetryPolicy`](https://docs.rs/kube/latest/kube/client/retry/struct.RetryPolicy.html) that implements [tower]'s retry middleware. It retries on 429, 503, and 504 with exponential backoff:
+
+```rust
+use kube::client::retry::RetryPolicy;
+use tower::{ServiceBuilder, retry::RetryLayer, buffer::BufferLayer};
+
+let service = ServiceBuilder::new()
+    .layer(config.base_uri_layer())
+    .option_layer(config.auth_layer()?)
+    .layer(BufferLayer::new(1024))
+    .layer(RetryLayer::new(RetryPolicy::default()))
+    // ...
+```
+
+Not all errors are retryable:
 
 | Error | Retryable | Reason |
 |-------|-----------|--------|
@@ -132,21 +146,7 @@ For automatic retry, you can use [tower]'s retry middleware. However, not all er
 
 ## Timeout Strategy
 
-The default `read_timeout` on [Client] is 295 seconds (matching the Kubernetes server-side watch timeout). This means a regular [Api] call could block for nearly 5 minutes if the server is unresponsive.
-
-### Separate clients
-
-```rust
-// Watcher client (default 295s timeout — needed for watch)
-let watcher_client = Client::try_default().await?;
-
-// API call client (short timeout)
-let mut config = Config::infer().await?;
-config.read_timeout = Some(Duration::from_secs(15));
-let api_client = Client::try_from(config)?;
-```
-
-### Wrapping individual calls
+If you need to guard against slow API calls in your reconciler, you can wrap individual calls with `tokio::time::timeout`:
 
 ```rust
 let pod = tokio::time::timeout(
@@ -155,9 +155,7 @@ let pod = tokio::time::timeout(
 ).await??;
 ```
 
-### Controllers
-
-In a [Controller] context, the watcher needs the long timeout. Only the API calls inside your reconciler need shorter timeouts. Wrapping individual reconciler calls with `tokio::time::timeout` is usually sufficient.
+In a [Controller] context, stream timeouts rely internally on watcher timeouts and can be configured via stream backoff parameters and [watcher::Config]. Only individual API calls inside your reconciler typically need shorter timeouts.
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
