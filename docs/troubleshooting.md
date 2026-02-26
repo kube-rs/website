@@ -46,7 +46,7 @@ If you turn up logging to `RUST_LOG=kube=debug` you should also see most errors 
 
 ## Watcher Errors
 
-A [watcher] will expose [watcher::Error] as the error part of it's `Stream` items. If these errors are discarded, it might lead to a continuously failing and retrying program.
+A [watcher] will expose [watcher::Error] as the error part of it's `Stream` items. If these errors are discarded, it might lead to a continuously failing and retrying program. For a comprehensive treatment of error types across all layers and backoff configuration, see [[errors]].
 
 !!! warning "Watcher errors are soft errors"
 
@@ -97,5 +97,173 @@ watcher(docs, conf).try_for_each(|_| future::ready(Ok(()))).await?;
 
 This is a particularly common error case since CRD installation is often managed out-of-band with the application and thus often neglected.
 
+## Common Symptoms
+
+The sections above cover specific error types. Below are symptom-based tables for quickly diagnosing the most common operational issues.
+
+### Reconciler Infinite Loop
+
+**Symptom**: reconcile call count increases endlessly, high CPU usage.
+
+| Cause | How to verify | Solution |
+|-------|--------------|----------|
+| Writing non-deterministic values to status (timestamps) | `RUST_LOG=kube=debug` — patch fires every reconcile | Use deterministic values; skip patch when unchanged |
+| Missing [predicate_filter] | Reconcile logs show status-only changes triggering | Apply `predicate_filter(predicates::generation)` |
+| Competing with another controller (annotation ping-pong) | `kubectl get -w` shows alternating `resourceVersion` updates | Use [[ssa]] to separate field ownership |
+
+See [[optimization#repeatedly-triggering-yourself]] for a detailed explanation of self-triggering causes and fixes.
+
+### Memory Keeps Growing
+
+**Symptom**: Pod memory increases over time, eventually OOMKilled.
+
+| Cause | How to verify | Solution |
+|-------|--------------|----------|
+| Re-list memory spikes | Periodic spikes visible in memory graphs | Use `streaming_lists()`, reduce `page_size` |
+| Large objects in [Store] cache | Profile with jemalloc; check Store size | Use `.modify()` to strip `managedFields`, or switch to [metadata_watcher] |
+| Watch scope too broad | Check `store.state().len()` for cached object count | Narrow scope with label/field selectors |
+
+See [[optimization]] for detailed guidance.
+
+### Watch Connection Not Recovering
+
+**Symptom**: controller appears stuck, no events received.
+
+| Cause | How to verify | Solution |
+|-------|--------------|----------|
+| 410 Gone without bookmarks | Log shows `WatchError` 410 | Watcher auto-recovers via re-list with `default_backoff()` |
+| Credential expiry | Log shows 401/403 errors | Verify `Config::infer()` auto-refreshes; check exec plugin config |
+| Missing backoff | Stream terminates on first error | Always use `.default_backoff()` |
+
+See [[errors]] for watcher backoff configuration and the full error handling guide.
+
+### API Server Throttling (429)
+
+**Symptom**: frequent `429 Too Many Requests` errors in logs.
+
+| Cause | How to verify | Solution |
+|-------|--------------|----------|
+| Too many concurrent reconciles | Check active reconcile count via metrics | Set `controller::Config::concurrency(N)` |
+| Too many watch connections | Count `owns()` and `watches()` calls | Use shared reflectors to share watches |
+| Excessive API calls in reconciler | Trace HTTP request count per reconcile | Use [Store] cache reads; parallelize with `try_join!` |
+
+### Finalizer Deadlock (Stuck Terminating)
+
+**Symptom**: resource stays in `Terminating` state indefinitely.
+
+| Cause | How to verify | Solution |
+|-------|--------------|----------|
+| Cleanup function keeps failing | Check logs for cleanup errors | Design cleanup to eventually succeed (treat missing external resources as success) |
+| [predicate_filter] blocks finalizer events | Using `predicates::generation` only | Use `predicates::generation.combine(predicates::finalizers)` |
+| Controller is down | Check pod status | Controller automatically processes on restart |
+
+Emergency release: `kubectl patch <resource> -p '{"metadata":{"finalizers":null}}' --type=merge` (skips cleanup)
+
+### Reconciler Not Running
+
+**Symptom**: resource changes but no reconciler logs appear.
+
+| Cause | How to verify | Solution |
+|-------|--------------|----------|
+| [Store] not yet initialized | Readiness probe fails | Wait for [Store::wait_until_ready] |
+| [predicate_filter] blocks all events | Review predicate logic | Temporarily remove predicates to test |
+| Insufficient RBAC permissions | Log shows 403 Forbidden | Add watch/list permissions to ClusterRole |
+| Watcher selector too narrow | `kubectl get -l <selector>` returns nothing | Adjust selector |
+
+## Debugging Tools
+
+### RUST_LOG levels
+
+```sh
+# Basic debugging: kube internals + your controller
+RUST_LOG=kube=debug,my_controller=debug
+
+# Individual watch events (very verbose)
+RUST_LOG=kube=trace
+
+# HTTP request level
+RUST_LOG=kube=debug,tower_http=debug
+
+# Suppress noise
+RUST_LOG=kube=warn,hyper=warn,my_controller=info
+```
+
+### tracing spans
+
+The [Controller] automatically creates spans with `object.ref` and `object.reason`. With JSON logging enabled, you can filter by object:
+
+```sh
+cat logs.json | jq 'select(.span.object_ref | contains("my-resource-name"))'
+```
+
+See [[observability]] for setting up structured logging and traces.
+
+### kubectl inspection
+
+```sh
+# Resource status and events
+kubectl describe myresource <name>
+
+# Watch for real-time changes
+kubectl get myresource -w
+
+# Track resourceVersion changes (diagnose infinite loops)
+kubectl get myresource <name> -o jsonpath='{.metadata.resourceVersion}' -w
+
+# Check finalizer state
+kubectl get myresource <name> -o jsonpath='{.metadata.finalizers}'
+```
+
+## Profiling
+
+### Memory profiling with jemalloc
+
+```toml
+[dependencies]
+tikv-jemallocator = { version = "*", features = ["profiling"] }
+```
+
+```rust
+#[global_allocator]
+static ALLOC: tikv_jemallocator::Jemalloc = tikv_jemallocator::Jemalloc;
+```
+
+```sh
+# Enable heap profiling
+MALLOC_CONF="prof:true,prof_active:true,lg_prof_interval:30" ./my-controller
+
+# Analyze profile dump
+jeprof --svg ./my-controller jeprof.*.heap > heap.svg
+```
+
+If `AHashMap` allocations dominate the profile, the [Store] cache is likely the bottleneck. Apply `.modify()` or switch to [metadata_watcher].
+
+### Async runtime profiling with tokio-console
+
+If reconcilers are slow and you suspect async task scheduling, use [tokio-console](https://github.com/tokio-rs/console):
+
+```toml
+[dependencies]
+console-subscriber = "*"
+```
+
+```rust
+console_subscriber::init();
+```
+
+```sh
+tokio-console http://localhost:6669
+```
+
+This shows per-task poll times, waker counts, and wait durations. If a reconciler task is blocked for long periods, look for synchronous operations or slow API calls inside it.
+
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
+
+[//begin]: # "Autogenerated link references for markdown compatibility"
+[ssa]: controllers/ssa "Server-Side Apply"
+[errors]: controllers/errors "Error Handling"
+[optimization]: controllers/optimization "Optimization"
+[observability]: controllers/observability "Observability"
+[manifests]: controllers/manifests "Manifests"
+[//end]: # "Autogenerated link references"
