@@ -71,6 +71,7 @@ nav:
     - controllers/intro.md
     - controllers/object.md
     - controllers/reconciler.md
+    - controllers/ssa.md
     - controllers/application.md
     - controllers/relations.md
     - controllers/gc.md
@@ -83,6 +84,7 @@ nav:
     - controllers/internals.md
     Operational:
     - controllers/observability.md
+    - controllers/errors.md
     - controllers/optimization.md
     - controllers/manifests.md
     - controllers/security.md
