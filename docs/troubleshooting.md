@@ -119,7 +119,7 @@ See [[optimization#repeatedly-triggering-yourself]] for a detailed explanation o
 
 | Cause | How to verify | Solution |
 |-------|--------------|----------|
-| Re-list memory spikes | Periodic spikes visible in memory graphs | Use `streaming_lists()`, or reduce `page_size` |
+| Initial list allocations | High baseline memory after startup | Use `streaming_lists()`, or reduce `page_size` |
 | Large objects in [Store] cache | Profile with jemalloc; check Store size | Use `.modify()` to strip `managedFields`, or switch to [metadata_watcher] |
 | Watch scope too broad | Check `store.state().len()` for cached object count | Narrow scope with label/field selectors |
 
@@ -238,7 +238,7 @@ MALLOC_CONF="prof:true,prof_active:true,lg_prof_interval:30" ./my-controller
 jeprof --svg ./my-controller jeprof.*.heap > heap.svg
 ```
 
-If `AHashMap` allocations dominate the profile, the [Store] cache is likely the bottleneck. Apply `.modify()` or switch to [metadata_watcher].
+If `AHashMap` allocations dominate the profile, the [Store] cache is the largest memory consumer. Apply `.modify()` or switch to [metadata_watcher].
 
 ### Async runtime profiling with tokio-console
 

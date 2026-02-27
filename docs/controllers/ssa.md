@@ -65,14 +65,14 @@ Unlike merge patch, SSA requires `apiVersion` and `kind` in every request.
 ### Missing field manager
 
 ```rust
-// ✗ Uses default field manager → unintended ownership conflicts
+// ✗ field_manager is None → API server rejects the request
 let pp = PatchParams::default();
 
 // ✓ Explicit field manager
 let pp = PatchParams::apply("my-controller");
 ```
 
-Always specify an explicit field manager. Without one, you risk ownership collisions with other controllers or kubectl users.
+A field manager is **required** for SSA. When `field_manager` is `None` (the default), the API server returns an error. Always use `PatchParams::apply("my-controller")` for SSA operations.
 
 ### Overusing force
 
@@ -104,7 +104,7 @@ let patch = serde_json::json!({
 
 !!! note "Current limitation: no ApplyConfigurations in Rust"
 
-    Go's client-go provides [ApplyConfigurations](https://pkg.go.dev/k8s.io/client-go/applyconfigurations) — fully optional builder types designed specifically for SSA. Rust does not have an equivalent yet ([kube#649](https://github.com/kube-rs/kube/issues/649)). Some [k8s-openapi] fields are not fully optional (e.g. certain integer fields like `maxReplicas`), which can make typed partial SSA awkward. Using `serde_json::json!()` for partial patches avoids this issue.
+    Go's client-go provides [ApplyConfigurations](https://pkg.go.dev/k8s.io/client-go/applyconfigurations) - fully optional builder types designed specifically for SSA. Rust does not have an equivalent yet ([kube#649](https://github.com/kube-rs/kube/issues/649)). Some [k8s-openapi] fields are not fully optional (e.g. certain integer fields like `maxReplicas`), which can make typed partial SSA awkward. Using `serde_json::json!()` for partial patches works around this issue.
 
 ## Status Patching
 

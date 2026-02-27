@@ -113,7 +113,7 @@ fn error_policy(obj: Arc<MyResource>, err: &Error, ctx: Arc<Context>) -> Action 
 
 !!! note "Current limitations"
 
-    `error_policy` is a **synchronous** function. You cannot perform async operations (sending metrics, updating status) inside it. For per-key exponential backoff, wrap the reconciler itself — see the pattern described in the [[reconciler]] documentation.
+    `error_policy` is a **synchronous** function. You cannot perform async operations (sending metrics, updating status) inside it. For per-key exponential backoff, wrap the reconciler itself with a middleware that tracks per-object retry state.
 
 ## Client-level Retry
 
@@ -133,22 +133,25 @@ let service = ServiceBuilder::new()
     // ...
 ```
 
-Not all errors are retryable:
+`RetryPolicy` specifically retries **429**, **503**, and **504** responses. It does not retry network errors or other 5xx codes.
 
-| Error | Retryable | Reason |
-|-------|-----------|--------|
-| 5xx | Yes | Server-side transient failure |
-| Timeout | Yes | Temporary network issue |
-| 429 Too Many Requests | Yes | Rate limit — wait and retry |
-| Network error | Yes | Temporary connectivity failure |
-| 4xx (400, 403, 404) | No | The request itself is wrong |
-| 409 Conflict | No | SSA ownership conflict — fix the logic |
+For broader retry guidance when designing your own error handling:
+
+| Error | Retryable | Where to handle |
+|-------|-----------|-----------------|
+| 429, 503, 504 | Yes | `RetryPolicy` handles automatically |
+| Other 5xx | Depends | `error_policy` or custom Tower middleware |
+| Timeout / Network | Yes | `error_policy` requeue, or watcher backoff |
+| 4xx (400, 403, 404) | No | Fix the request or RBAC |
+| 409 Conflict | No | SSA ownership conflict — fix field managers |
 
 ## Timeout Strategy
 
 If you need to guard against slow API calls in your reconciler, you can wrap individual calls with `tokio::time::timeout`:
 
 ```rust
+// First ? unwraps the timeout Result<T, Elapsed>
+// Second ? unwraps the API Result<Pod, kube::Error>
 let pod = tokio::time::timeout(
     Duration::from_secs(10),
     api.get("my-pod"),
