@@ -17,7 +17,7 @@ To successfully use owner references you need to:
 2. mark the children as watchable through owner [[relations]]
 
 ### Owner Reference Example
-In the [configmapgen_controller example](https://github.com/kube-rs/kube/blob/main/examples/configmapgen_controller.rs), the controller creates a `ConfigMap` from a contrieved `ConfigMapGenerator` custom resource ([cmg crd](https://github.com/kube-rs/kube/blob/main/examples/configmapgen_controller_crd.yaml)). The [example's reconciler](https://github.com/kube-rs/kube/blob/83368df52a4845e06edbb9b4b3246c3807bb711a/examples/configmapgen_controller.rs#L37-L73) for the `ConfigMapGenerator` objects insert the `owner_reference` into the generated `ConfigMap`:
+In the [configmapgen_controller example](https://github.com/kube-rs/kube/blob/main/examples/configmapgen_controller.rs), the controller creates a `ConfigMap` from a contrived `ConfigMapGenerator` custom resource ([cmg crd](https://github.com/kube-rs/kube/blob/main/examples/configmapgen_controller_crd.yaml)). The [example's reconciler](https://github.com/kube-rs/kube/blob/83368df52a4845e06edbb9b4b3246c3807bb711a/examples/configmapgen_controller.rs#L37-L73) for the `ConfigMapGenerator` objects insert the `owner_reference` into the generated `ConfigMap`:
 
 ```rust
 let oref = generator.controller_owner_ref(&()).unwrap();

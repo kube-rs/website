@@ -40,7 +40,7 @@ The [controller::Config] currently[**](https://github.com/kube-rs/kube/issues/14
 
 It is __possible__ to compute an optimal `concurrency` number based the CPU `resources` you assign to your container, but this would require specific measurement against your workload.
 
-!!! note "Agressiveness meets fairness"
+!!! note "Aggressiveness meets fairness"
 
     A highly parallel reconciler might be eventually throttled by [apiserver flow-control rules](https://kubernetes.io/docs/concepts/cluster-administration/flow-control/), and this can clearly degrade your controller's performance. Measurements, calculations, and [[observability]] (particularly for error rates) are useful to identifying such scenarios.
 
@@ -60,7 +60,7 @@ Sharding is splitting your workload into mutually exclusive groups that you gran
 Sharding can also be done in a more explicit way:
 
 * 1 controller deployment per namespace (naive sharding)
-* 1 controller deployment per labelled shard (precice, but requires labelling work)
+* 1 controller deployment per labelled shard (precise, but requires labelling work)
 
 Explicitly labelled shards is less common, but is a powerful option. It is used by [fluxcd](https://fluxcd.io/) via their [sharding.fluxcd.io/key label](https://fluxcd.io/flux/installation/configuration/sharding/) to associate a resource with a shard. Flux's Stefan talks about [scaling flux controllers at KubeCon 2024](https://www.youtube.com/watch?v=JFLNFJT59DY).
 
