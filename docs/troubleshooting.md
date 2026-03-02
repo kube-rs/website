@@ -40,7 +40,7 @@ In print, they look something like this:
 ErrorResponse { status: "Failure", message: "documents.kube.rs \"samuel\" is forbidden: User \"system:serviceaccount:default:doc-controller\" cannot patch resource \"documents\" in API group \"kube.rs\" in the namespace \"default\"", reason: "Forbidden", code: 403 }
 ```
 
-And they should be visible directly provided you are actully printing your error objects somewhere (rather than discarding them).
+And they should be visible directly provided you are actually printing your error objects somewhere (rather than discarding them).
 
 If you turn up logging to `RUST_LOG=kube=debug` you should also see most errors internally.
 

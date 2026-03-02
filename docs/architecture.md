@@ -26,9 +26,9 @@ The extra indirection crate `kube` is there to avoid cyclic dependencies between
 When working on features/issues with `kube-rs` you will __generally__ work inside one of these crates at a time, so we will focus on these in isolation, but talk about possible overlaps at the end.
 
 ## Kubernetes Ecosystem Considerations
-The Rust ecosystem does not exist in a vaccum as we take heavy inspirations from the popular Go ecosystem. In particular:
+The Rust ecosystem does not exist in a vacuum as we take heavy inspirations from the popular Go ecosystem. In particular:
 
-- `core` module contains invariants from [apimachinery](https://github.com/kubernetes/apimachinery) that is preseved across individual apis
+- `core` module contains invariants from [apimachinery](https://github.com/kubernetes/apimachinery) that is preserved across individual apis
 - `client::Client` is a re-envisioning of a generic [client-go](https://github.com/kubernetes/client-go)
 - `runtime::Controller` abstraction follows conventions in [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime)
 - `derive::CustomResource` derive macro for [CRDs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/) is loosely inspired by [kubebuilder's annotations](https://book.kubebuilder.io/reference/generating-crd.html)

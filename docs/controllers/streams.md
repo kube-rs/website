@@ -102,7 +102,7 @@ let stream = watcher(api, cfg)
 
 in this case, deployments with the last previously seen `.metadata.generation` hash will be filtered out from the stream.
 
-A generation predicate effectively filters out changes that only affect the `.status` object (for resources that support .generation), and is one useful way to avoding reconcile changes to your own CR re-triggering your reconciler.
+A generation predicate effectively filters out changes that only affect the `.status` object (for resources that support .generation), and is one useful way to avoiding reconcile changes to your own CR re-triggering your reconciler.
 
 We can additionally wrap a [reflector] around the raw watcher stream before doing the filter. This ensures we still have the most up-to-date value received in the cache:
 
@@ -205,7 +205,7 @@ leaving additionally the `reader` in your hands should you need it (obviating th
     This means the object you get in your reconciler is just a partial object with only `.metadata`. You can call `api.get()` inside `reconcile` to get a full object if needed.
 
 #### Owned Stream
-As per [[relations]], this requires your owned objects to have owner refrences back to your main object (`cr`):
+As per [[relations]], this requires your owned objects to have owner references back to your main object (`cr`):
 
 ```diff
  let cfg_owned = watcher::Config::default();

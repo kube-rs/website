@@ -3,7 +3,7 @@
 This chapter contains tips and tricks for re-using generic reconcilers.
 
 ## Generic Reconcilers
-It is possible to create generic reconcilers by abstracing away the underlying type by using either [DynamicObject] or [PartialObjectMeta].
+It is possible to create generic reconcilers by abstracting away the underlying type by using either [DynamicObject] or [PartialObjectMeta].
 
 This is a useful technique for controllers that need to do _the same thing_ to a bunch of resources, like for instance adding consistent labels / annotations.
 

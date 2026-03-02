@@ -88,7 +88,7 @@ nav:
     - controllers/security.md
     - controllers/scaling.md
     - controllers/availability.md
-  #- comunity.md
+  #- community.md
   #- proposal-process.md
   #- mentorship.md
   #- coding-style.md

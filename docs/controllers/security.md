@@ -20,7 +20,7 @@ The incident scenarios usually vary based on **what access attackers acquire**:
 - pod creation access ⇒ bitcoin miner installation
 - host/privileged access ⇒ secret data exfiltration/app installation
 
-See [Trampoline Pods: Node to Admin PrivEsc Built Into Popular K8s Platorms](https://www.youtube.com/watch?v=PGsJ4QTlKlQ) as an example of how these types of attacks can work.
+See [Trampoline Pods: Node to Admin PrivEsc Built Into Popular K8s Platforms](https://www.youtube.com/watch?v=PGsJ4QTlKlQ) as an example of how these types of attacks can work.
 
 ## Access Constriction
 

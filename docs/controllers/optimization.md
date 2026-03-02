@@ -286,7 +286,7 @@ To flatten such a workload curve, consider limiting your `concurrency` to contro
 
 ```rust
 Controller::new(pods, watcher::Config::default())
-    .with_config(controller::Config::default().concurency(3))
+    .with_config(controller::Config::default().concurrency(3))
 ```
 
 !!! note "Reconciler Deduplication"

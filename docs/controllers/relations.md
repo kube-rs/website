@@ -45,7 +45,7 @@ let mapper = |obj: RelatedObject| {
 Controller::new(main, watcher::Config::default())
     .watches(related, watcher::Config::default(), mapper)
 ```
-<!-- TODO: ReconcileRequest::from sets reason to Unknow, needs a method to set reason, ReconcileReason -> controller::Reason -->
+<!-- TODO: ReconcileRequest::from sets reason to Unknown, needs a method to set reason, ReconcileReason -> controller::Reason -->
 
 In this case, we are extracting an object reference from the spec of our object. Regardless of how you get the information, your mapper must return an iterator of [ObjectRef] for the root object(s) that must be reconciled as a result of the change.
 

@@ -63,7 +63,7 @@ Change our registry setup to use 3 layers:
 +Registry::default().with(env_filter).with(logger).with(otel).init();
 ```
 
-However, tracing requires us to have a configurable location of **where to send spans**, the provders needs to be globally registered, and you likely want to set some resource attributes, so creating the actual `tracer` requires a bit more work:
+However, tracing requires us to have a configurable location of **where to send spans**, the providers needs to be globally registered, and you likely want to set some resource attributes, so creating the actual `tracer` requires a bit more work:
 
 ```rust
 use opentelemetry::trace::TracerProvider;
@@ -337,7 +337,7 @@ You will also want resource utilization metrics, but this is typically handled u
 
 !!! note "tokio-metrics"
 
-    New **experimental** runtime metrics are also availble for the tokio runtime via [tokio-metrics](https://github.com/tokio-rs/tokio-metrics).
+    New **experimental** runtime metrics are also available for the tokio runtime via [tokio-metrics](https://github.com/tokio-rs/tokio-metrics).
 
 ### External References
 
