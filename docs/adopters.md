@@ -46,6 +46,7 @@
 - [MetalBear](https://metalbear.co)
 - [Tembo](https://tembo.io/)
 - [Aptakube](https://aptakube.com/)
+- [ZURU Tech](https://zuru.tech)
 
 If you're using `kube-rs` in production and are not on this list, please [submit a pull request](https://github.com/kube-rs/website/edit/main/docs/adopters.md)!
 
