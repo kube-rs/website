@@ -5,10 +5,44 @@
 <!-- You do NOT have to create links to issues yourself:  hashNUMBER will be linked by automation -->
 <!-- DO NOT touch the headers, UNRELEAS'D line, or compare url manually - they are sed'd -->
 <!-- next-header -->
-## Unreleased
- * see https://github.com/kube-rs/kube/compare/3.0.1...main
+UNRELEASED
+===================
+ * see https://github.com/kube-rs/kube/compare/3.1.0...main
 
-## [3.0.1](https://github.com/kube-rs/kube/releases/tag/3.0.1) / 2026-01-30
+[3.1.0](https://github.com/kube-rs/kube/releases/tag/3.1.0) / 2026-03-17
+===================
+<!-- Release notes generated using configuration in .github/release.yml at 3.1.0 -->
+
+## What's Changed
+Maintenance release with fixes for schemas/validation, client exec blocking and proxy handling, as well as some smaller new features listed below. Internal changes and documentation improvements listed in the [milestone](https://github.com/kube-rs/kube/milestone/54?closed=1).
+
+### Added
+* allow empty body in const context by @tottoto in https://github.com/kube-rs/kube/pull/1927
+* Add typed printcolumn argument to derive macro by @cchndl in https://github.com/kube-rs/kube/pull/1872
+* kube-core: add optionalOldSelf to CEL `Rule` by @Immortal-Beyond-Oblivion in https://github.com/kube-rs/kube/pull/1947
+* Re-add support for basic auth in Proxy by @goenning in https://github.com/kube-rs/kube/pull/1959
+### Fixed
+* Fix OptionalEnum transform for complex enums by @doxxx93 in https://github.com/kube-rs/kube/pull/1934
+* Bump tower-http dependency to 0.6.4 by @abustany in https://github.com/kube-rs/kube/pull/1939
+* Add minimal-versions CI check by @doxxx93 in https://github.com/kube-rs/kube/pull/1940
+* fix: Produce valid CRDs containing flattened untagged enums by @NickLarsenNZ in https://github.com/kube-rs/kube/pull/1942
+* kube-client: Avoid blocking tokio worker during exec auth token refresh by @blakelawson in https://github.com/kube-rs/kube/pull/1950
+
+
+* @abustany made their first contribution in https://github.com/kube-rs/kube/pull/1939
+* @cchndl made their first contribution in https://github.com/kube-rs/kube/pull/1872
+* @Immortal-Beyond-Oblivion made their first contribution in https://github.com/kube-rs/kube/pull/1947
+* @gauravgahlot made their first contribution in https://github.com/kube-rs/kube/pull/1949
+* @blakelawson made their first contribution in https://github.com/kube-rs/kube/pull/1950
+
+**Full Changelog**: https://github.com/kube-rs/kube/compare/3.0.1...3.1.0
+
+3.1.0 / 2026-03-17
+===================
+ * see https://github.com/kube-rs/kube/compare/3.1.0...main
+
+[3.0.1](https://github.com/kube-rs/kube/releases/tag/3.0.1) / 2026-01-30
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 3.0.1 -->
 
 ## What's Changed
@@ -19,10 +53,8 @@ Bugfix release for schemas, admission, and docs. Minor internal improvements lis
 * Fix [`OptionalEnum`](https://docs.rs/kube/3.0.1/kube/core/schema/struct.OptionalEnum.html) transform skipping schemas with description by @doxxx93 in https://github.com/kube-rs/kube/pull/1908
 * Remove conflicting `additionalProperties: false` from schema by @doxxx93 in https://github.com/kube-rs/kube/pull/1920
 
-
-## 3.0.1 / 2026-01-30
-
-## [3.0.0](https://github.com/kube-rs/kube/releases/tag/3.0.0) / 2026-01-12
+[3.0.0](https://github.com/kube-rs/kube/releases/tag/3.0.0) / 2026-01-12
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 3.0.0 -->
 ## New Major
 As per the new release schedule to match up with the new Kubernetes release.
@@ -156,9 +188,11 @@ Enabled by a [cloneable body](https://github.com/kube-rs/kube/pull/1867) + the n
 * Fix watcher ExponentialBackoff jitter ignored by @doxxx93 in https://github.com/kube-rs/kube/pull/1897
 
 
-## 3.0.0 / 2026-01-12
+3.0.0 / 2026-01-12
+===================
 
-## [2.0.1](https://github.com/kube-rs/kube/releases/tag/2.0.1) / 2025-09-12
+[2.0.1](https://github.com/kube-rs/kube/releases/tag/2.0.1) / 2025-09-12
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 2.0.1 -->
 
 ## What's Changed
@@ -168,9 +202,11 @@ Fixes an accidental inclusion of a constraint added to `Api::log_stream` introdu
 * Remove unused use<'_> from log_stream() by @pgerber in https://github.com/kube-rs/kube/pull/1824
 
 
-## 2.0.1 / 2025-09-12
+2.0.1 / 2025-09-12
+===================
 
-## [2.0.0](https://github.com/kube-rs/kube/releases/tag/2.0.0) / 2025-09-08
+[2.0.0](https://github.com/kube-rs/kube/releases/tag/2.0.0) / 2025-09-08
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 2.0.0 -->
 ## Kubernetes `v1_34` support via `k8s-openapi` [0.26](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0260-2025-09-06)
 Please [upgrade k8s-openapi along with kube](https://kube.rs/upgrading/) to avoid conflicts.
@@ -206,7 +242,8 @@ A new semver major for unstable, public facing dependency updates. As per the ne
 * Fix oidc with openssl by @saif-88 in https://github.com/kube-rs/kube/pull/1807
 
 
-## [1.1.0](https://github.com/kube-rs/kube/releases/tag/1.1.0) / 2025-05-26
+[1.1.0](https://github.com/kube-rs/kube/releases/tag/1.1.0) / 2025-05-26
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 1.1.0 -->
 
 ## What's Changed
@@ -219,7 +256,8 @@ Missing attribute bugfix + extra standard derives on [core::conversion](https://
 
 
 **Full Changelog**: https://github.com/kube-rs/kube/compare/1.0.0...1.1.0
-## [1.0.0](https://github.com/kube-rs/kube/releases/tag/1.0.0) / 2025-05-13
+[1.0.0](https://github.com/kube-rs/kube/releases/tag/1.0.0) / 2025-05-13
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 1.0.0 -->
 
 ### A Major Version
@@ -271,7 +309,8 @@ See [kube.rs docs on validation](https://kube.rs/controllers/admission/#validati
 * Allow schemars validate attribute in `CELSchema` by @Danil-Grigorev in https://github.com/kube-rs/kube/pull/1749
 * fix: resolve conflict with schemars preserve_order feature by @HoKim98 in https://github.com/kube-rs/kube/pull/1758
 
-## [0.99.0](https://github.com/kube-rs/kube/releases/tag/0.99.0) / 2025-03-12
+[0.99.0](https://github.com/kube-rs/kube/releases/tag/0.99.0) / 2025-03-12
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.99.0 -->
 ## Highlights
 ### Dependency Cleanups
@@ -307,7 +346,8 @@ See [kube.rs docs on validation](https://kube.rs/controllers/admission/#validati
 * kube-runtime: fix exponential backoff max times by @eliad-wiz in https://github.com/kube-rs/kube/pull/1713
 * `CustomResource` derive; allow `status` attribute to take a path by @clux in https://github.com/kube-rs/kube/pull/1704
 
-## [0.98.0](https://github.com/kube-rs/kube/releases/tag/0.98.0) / 2024-12-23
+[0.98.0](https://github.com/kube-rs/kube/releases/tag/0.98.0) / 2024-12-23
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.98.0 -->
 
 ## Highlights
@@ -332,7 +372,8 @@ See [kube.rs docs on validation](https://kube.rs/controllers/admission/#validati
 ### Fixed
 * Add support for UTF-16 encoded kubeconfig files by @goenning in https://github.com/kube-rs/kube/pull/1654
 
-## [0.97.0](https://github.com/kube-rs/kube/releases/tag/0.97.0) / 2024-11-20
+[0.97.0](https://github.com/kube-rs/kube/releases/tag/0.97.0) / 2024-11-20
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.97.0 -->
 
 ## Highlights
@@ -365,7 +406,8 @@ See [kube.rs docs on validation](https://kube.rs/controllers/admission/#validati
 * conditionally install `aws-lc-rs` by @goenning in https://github.com/kube-rs/kube/pull/1617
 * Warn when trying to use an unsupported proxy protocol by @nightkr in https://github.com/kube-rs/kube/pull/1626
 
-## [0.96.0](https://github.com/kube-rs/kube/releases/tag/0.96.0) / 2024-10-09
+[0.96.0](https://github.com/kube-rs/kube/releases/tag/0.96.0) / 2024-10-09
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.96.0 -->
 ## Highlights
 - **[Features](https://kube.rs/features/)**: `webpki-roots` added [#1323](https://github.com/kube-rs/kube/issues/1323), and [predicates](https://docs.rs/kube/latest/kube/runtime/utils/predicates/index.html) no longer require `unstable-runtime` [#1578](https://github.com/kube-rs/kube/issues/1578)
@@ -387,7 +429,8 @@ See [kube.rs docs on validation](https://kube.rs/controllers/admission/#validati
 * replace derivative dependency with educe by @rorosen in https://github.com/kube-rs/kube/pull/1585
 * change auth behavior to match upstream on unknown/empty user - use null auth by @aviramha in https://github.com/kube-rs/kube/pull/1595
 
-## [0.95.0](https://github.com/kube-rs/kube/releases/tag/0.95.0) / 2024-09-16
+[0.95.0](https://github.com/kube-rs/kube/releases/tag/0.95.0) / 2024-09-16
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.95.0 -->
 ## Kubernetes `v1_31` support via `k8s-openapi` [0.23](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.23.0)
 Please [upgrade k8s-openapi along with kube](https://kube.rs/upgrading/) to avoid conflicts.
@@ -401,7 +444,8 @@ New minimum versions: [MSRV](https://kube.rs/rust-version/) 1.77.2, [MK8SV](http
 
 
 **Full Changelog**: https://github.com/kube-rs/kube/compare/0.94.2...0.95.0
-## [0.94.2](https://github.com/kube-rs/kube/releases/tag/0.94.2) / 2024-09-13
+[0.94.2](https://github.com/kube-rs/kube/releases/tag/0.94.2) / 2024-09-13
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.94.2 -->
 
 ## What's Changed
@@ -410,7 +454,8 @@ Fixes a runtime regression in [`watch_object`](https://docs.rs/kube/latest/kube/
 ### Fixed
 * Ensure `watch_object` handles objects removed before init by @markdingram in https://github.com/kube-rs/kube/pull/1577
 
-## [0.94.1](https://github.com/kube-rs/kube/releases/tag/0.94.1) / 2024-09-09
+[0.94.1](https://github.com/kube-rs/kube/releases/tag/0.94.1) / 2024-09-09
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.94.1 -->
 
 ## What's Changed
@@ -419,7 +464,8 @@ Convenience release. Adjusted a version bound to avoid possibility of running in
 ### Fixed
 * Update hyper-rustls minimum version by @divergentdave in https://github.com/kube-rs/kube/pull/1575
 
-## [0.94.0](https://github.com/kube-rs/kube/releases/tag/0.94.0) / 2024-09-09
+[0.94.0](https://github.com/kube-rs/kube/releases/tag/0.94.0) / 2024-09-09
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.94.0 -->
 ## Highlights
 Support for `rustls`'s [aws-lc-rs](https://aws.amazon.com/blogs/opensource/introducing-aws-libcrypto-for-rust-an-open-source-cryptographic-library-for-rust/) is available under a new `kube/aws-lc-rs` feature. Via https://github.com/kube-rs/kube/pull/1568 for https://github.com/kube-rs/kube/issues/1562
@@ -439,14 +485,16 @@ Furthermore, there are improvements to [partial typing](https://kube.rs/controll
 ### Changed
 * Make implicitly dependent feature explicitly depend on each other by @clux in https://github.com/kube-rs/kube/pull/1551
 
-## [0.93.1](https://github.com/kube-rs/kube/releases/tag/0.93.1) / 2024-07-23
+[0.93.1](https://github.com/kube-rs/kube/releases/tag/0.93.1) / 2024-07-23
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.93.1 -->
 
 ## What's Changed
 ### Fixed
 * add missing feature gate on ConfigExt for no-features build by @HoKim98 in https://github.com/kube-rs/kube/pull/1549
 
-## [0.93.0](https://github.com/kube-rs/kube/releases/tag/0.93.0) / 2024-07-22
+[0.93.0](https://github.com/kube-rs/kube/releases/tag/0.93.0) / 2024-07-22
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.93.0 -->
 
 ## Highlights
@@ -470,7 +518,8 @@ A big thank you to everyone who contributed to this release!
 * Fix watcher not fully paginating on Init by @clux in https://github.com/kube-rs/kube/pull/1525 (ported to 0.92.1)
 * Prevent empty string object name requests from being sent to the apiserver by @xMAC94x in https://github.com/kube-rs/kube/pull/1541
 
-## [0.92.1](https://github.com/kube-rs/kube/releases/tag/0.92.1) / 2024-06-19
+[0.92.1](https://github.com/kube-rs/kube/releases/tag/0.92.1) / 2024-06-19
+===================
 ## Bugfix Release
 This release fixes [#1524](https://github.com/kube-rs/kube/issues/1524); a regression from [0.92.0](https://github.com/kube-rs/kube/releases/tag/0.92.0) causing `watcher` to skip pages on initial list. See [#1525](https://github.com/kube-rs/kube/pull/1525).
 
@@ -480,7 +529,8 @@ It is recommended to upgrade from 0.92.0.
 ### Fixed
 * Fix watcher not fully paginating on Init by @clux in https://github.com/kube-rs/kube/pull/1525
 
-## [0.92.0](https://github.com/kube-rs/kube/releases/tag/0.92.0) / 2024-06-12
+[0.92.0](https://github.com/kube-rs/kube/releases/tag/0.92.0) / 2024-06-12
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.92.0 -->
 ## Runtime: Decreased Memory Usage from `watcher`
 Buffering of [initial pages](https://kubernetes.io/docs/reference/using-api/api-concepts/#retrieving-large-results-sets-in-chunks) / [init streams](https://kubernetes.io/docs/reference/using-api/api-concepts/#streaming-lists) is no longer a mandatory process with [`watcher::Event`](https://docs.rs/kube/latest/kube/runtime/watcher/enum.Event.html) gaining new `Init`, `InitApply`, and `InitDone` events. These events are read on the [store side](https://github.com/kube-rs/kube/blob/0f6cb6f0ac695444f6789f98fa07073f4980a127/kube-runtime/src/reflector/store.rs#L99-L134) maintaining the atomicity/completeness guarantees for `reflector` and `Store` users.
@@ -512,7 +562,8 @@ Thanks to @aviramha via [MetalBear](https://metalbear.co/) for the support in ht
 * rename http_proxy feature to http-proxy and add it to the umbrella crate by @aviramha in https://github.com/kube-rs/kube/pull/1501
 * move from `hyper-proxy2` to `hyper-http-proxy` by @aviramha in https://github.com/kube-rs/kube/pull/1502
 
-## [0.91.0](https://github.com/kube-rs/kube/releases/tag/0.91.0) / 2024-05-06
+[0.91.0](https://github.com/kube-rs/kube/releases/tag/0.91.0) / 2024-05-06
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.91.0 -->
 ## Kubernetes `v1_30` support via `k8s-openapi` [0.22](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.22.0)
 Please [upgrade k8s-openapi along with kube](https://kube.rs/upgrading/) to avoid conflicts.
@@ -533,7 +584,8 @@ A more complete implementation that allows sharing `watcher` streams between mul
 * Include inner error message in Display for SerdeError by @XAMPPRocky in https://github.com/kube-rs/kube/pull/1481
 * Remove invalid `uniqueItems` property from CRDs when Sets are used  by @sbernauer in https://github.com/kube-rs/kube/pull/1484
 
-## [0.90.0](https://github.com/kube-rs/kube/releases/tag/0.90.0) / 2024-04-03
+[0.90.0](https://github.com/kube-rs/kube/releases/tag/0.90.0) / 2024-04-03
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.90.0 -->
 ## Highlights
 ### [`kube::client::Body`](https://docs.rs/kube/latest/kube/client/struct.Body.html) Improvements
@@ -562,7 +614,8 @@ A more complete implementation that allows sharing `watcher` streams between mul
 
 
 **Full Changelog**: https://github.com/kube-rs/kube/compare/0.89.0...0.90.0
-## [0.89.0](https://github.com/kube-rs/kube/releases/tag/0.89.0) / 2024-03-26
+[0.89.0](https://github.com/kube-rs/kube/releases/tag/0.89.0) / 2024-03-26
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.89.0 -->
 
 ## Upgrading `hyper` and `http` to 1.0 and MSRV to `1.75.0`
@@ -585,7 +638,8 @@ While this change constitutes significant internal churn (and a new [`kube::clie
 * `Kubeconfig` allow `certificate_authority_data` not present in `ExecAuthCluster` by @ljun20160606 in https://github.com/kube-rs/kube/pull/1432
 * fix: check err on `Client::request_stream` by @XciD in https://github.com/kube-rs/kube/pull/1433
 
-## [0.88.1](https://github.com/kube-rs/kube/releases/tag/0.88.1) / 2024-01-26
+[0.88.1](https://github.com/kube-rs/kube/releases/tag/0.88.1) / 2024-01-26
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.88.1 -->
 
 ## What's Changed
@@ -594,7 +648,8 @@ This is a bug fix release for a deserialization issue introduced in 0.88.0.
 ### Fixed
 * Minor fixes to `ObjectList` by @flavio in https://github.com/kube-rs/kube/pull/1398
 
-## [0.88.0](https://github.com/kube-rs/kube/releases/tag/0.88.0) / 2024-01-21
+[0.88.0](https://github.com/kube-rs/kube/releases/tag/0.88.0) / 2024-01-21
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.88.0 -->
 
 ## Kubernetes `v1_29` support via `k8s-openapi` [0.21](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.21.0)
@@ -607,7 +662,8 @@ Please [upgrade k8s-openapi along with kube](https://kube.rs/upgrading/) to avoi
 * Bump MSRV to 1.70 by @clux in https://github.com/kube-rs/kube/pull/1384
 * Upgrade `k8s-openapi` for Kubernetes `v1_29` support by @clux in https://github.com/kube-rs/kube/pull/1394
 
-## [0.87.2](https://github.com/kube-rs/kube/releases/tag/0.87.2) / 2023-12-22
+[0.87.2](https://github.com/kube-rs/kube/releases/tag/0.87.2) / 2023-12-22
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.87.2 -->
 
 ## What's Changed
@@ -619,7 +675,8 @@ Please [upgrade k8s-openapi along with kube](https://kube.rs/upgrading/) to avoi
 * Bump MSRV from 1.64 to 1.65 by @clux in https://github.com/kube-rs/kube/pull/1353
 * Switch from `jsonpath_lib` to `jsonpath-rust` by @ilya-bobyr in https://github.com/kube-rs/kube/pull/1345
 
-## [0.87.1](https://github.com/kube-rs/kube/releases/tag/0.87.1) / 2023-11-01
+[0.87.1](https://github.com/kube-rs/kube/releases/tag/0.87.1) / 2023-11-01
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.87.1 -->
 ## Headlines
 - fixed a `Controller` issue with reconciliation requests disappearing when using `concurrency` [#1324](https://github.com/kube-rs/kube/issues/1324)
@@ -643,7 +700,8 @@ Big thanks to everyone involved 🎃
 
 
 **Full Changelog**: https://github.com/kube-rs/kube/compare/0.86.0...0.87.1
-## [0.86.0](https://github.com/kube-rs/kube/releases/tag/0.86.0) / 2023-09-08
+[0.86.0](https://github.com/kube-rs/kube/releases/tag/0.86.0) / 2023-09-08
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.86.0 -->
 
 ## Headlines
@@ -671,7 +729,8 @@ The `sendInitialEvents` [alpha feature](https://kubernetes.io/docs/reference/usi
 ### Fixed
 * `core`: omit invalid resource version parameters when doing paged requests by @goenning in https://github.com/kube-rs/kube/pull/1281
 
-## [0.85.0](https://github.com/kube-rs/kube/releases/tag/0.85.0) / 2023-08-06
+[0.85.0](https://github.com/kube-rs/kube/releases/tag/0.85.0) / 2023-08-06
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.85.0 -->
 
 ## What's Changed
@@ -685,7 +744,8 @@ The `sendInitialEvents` [alpha feature](https://kubernetes.io/docs/reference/usi
 * `watcher`: return `NoResourceVersion` error if resource version is empty by @aryan9600 in https://github.com/kube-rs/kube/pull/1259
 * Update the `scheduler` message when preponing by @nightkr in https://github.com/kube-rs/kube/pull/1260
 
-## [0.84.0](https://github.com/kube-rs/kube/releases/tag/0.84.0) / 2023-07-14
+[0.84.0](https://github.com/kube-rs/kube/releases/tag/0.84.0) / 2023-07-14
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.84.0 -->
 
 ## Highlights
@@ -712,7 +772,8 @@ Optional OIDC refreshable token support was introduced in [#1229](https://github
 ### Fixed
 * Make `Controller::owns` use `metadata_watcher` internally by @clux in https://github.com/kube-rs/kube/pull/1240
 
-## [0.83.0](https://github.com/kube-rs/kube/releases/tag/0.83.0) / 2023-06-05
+[0.83.0](https://github.com/kube-rs/kube/releases/tag/0.83.0) / 2023-06-05
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.83.0 -->
 
 ## What's Changed
@@ -726,7 +787,8 @@ Optional OIDC refreshable token support was introduced in [#1229](https://github
 * Swap `validator` for `garde` by @mateiidavid in https://github.com/kube-rs/kube/pull/1212
 * fix: `#[kube(crates(serde = "some_crate::serde"))]` was not working by @chubei in https://github.com/kube-rs/kube/pull/1215
 
-## [0.82.2](https://github.com/kube-rs/kube/releases/tag/0.82.2) / 2023-04-19
+[0.82.2](https://github.com/kube-rs/kube/releases/tag/0.82.2) / 2023-04-19
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.82.2 -->
 ## Watcher Fixes
 Two fixes to allow `watcher::Config` to function as intended.
@@ -738,7 +800,8 @@ Two fixes to allow `watcher::Config` to function as intended.
 
 
 **Full Changelog**: https://github.com/kube-rs/kube/compare/0.82.1...0.82.2
-## [0.82.1](https://github.com/kube-rs/kube/releases/tag/0.82.1) / 2023-04-14
+[0.82.1](https://github.com/kube-rs/kube/releases/tag/0.82.1) / 2023-04-14
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.82.1 -->
 ## Bugfix Release
 
@@ -752,7 +815,8 @@ This release also fixes a [`metadata_watcher`](https://docs.rs/kube/latest/kube/
 * Fix `ObjectList` not deserializing `items: null` by @suryapandian in https://github.com/kube-rs/kube/pull/1199
 * Revert "kube-derive: Disable `option_nullable` for CRD generation" by @Dav1dde in https://github.com/kube-rs/kube/pull/1201
 
-## [0.82.0](https://github.com/kube-rs/kube/releases/tag/0.82.0) / 2023-04-08
+[0.82.0](https://github.com/kube-rs/kube/releases/tag/0.82.0) / 2023-04-08
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.82.0 -->
 
 ## Dependency Updates
@@ -771,7 +835,8 @@ cargo upgrade -p k8s-openapi -p kube -i
 
 
 **Full Changelog**: https://github.com/kube-rs/kube/compare/0.81.0...0.82.0
-## [0.81.0](https://github.com/kube-rs/kube/releases/tag/0.81.0) / 2023-04-07
+[0.81.0](https://github.com/kube-rs/kube/releases/tag/0.81.0) / 2023-04-07
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.81.0 -->
 ## Highlights
 ### List/Watch Changes
@@ -806,7 +871,8 @@ Multiple new `runtime` features have been added to be able to more precisely con
 * Fix:  tower buffer's worker closed unexpectedly by @divinerapier in https://github.com/kube-rs/kube/pull/1185
 * Avoid special `Config::incluster` behavior for `rustls` by @clux in https://github.com/kube-rs/kube/pull/1184
 
-## [0.80.0](https://github.com/kube-rs/kube/releases/tag/0.80.0) / 2023-03-02
+[0.80.0](https://github.com/kube-rs/kube/releases/tag/0.80.0) / 2023-03-02
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.80.0 -->
 ## Notes
 
@@ -822,7 +888,8 @@ Early release for the above change to the new metadata api, plus a trigger for o
 
 
 **Full Changelog**: https://github.com/kube-rs/kube/compare/0.79.0...0.80.0
-## [0.79.0](https://github.com/kube-rs/kube/releases/tag/0.79.0) / 2023-02-23
+[0.79.0](https://github.com/kube-rs/kube/releases/tag/0.79.0) / 2023-02-23
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.79.0 -->
 ## Watch Improvements
 A big feature this time around is the added support for the metadata api via [#1137](https://github.com/kube-rs/kube/issues/1137). This is a variant api that **only** returns the `ObjectMeta` and `TypeMeta` to reduce network load, and has a low-level watch analogue available at `Api::watch_metadata`. Most users will generally want an infinite watch stream rather than the low-level method, so `kube::runtime::metadata_watcher` has been added as a direct analogue of `watcher` via [#1145](https://github.com/kube-rs/kube/issues/1145). The [dynamic_watcher example](https://github.com/kube-rs/kube/blob/0f632eaa88b8eef2a232ca7c7dd1f841d32f6454/examples/dynamic_watcher.rs#L33-L54) shows how to switch between the two to get up and running.
@@ -844,7 +911,8 @@ Finally, there is work in progress on shared streams via `WatchStreamExt` from [
 * Add better logging for watcher errors by @clux in https://github.com/kube-rs/kube/pull/1134
 * kubeconfig: deserialize null vectors as default by @goenning in https://github.com/kube-rs/kube/pull/1142
 
-## [0.78.0](https://github.com/kube-rs/kube/releases/tag/0.78.0) / 2023-01-06
+[0.78.0](https://github.com/kube-rs/kube/releases/tag/0.78.0) / 2023-01-06
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.78.0 -->
 
 ## Kubernetes Bump
@@ -866,7 +934,8 @@ cargo upgrade -p k8s-openapi -p kube -i
 ### Fixed
 * fix shell exec exiting message loop when terminalSizeReceiver is dropped by @erebe in https://github.com/kube-rs/kube/pull/1112
 
-## [0.77.0](https://github.com/kube-rs/kube/releases/tag/0.77.0) / 2022-12-15
+[0.77.0](https://github.com/kube-rs/kube/releases/tag/0.77.0) / 2022-12-15
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.77.0 -->
 ## Highlights
 
@@ -896,7 +965,8 @@ Kubeconfigs relying on [`ExecConfig`](https://docs.rs/kube/0.77.0/kube/config/st
 * fix: align kube-rs with client-go config parsing by @goenning in https://github.com/kube-rs/kube/pull/1077
 * Return error from `watcher` when kinds do not support watch by @clux in https://github.com/kube-rs/kube/pull/1101
 
-## [0.76.0](https://github.com/kube-rs/kube/releases/tag/0.76.0) / 2022-10-28
+[0.76.0](https://github.com/kube-rs/kube/releases/tag/0.76.0) / 2022-10-28
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.76.0 -->
 
 ## Highlights
@@ -924,7 +994,8 @@ These have been deprecated since 0.72, and are replaced by the equivalent `Watch
 * Fix compatibility with schemars' preserve_order feature by @teozkr in https://github.com/kube-rs/kube/pull/1050
 * Hoist enum values from subschemas by @teozkr in https://github.com/kube-rs/kube/pull/1051
 
-## [0.75.0](https://github.com/kube-rs/kube/releases/tag/0.75.0) / 2022-09-21
+[0.75.0](https://github.com/kube-rs/kube/releases/tag/0.75.0) / 2022-09-21
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.75.0 -->
 
 ## Highlights
@@ -976,7 +1047,8 @@ There are also a slew of ergonomics improvements, closing of [gaps in subresourc
 * fix duplicate finalizers race condition by @alex-hunt-materialize in https://github.com/kube-rs/kube/pull/965
 * fix: portforward connection cleanup by @tiagolobocastro in https://github.com/kube-rs/kube/pull/973
 
-## [0.74.0](https://github.com/kube-rs/kube/releases/tag/0.74.0) / 2022-07-09
+[0.74.0](https://github.com/kube-rs/kube/releases/tag/0.74.0) / 2022-07-09
+===================
 <!-- Release notes generated using configuration in .github/release.yml at 0.74.0 -->
 
 ## Highlights
@@ -1017,7 +1089,8 @@ This method could panic and it is unexpected for the users and bad for our consi
 * Fix deserialization issue in AdmissionResponse by @clux in https://github.com/kube-rs/kube/pull/939
 * Admission controller example fixes by @Alibirb in https://github.com/kube-rs/kube/pull/950
 
-## [0.73.1](https://github.com/kube-rs/kube/releases/tag/0.73.1) / 2022-06-03
+[0.73.1](https://github.com/kube-rs/kube/releases/tag/0.73.1) / 2022-06-03
+===================
 ## Highlights
 
 This patch release fixes a bug causing `applier` and `Controller` to deadlock when too many Kubernetes object change events were ingested at once. All users of `applier` and `Controller` are encouraged to upgrade as quickly as possible. Older versions are also affected, this bug is believed to have existed since the original release of `kube_runtime`.
@@ -1030,7 +1103,8 @@ This patch release fixes a bug causing `applier` and `Controller` to deadlock wh
 
 
 **Full Changelog**: https://github.com/kube-rs/kube/compare/0.73.0...0.73.1
-## [0.73.0](https://github.com/kube-rs/kube/releases/tag/0.73.0) / 2022-05-23
+[0.73.0](https://github.com/kube-rs/kube/releases/tag/0.73.0) / 2022-05-23
+===================
 
 ## Highlights
 
@@ -1059,7 +1133,8 @@ See the [controller-rs upgrade change for details](https://github.com/kube-rs/co
 * runtime: Return the object from `await_condition` by @olix0r in https://github.com/kube-rs/kube/pull/877
 * Bump k8s-openapi to 0.15 for kubernetes v1_24 and bump MSRV to 1.60 by @clux in https://github.com/kube-rs/kube/pull/916
 
-## [0.72.0](https://github.com/kube-rs/kube/releases/tag/0.72.0) / 2022-05-13
+[0.72.0](https://github.com/kube-rs/kube/releases/tag/0.72.0) / 2022-05-13
+===================
 
 ## Highlights
 ### Ergonomics improvements
@@ -1108,7 +1183,8 @@ Examples now have moved to `tracing` for its logging, respects `RUST_LOG`, and n
 * Remove deprecated legacy crd v1beta1 by @clux in https://github.com/kube-rs/kube/pull/890
 
 
-## [0.71.0](https://github.com/kube-rs/kube/releases/tag/0.71.0) / 2022-04-12
+[0.71.0](https://github.com/kube-rs/kube/releases/tag/0.71.0) / 2022-04-12
+===================
 
 ## Highlights
 Several quality of life changes and improvement this release for port-forwarding, a new `ClientBuilder`, better handling of `kube-derive` edge-cases.
@@ -1135,7 +1211,8 @@ The previous `native-tls` default  was there because we used to depend on `reqwe
 * Make dependency pins between sibling crates stricter by @clux in https://github.com/kube-rs/kube/pull/864
 * Fix in-cluster kube_host_port generation for IPv6 by @somnusfish in https://github.com/kube-rs/kube/pull/875
 
-## [0.70.0](https://github.com/kube-rs/kube/releases/tag/0.70.0) / 2022-03-20
+[0.70.0](https://github.com/kube-rs/kube/releases/tag/0.70.0) / 2022-03-20
+===================
 ## Highlights
 
 ### [Support for EC keys with rustls](https://github.com/kube-rs/kube/pull/804)
@@ -1174,7 +1251,8 @@ The `Action` import lives in the same place as the old `ReconcilerAction`.
 * Fix event publishing for cluster scoped crds by @zhrebicek in https://github.com/kube-rs/kube/pull/847
 * Fix invalid CRD when Enum variants have descriptions by @sbernauer in https://github.com/kube-rs/kube/pull/852
 
-## [0.69.1](https://github.com/kube-rs/kube/releases/tag/0.69.1) / 2022-02-16
+[0.69.1](https://github.com/kube-rs/kube/releases/tag/0.69.1) / 2022-02-16
+===================
 ## Highlights
 
 This is an emergency patch release fixing a bug in 0.69.0 where a `kube::Client` would deadlock after running inside a cluster for about a minute (#829).
@@ -1187,7 +1265,8 @@ All users of 0.69.0 are encouraged to upgrade immediately. 0.68.x and below are 
 ### Fixed
 * [0.69.x] Fix deadlock in token reloading by @clux (backported by @teozkr) in https://github.com/kube-rs/kube/pull/831
 
-## [0.69.0](https://github.com/kube-rs/kube/releases/tag/0.69.0) / 2022-02-14
+[0.69.0](https://github.com/kube-rs/kube/releases/tag/0.69.0) / 2022-02-14
+===================
 ## Highlights
 ### Ergonomic Additions to Api
 
@@ -1213,7 +1292,8 @@ Following a requirement for Kubernetes clients against versions `>= 1.22.0`, our
 ### Fixed
 * Disable CSR utilities on K8s <1.19 by @teozkr in https://github.com/kube-rs/kube/pull/817
 
-## [0.68.0](https://github.com/kube-rs/kube/releases/tag/0.68.0) / 2022-02-01
+[0.68.0](https://github.com/kube-rs/kube/releases/tag/0.68.0) / 2022-02-01
+===================
 
 ### Interface Changes
 
@@ -1243,13 +1323,15 @@ As one of the last steps toward [gold level client requirements](https://github.
 * Use absolute path to Result in derives by @teozkr in https://github.com/kube-rs/kube/pull/795
 * core: add missing reason to Display on Error::Validation in Request by @clux in https://github.com/kube-rs/kube/pull/798
 
-## [0.67.0](https://github.com/kube-rs/kube/releases/tag/0.67.0) / 2022-01-25
+[0.67.0](https://github.com/kube-rs/kube/releases/tag/0.67.0) / 2022-01-25
+===================
 ### Changed
 
 * runtime: Replace `DashMap` with a locked `AHashMap` by @olix0r in https://github.com/kube-rs/kube/pull/785
 * update k8s-openapi for kubernetes 1.23 support by @clux in https://github.com/kube-rs/kube/pull/789
 
-## [0.66.0](https://github.com/kube-rs/kube/releases/tag/0.66.0) / 2022-01-15
+[0.66.0](https://github.com/kube-rs/kube/releases/tag/0.66.0) / 2022-01-15
+===================
 
 Tons of ergonomics improvements, and 3 new contributors.
 Highlighted first is the 3 **most discussed** changes:
@@ -1289,7 +1371,8 @@ Merged PRs from [github release](https://github.com/kube-rs/kube/releases/tag/0.
 * Remove crate private `identity_pem` field from `Config` by @kazk in https://github.com/kube-rs/kube/pull/771
 * Use SecretString in AuthInfo to avoid credential leaking by @ChinYing-Li in https://github.com/kube-rs/kube/pull/766
 
-## [0.65.0](https://github.com/kube-rs/kube/releases/tag/0.65.0) / 2021-12-10
+[0.65.0](https://github.com/kube-rs/kube/releases/tag/0.65.0) / 2021-12-10
+===================
 
  * BREAKING: Removed `kube::Error::OpenSslError` - [#716](https://github.com/kube-rs/kube/issues/716)
  * BREAKING: Removed `kube::Error::SslError` - [#704](https://github.com/kube-rs/kube/issues/704) and [#716](https://github.com/kube-rs/kube/issues/716)
@@ -1304,7 +1387,8 @@ Merged PRs from [github release](https://github.com/kube-rs/kube/releases/tag/0.
  * Updated `tower-http` to 0.2.0 - [#748](https://github.com/kube-rs/kube/issues/748)
  * BREAKING: `kube-client`: replace `RefreshTokenLayer` with `AsyncFilterLayer` in `AuthLayer` - [#752](https://github.com/kube-rs/kube/issues/752)
 
-## [0.64.0](https://github.com/kube-rs/kube/releases/tag/0.64.0) / 2021-11-16
+[0.64.0](https://github.com/kube-rs/kube/releases/tag/0.64.0) / 2021-11-16
+===================
 
  * BREAKING: Replaced feature `kube-derive/schema` with attribute `#[kube(schema)]` - [#690](https://github.com/kube-rs/kube/issues/690)
    - If you currently disable default `kube-derive` default features to avoid automatic schema generation, add `#[kube(schema = "disabled")]` to your spec struct instead
@@ -1370,19 +1454,23 @@ The following breaking changes were made as a part of an effort to refine errors
 
 </details>
 
-## [0.63.2](https://github.com/kube-rs/kube/releases/tag/0.63.2) / 2021-10-28
+[0.63.2](https://github.com/kube-rs/kube/releases/tag/0.63.2) / 2021-10-28
+===================
 * `kube::runtime::events`: fix build and hide module on kubernetes < 1.19 (events/v1 missing there) - [#685](https://github.com/kube-rs/kube/issues/685)
 
-## [0.63.1](https://github.com/kube-rs/kube/releases/tag/0.63.1) / 2021-10-26
+[0.63.1](https://github.com/kube-rs/kube/releases/tag/0.63.1) / 2021-10-26
+===================
  * `kube::runtime::wait::Condition` added boolean combinators (`not`/`and`/`or`) - [#678](https://github.com/kube-rs/kube/issues/678)
  * `kube`: fix docs.rs build - [#681](https://github.com/kube-rs/kube/issues/681) via [#682](https://github.com/kube-rs/kube/pull/682)
 
-## [0.63.0](https://github.com/kube-rs/kube/releases/tag/0.63.0) / 2021-10-26
+[0.63.0](https://github.com/kube-rs/kube/releases/tag/0.63.0) / 2021-10-26
+===================
  * rust `edition` bumped to `2021` - [#664](https://github.com/kube-rs/kube/pull/664/), [#666](https://github.com/kube-rs/kube/pull/666), [#667](https://github.com/kube-rs/kube/pull/667)
  * `kube::CustomResource` derive can now take arbitrary `#[kube(k8s_openapi)]` style-paths for `k8s_openapi`, `schemars`, `serde`, and `serde_json` - [#675](https://github.com/kube-rs/kube/pull/675)
  * `kube`: fix `native-tls` included when only `rustls-tls` feature is selected - [#673](https://github.com/kube-rs/kube/issues/673) via [#674](https://github.com/kube-rs/kube/pull/674)
 
-## [0.62.0](https://github.com/kube-rs/kube/releases/tag/0.62.0) / 2021-10-22
+[0.62.0](https://github.com/kube-rs/kube/releases/tag/0.62.0) / 2021-10-22
+===================
  * `kube` now re-exports `kube-runtime` under `runtime` feature - [#651](https://github.com/kube-rs/kube/issues/651) via [#652](https://github.com/kube-rs/kube/issues/652)
   - no need to keep both `kube` and `kube_runtime` in `Cargo.toml` anymore
   - fixes issues with dependabot / lock-step upgrading
@@ -1393,18 +1481,21 @@ The following breaking changes were made as a part of an effort to refine errors
  * `kube::core` consistently re-exported across crates
  * docs: major overhaul + [architecture.md](https://kube.rs/architecture/) - [#416](https://github.com/kube-rs/kube/issues/416) via [#652](https://github.com/kube-rs/kube/issues/652)
 
-## [0.61.0](https://github.com/kube-rs/kube/releases/tag/0.61.0) / 2021-10-09
+[0.61.0](https://github.com/kube-rs/kube/releases/tag/0.61.0) / 2021-10-09
+===================
  * `kube-core`: BREAKING: extend `CustomResourceExt` trait with `::shortnames` method (impl in `kube-derive`) - [#641](https://github.com/kube-rs/kube/issues/641)
  * `kube-runtime`: add `wait` module to `await_condition`, and added `watch_object` to watcher - [#632](https://github.com/kube-rs/kube/issues/632) via [#633](https://github.com/kube-rs/kube/issues/633)
  * `kube`: add `Restart` marker trait to allow `Api::restart` on core workloads - [#630](https://github.com/kube-rs/kube/issues/630) via [#635](https://github.com/kube-rs/kube/issues/635)
  * bump dependencies: `tokio-tungstenite`, `k8s-openapi`, `schemars`, `tokio` in particular - [#643](https://github.com/kube-rs/kube/issues/643) + [#645](https://github.com/kube-rs/kube/issues/645)
 
-## [0.60.0](https://github.com/kube-rs/kube/releases/tag/0.60.0) / 2021-09-02
+[0.60.0](https://github.com/kube-rs/kube/releases/tag/0.60.0) / 2021-09-02
+===================
  * `kube`: support `k8s-openapi` with `v1_22` features - [#621](https://github.com/kube-rs/kube/issues/621) via [#622](https://github.com/kube-rs/kube/issues/622)
  * `kube`: `BREAKING`: support for `CustomResourceDefinition` at `v1beta1` now requires an opt-in `deprecated-crd-v1beta1` feature - [#622](https://github.com/kube-rs/kube/issues/622)
  * `kube-core`: add content-type header to requests with body - [#626](https://github.com/kube-rs/kube/issues/626) via [#627](https://github.com/kube-rs/kube/issues/627)
 
-## [0.59.0](https://github.com/kube-rs/kube/releases/tag/0.59.0) / 2021-08-09
+[0.59.0](https://github.com/kube-rs/kube/releases/tag/0.59.0) / 2021-08-09
+===================
  * `BREAKING`: bumped `k8s-openapi` to [0.13.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.13.0) - [#581](https://github.com/kube-rs/kube/issues/581) via [#616](https://github.com/kube-rs/kube/issues/616)
  * `kube` connects to kubernetes via cluster dns when using `rustls` - [#587](https://github.com/kube-rs/kube/issues/587) via [#597](https://github.com/kube-rs/kube/issues/597)
    - client now works with `rustls` feature __in-cluster__ - [#153](https://github.com/kube-rs/kube/issues/153) via [#597](https://github.com/kube-rs/kube/issues/597)
@@ -1415,10 +1506,12 @@ The following breaking changes were made as a part of an effort to refine errors
  * `kube-derive` added support to automatically implement the `HasSpec` and `HasStatus` traits - [#605](https://github.com/kube-rs/kube/issues/605)
 * `kube-runtime` fix tracing span hierarchy from applier - [#600](https://github.com/kube-rs/kube/issues/600)
 
-## [0.58.1](https://github.com/kube-rs/kube/releases/tag/0.58.1) / 2021-07-06
+[0.58.1](https://github.com/kube-rs/kube/releases/tag/0.58.1) / 2021-07-06
+===================
  * `kube-runtime`: fix non-unix builds - [#582](https://github.com/kube-rs/kube/issues/582)
 
-## [0.58.0](https://github.com/kube-rs/kube/releases/tag/0.58.0) / 2021-07-05
+[0.58.0](https://github.com/kube-rs/kube/releases/tag/0.58.0) / 2021-07-05
+===================
  * `kube`: `BREAKING`: subresource marker traits renamed conjugation: `Log`, `Execute`, `Attach`, `Evict` (previously `Logging`, `Executable`, `Attachable`, `Evictable`) - [#536](https://github.com/kube-rs/kube/issues/536) via [#560](https://github.com/kube-rs/kube/issues/560)
  * `kube-derive` added `#[kube(category)]` attr to set [CRD categories](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#categories) - [#559](https://github.com/kube-rs/kube/issues/559)
  * `kube-runtime` added `finalizer` helper [#291](https://github.com/kube-rs/kube/issues/291) via [#475](https://github.com/kube-rs/kube/issues/475)
@@ -1435,7 +1528,8 @@ The following breaking changes were made as a part of an effort to refine errors
 ### Known Issues
 - Api::replace can fail to unset list values with k8s-openapi 0.12 [#581](https://github.com/kube-rs/kube/issues/581)
 
-## 0.57.0 / 2021-06-16
+0.57.0 / 2021-06-16
+===================
  * `kube`: custom clients now respect default namespaces - fixes [#534](https://github.com/kube-rs/kube/issues/534) via [#544](https://github.com/kube-rs/kube/issues/544)
   - BREAKING: custom clients via `Client::new` must pass `config.default_namespace` as 2nd arg
  * `kube`: Added `CustomResourceExt` trait for `kube-derive` - [#497](https://github.com/kube-rs/kube/issues/497) via [#545](https://github.com/kube-rs/kube/issues/545)
@@ -1450,7 +1544,8 @@ The following breaking changes were made as a part of an effort to refine errors
 ### Known Issues
 - Api::replace can fail to unset list values with k8s-openapi 0.12 [#581](https://github.com/kube-rs/kube/issues/581)
 
-## 0.56.0 / 2021-06-05
+0.56.0 / 2021-06-05
+===================
  * `kube`: added `Api::default_namespaced` - [#209](https://github.com/kube-rs/kube/issues/209) via [#534](https://github.com/kube-rs/kube/issues/534)
  * `kube`: added `config` feature - [#533](https://github.com/kube-rs/kube/issues/533) via [#535](https://github.com/kube-rs/kube/issues/535)
  * `kube`: BREAKING: moved `client::discovery` module to `kube::discovery` and rewritten module [#538](https://github.com/kube-rs/kube/issues/538)
@@ -1497,7 +1592,8 @@ The following breaking changes were made as a part of an effort to refine errors
   - **BREAKING**: `Error::InternalUrlError(url::ParseError)` and `Error::MalformedUrl(url::ParseError)` replaced by `Error::InvalidUri(http::uri::InvalidUri)`
 
 
-## 0.55.0 / 2021-05-21
+0.55.0 / 2021-05-21
+===================
  * `kube`: `client` feature added (default-enabled) - [#528](https://github.com/kube-rs/kube/issues/528)
  * `kube`: `PatchParams` force now only works with `Patch::Apply` [#528](https://github.com/kube-rs/kube/issues/528)
  * `kube`: `api` `discovery` module now uses a new `ApiResource` struct [#495](https://github.com/kube-rs/kube/issues/495) + [#482](https://github.com/kube-rs/kube/issues/482)
@@ -1507,11 +1603,13 @@ The following breaking changes were made as a part of an effort to refine errors
  * `kube-core` crate factored out of `kube` to reduce dependencies - [#516](https://github.com/kube-rs/kube/issues/516) via [#517](https://github.com/kube-rs/kube/issues/517) + [#519](https://github.com/kube-rs/kube/issues/519) + [#522](https://github.com/kube-rs/kube/issues/522) + [#528](https://github.com/kube-rs/kube/issues/528) + [#530](https://github.com/kube-rs/kube/issues/530)
  * `kube`: `kube::Service` removed to allow `kube::Client` to take an arbitrary `Service<http::Request<hyper::Body>>` - [#532](https://github.com/kube-rs/kube/issues/532)
 
-## 0.54.0 / 2021-05-19
+0.54.0 / 2021-05-19
+===================
  * yanked 30 minutes after release due to [#525](https://github.com/kube-rs/kube/issues/525)
  * changes lifted to 0.55.0
 
-## 0.53.0 / 2021-05-15
+0.53.0 / 2021-05-15
+===================
  * `kube`: `admission` controller module added under feature - [#477](https://github.com/kube-rs/kube/issues/477) via [#484](https://github.com/kube-rs/kube/issues/484) + fixes in [#488](https://github.com/kube-rs/kube/issues/488) [#498](https://github.com/kube-rs/kube/issues/498) [#499](https://github.com/kube-rs/kube/issues/499) + [#507](https://github.com/kube-rs/kube/issues/507) + [#509](https://github.com/kube-rs/kube/issues/509)
  * `kube`: `config` parsing of pem blobs now resilient against missing newlines - [#504](https://github.com/kube-rs/kube/issues/504) via [#505](https://github.com/kube-rs/kube/issues/505)
  * `kube`: `discovery` module added to simplify dynamic api usage - [#491](https://github.com/kube-rs/kube/issues/491)
@@ -1531,7 +1629,8 @@ The most likely issue you'll run into is from `kube` when using `Resource` trait
 +    let ns = ResourceExt::namespace(&foo).expect("foo is namespaced");
 ```
 
-## 0.52.0 / 2021-03-31
+0.52.0 / 2021-03-31
+===================
  * `kube-derive`: allow overriding `#[kube(plural)]` and `#[kube(singular)]` - [#458](https://github.com/kube-rs/kube/issues/458) via [#463](https://github.com/kube-rs/kube/issues/463)
  * `kube`: added tracing instrumentation for io operations in `kube::Api` - [#455](https://github.com/kube-rs/kube/issues/455)
  * `kube`: `DeleteParams`'s `Preconditions` is now public - [#459](https://github.com/kube-rs/kube/issues/459) via [#460](https://github.com/kube-rs/kube/issues/460)
@@ -1579,23 +1678,27 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
 - replace `Foo::VERSION` with `Foo::version(&())`
 - replace `Foo::API_VERSION` with `Foo::api_version(&())`
 
-## 0.51.0 / 2021-02-28
+0.51.0 / 2021-02-28
+===================
  * `kube` `Config` now allows arbitrary extension objects - [#425](https://github.com/kube-rs/kube/issues/425)
  * `kube` `Config` now allows multiple yaml documents per kubeconfig - [#440](https://github.com/kube-rs/kube/issues/440) via [#441](https://github.com/kube-rs/kube/issues/441)
  * `kube-derive` now more robust and is using `darling` - [#435](https://github.com/kube-rs/kube/issues/435)
  * docs improvements to patch + runtime
 
-## 0.50.1 / 2021-02-17
+0.50.1 / 2021-02-17
+===================
  * bug: fix oidc auth provider - [#424](https://github.com/kube-rs/kube/issues/424) via [#419](https://github.com/kube-rs/kube/issues/419)
 
-## 0.50.0 / 2021-02-10
+0.50.0 / 2021-02-10
+===================
  * feat: added support for stacked kubeconfigs - [#132](https://github.com/kube-rs/kube/issues/132) via [#411](https://github.com/kube-rs/kube/issues/411)
  * refactor: authentication logic moved out of `kube::config` and into into `kube::service` - [#409](https://github.com/kube-rs/kube/issues/409)
   - BREAKING: `Config::get_auth_header` removed
  * refactor: remove `hyper` dependency from `kube::api` - [#410](https://github.com/kube-rs/kube/issues/410)
  * refactor: `kube::Service` simpler auth and gzip handling - [#405](https://github.com/kube-rs/kube/issues/405) + [#408](https://github.com/kube-rs/kube/issues/408)
 
-## 0.49.0 / 2021-02-08
+0.49.0 / 2021-02-08
+===================
  * dependency on `reqwest` + removed in favour of `hyper` + `tower` [#394](https://github.com/kube-rs/kube/pull/394)
    - refactor: `kube::Client` now uses `kube::Service` (a `tower::Service<http::Request<hyper::Body>>`) instead of `reqwest::Client` to handle all requests
    - refactor: `kube::Client` now uses a `tokio_util::codec` for internal buffering
@@ -1611,14 +1714,16 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
  * `kube`: subresource marker traits renamed to `Loggable`, `Executable`, `Attachable` (previously `LoggingObject`, `ExecutingObject`, `AttachableObject`) - [#395](https://github.com/kube-rs/kube/pull/395)
  * `examples` showcasing `kubectl cp` like behaviour [#381](https://github.com/kube-rs/kube/issues/381) via [#392](https://github.com/kube-rs/kube/pull/392)
 
-## 0.48.0 / 2021-01-23
+0.48.0 / 2021-01-23
+===================
   * bump `k8s-openapi` to `0.11.0` - [#388](https://github.com/kube-rs/kube/pull/388)
   * breaking: `kube`: no longer necessary to serialize patches yourself - [#386](https://github.com/kube-rs/kube/pull/386)
     - `PatchParams` removes `PatchStrategy`
     - `Api::patch*` methods now take an enum `Patch` type
     - optional `jsonpatch` feature added for `Patch::Json`
 
-## 0.47.0 / 2021-01-06
+0.47.0 / 2021-01-06
+===================
   * chore: upgrade `tokio` to `1.0` - [#363](https://github.com/kube-rs/kube/pull/363)
     * BREAKING: This requires the whole application to upgrade to `tokio` 1.0 and `reqwest` to 0.11.0
   * docs: fix broken documentation in `kube` 0.46.0 [#367](https://github.com/kube-rs/kube/pull/367)
@@ -1627,23 +1732,27 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * feat: `AttachParams::interactive_tty` convenience method added - [#364](https://github.com/kube-rs/kube/pull/364)
   * bug: fix `Runner` (and thus `Controller` and `applier`) not waking correctly when starting new tasks - [#375](https://github.com/kube-rs/kube/pull/375)
 
-## 0.46.1 / 2021-01-06
+0.46.1 / 2021-01-06
+===================
   * maintenance release for 0.46 (last supported tokio 0.2 release) from `tokio02` branch
   * bug backport: fix `Runner` (and thus `Controller` and `applier`) not waking correctly when starting new tasks - [#375](https://github.com/kube-rs/kube/pull/375)
 
-## 0.46.0 / 2021-01-02
+0.46.0 / 2021-01-02
+===================
   * feat: `kube` now has __optional__ websocket support with `async_tungstenite` under `ws` and `ws-*-tls` features [#360](https://github.com/kube-rs/kube/pull/360)
   * feat: `AttachableObject` marker trait added and implemented for `k8s_openapi::api::core::v1::Pod` [#360](https://github.com/kube-rs/kube/pull/360)
   * feat: `AttachParams` added for `Api::exec` and `Api::attach` for `AttachableObject`s [#360](https://github.com/kube-rs/kube/pull/360)
   * examples: `pod_shell`, `pod_attach`, `pod_exec` demonstrating the new features [#360](https://github.com/kube-rs/kube/pull/360)
 
-## 0.45.0 / 2020-12-26
+0.45.0 / 2020-12-26
+===================
   * feat: `kube-derive` now has a default enabled `schema` feature
     * allows opting out of `schemars` dependency for handwriting crds - [#355](https://github.com/kube-rs/kube/issues/355)
   * breaking: `kube-derive` attr `struct_name` renamed to `struct` - [#359](https://github.com/kube-rs/kube/pull/359)
   * docs: improvements on `kube`, `kube-runtime`, `kube-derive`
 
-## 0.44.0 / 2020-12-23
+0.44.0 / 2020-12-23
+===================
   * feat: `kube-derive` now generates openapi v3 schemas and is thus usable with v1 `CustomResourceDefinition` - [#129](https://github.com/kube-rs/kube/issues/129) and [#264](https://github.com/kube-rs/kube/issues/264) via [#348](https://github.com/kube-rs/kube/pull/348)
     * BREAKING: `kube-derive` types now require `JsonSchema` derived via `schemars` library (not breaking if going to 0.45.0)
   * feat: `kube_runtime::controller`: now reconciles objects in parallel - [#346](https://github.com/kube-rs/kube/issues/346)
@@ -1657,7 +1766,8 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * bump: `serde_yaml` - [#349](https://github.com/kube-rs/kube/issues/349)
   * bump: `dirs` to `dirs-next` - [#340](https://github.com/kube-rs/kube/pull/340)
 
-## 0.43.0 / 2020-10-08
+0.43.0 / 2020-10-08
+===================
   * bug: `kube-derive` attr `#[kube(shortname)]` now working correctly
   * bug: `kube-derive` now working with badly cased existing types - [#313](https://github.com/kube-rs/kube/issues/313)
   * missing: `kube` now correctly exports `config::NamedAuthInfo` - [#323](https://github.com/kube-rs/kube/pull/323)
@@ -1665,14 +1775,17 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * feat: `kube`: local config now tackles gcloud auth exec params - [#328](https://github.com/kube-rs/kube/pull/328) and [#84](https://github.com/kube-rs/kube/issues/84)
   * `kube-derive` now actually requires GVK (in particular `#[kube(kind = "Foo")]` which we sometimes inferred earlier, despite documenting the contrary)
 
-## 0.42.0 / 2020-09-10
+0.42.0 / 2020-09-10
+===================
   * bug: `kube-derive`'s `Default` derive now sets typemeta correctly - [#315](https://github.com/kube-rs/kube/issues/315)
   * feat: `ListParams` now supports `continue_token` and `limit` - [#320](https://github.com/kube-rs/kube/pull/320)
 
-## 0.41.0 / 2020-09-10
+0.41.0 / 2020-09-10
+===================
   * yanked release. failed publish.
 
-## 0.40.0 / 2020-08-17
+0.40.0 / 2020-08-17
+===================
   * `DynamicResource::from_api_resource` added to allow apiserver returned resources - [#305](https://github.com/kube-rs/kube/pull/305) via [#301](https://github.com/kube-rs/kube/pull/301)
   * `Client::list_api_groups` added
   * `Client::list_ap_group_resources` added
@@ -1684,12 +1797,14 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * Removed parameter `ListParams::include_uninitialized` deprecated since 1.14
   * Added optional `PostParams::field_manager` was missing for `Api::create` case
 
-## 0.39.0 / 2020-08-05
+0.39.0 / 2020-08-05
+===================
   * Bug: `ObjectRef` tweak in `kube-runtime` to allow controllers triggering across cluster and namespace scopes - [#293](https://github.com/kube-rs/kube/issues/293) via [#294](https://github.com/kube-rs/kube/pull/294)
   * Feature: `kube` now has a `derive` feature which will re-export `kube::CustomResource` from `kube-derive::CustomResource`.
   * Examples: revamp examples for `kube-runtime` - [#201](https://github.com/kube-rs/kube/issues/201)
 
-## 0.38.0 / 2020-07-23
+0.38.0 / 2020-07-23
+===================
   * Marked `kube::runtime` module as deprecated - [#281](https://github.com/kube-rs/kube/issues/281)
   * `Config::timeout` can now be overridden to `None` (with caveats) [#280](https://github.com/kube-rs/kube/pull/280)
   * Bug: reflector stores could have multiple copies inside datastore - [#286](https://github.com/kube-rs/kube/issues/286)
@@ -1698,12 +1813,14 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * Bug: Specialize WatchEvent::Bookmark so they can be deserialized - [#285](https://github.com/kube-rs/kube/issues/285)
   * Docs: Tons of docs for kube-runtime
 
-## 0.37.0 / 2020-07-20
+0.37.0 / 2020-07-20
+===================
   * Bump `k8s-openapi` to `0.9.0`
   * All runtime components now require `Sync` objects
   * reflector/watcher/Controller streams can be shared in threaded environments
 
-## 0.36.0 / 2020-07-19
+0.36.0 / 2020-07-19
+===================
   * https://gitlab.com/teozkr/kube-rt/ merged in for a new `kube-runtime` crate [#258](https://github.com/kube-rs/kube/pull/258)
   * `Controller<K>` added ([#148](https://github.com/kube-rs/kube/issues/148) via [#258](https://github.com/kube-rs/kube/pull/258))
   * `Reflector` api redesigned ([#102](https://github.com/kube-rs/kube/issues/102) via [#258](https://github.com/kube-rs/kube/pull/258))
@@ -1712,31 +1829,37 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * `CrBuilder` removed in favour of `DynamicResource` (with new error handling)
   * support level bumped to beta
 
-## 0.35.1 / 2020-06-18
+0.35.1 / 2020-06-18
+===================
   * Fix in-cluster Client when using having multiple certs in the chain - [#251](https://github.com/kube-rs/kube/issues/251)
 
-## 0.35.0 / 2020-06-15
+0.35.0 / 2020-06-15
+===================
   * `Config::proxy` support added - [#246](https://github.com/kube-rs/kube/pull/246)
   * `PartialEq` can be derived with `kube-derive` - [#242](https://github.com/kube-rs/kube/pull/242)
   * Windows builds no longer clashes with runtime - [#240](https://github.com/kube-rs/kube/pull/240)
   * Rancher hosts (with path specifiers) now works - [#244](https://github.com/kube-rs/kube/issues/244)
 
-## 0.34.0 / 2020-05-08
+0.34.0 / 2020-05-08
+===================
   * Bump `k8s-openapi` to `0.8.0`
   * `Config::from_cluster_env` <- renamed from `Config::new_from_cluster_env`
   * `Config::from_kubeconfig` <- renamed from `Config::new_from_kubeconfig`
   * `Config::from_custom_kubeconfig` added - [#236](https://github.com/kube-rs/kube/pull/236)
   * Majorly overhauled error handlind in config module - [#237](https://github.com/kube-rs/kube/pull/237)
 
-## 0.33.0 / 2020-04-27
+0.33.0 / 2020-04-27
+===================
   * documentation fixes for `Api::patch`
   * Config: add automatic token refresh - [#72](https://github.com/kube-rs/kube/issues/72) / [#224](https://github.com/kube-rs/kube/issues/224) / [#234](https://github.com/kube-rs/kube/pull/234)
 
-## 0.32.1 / 2020-04-15
+0.32.1 / 2020-04-15
+===================
   * add missing tokio `signal` feature as a dependency
   * upgrade all dependencies, including minor bumps to rustls and base64
 
-## 0.32.0 / 2020-04-10
+0.32.0 / 2020-04-10
+===================
   * Major `config` + `client` module refactor
   * `Config` is the new `Configuration` struct
   * `Client` is now just a configured `reqwest::Client` plus a `reqwest::Url`
@@ -1756,7 +1879,8 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * `PatchParams::default_apply` ctor added
   * `PatchParams` builder mutators: `::force` and `::dry_run` added
 
-## 0.31.0 / 2020-03-27
+0.31.0 / 2020-03-27
+===================
   * Expose `config::Configuration` at root level
   * Add `Configuration::infer` as a recommended constructor
   * Rename `client::APIClient` to `client::Client`
@@ -1766,11 +1890,13 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * Rename `config::KubeConfigLoader` -> `config::ConfigLoader`
   * removed `futures-timer` dependency for `tokio` (feature=timer)
 
-## 0.30.0 / 2020-03-17
+0.30.0 / 2020-03-17
+===================
   * Fix `#[kube(printcolumn)]` when `#[kube(apiextensions = "v1beta1")]`
   * Fix `#[kube(status)]` causing serializes of empty optional statuses
 
-## 0.29.0 / 2020-03-12
+0.29.0 / 2020-03-12
+===================
   * `Api::log` -> `Api::logs` (now matches `Resource::logs`)
   * `Object<FooSpec, FooStatus>` back for ad-hoc ser/de
   * kube-derive now derives `Debug` (requires `Debug` on spec struct)
@@ -1779,11 +1905,13 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * `Api::replace` now takes data `K` rather than bytes
     - (note that `Resource::create` and `Resource::replace` still takes bytes)
 
-## 0.28.1 / 2020-03-07
+0.28.1 / 2020-03-07
+===================
   * `#[derive(CustomResource)]` now implements `::new` on the generated `Kind`
   * derived `Kind` now properly contains `TypeMeta` - [#170](https://github.com/kube-rs/kube/issues/170)
 
-## 0.28.0 / 2020-03-05
+0.28.0 / 2020-03-05
+===================
   * `RawApi` removed -> `Resource` added
   * `Resource` implements `k8s_openapi::Resource`
   * **ALL OBJECTS REMOVED** -> Depening on light version of `k8s-openapi` now
@@ -1794,13 +1922,15 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * `Object<FooSpec, FooStatus>` removed -> types implementing `k8s_openapi::Resource` required instead
   * `kube-derive` crate added to derive this trait + other kubebuilder like codegen
 
-## 0.27.0 / 2020-02-26
+0.27.0 / 2020-02-26
+===================
  * `Reflector` + `Informer` moved from `kube::api` to `kube::runtime`
  * `Informer` now resets the version to 0 rather than dropping events - [#134](https://github.com/kube-rs/kube/issues/134)
    * Removed `Informer::init`, since it is now a no-op when building the `Informer`
  * Downgrade spurious log message when using service account auth
 
-## 0.26.0 / 2020-02-25
+0.26.0 / 2020-02-25
+===================
   * Fix a large percentage of EOFs from watches [#146](https://github.com/kube-rs/kube/issues/146)
   * => default timeout down to 290s from 300s
   * => `Reflector` now re-lists a lot less [#146](https://github.com/kube-rs/kube/issues/146)
@@ -1812,28 +1942,34 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * Add `Api::v1CustomResourceDefinition` when on k8s >= 1.17
   * Renamed `Void` to `NotUsed`
 
-## 0.25.0 / 2020-02-09
+0.25.0 / 2020-02-09
+===================
   * initial rustls support [#114](https://github.com/kube-rs/kube/pull/114) (some local kube config issues know [#120](https://github.com/kube-rs/kube/issues/120))
   * crate does better version checking against openapi features - [#106](https://github.com/kube-rs/kube/issues/106)
   * initial `log_stream` support - [#109](https://github.com/kube-rs/kube/issues/109)
 
-## 0.24.0 / 2020-01-26
+0.24.0 / 2020-01-26
+===================
   * Add support for ServiceAccount, Role, ClusterRole, RoleBinding, Endpoint - [#113](https://github.com/kube-rs/kube/pull/113) + [#111](https://github.com/kube-rs/kube/pull/111)
   * Upgrade k8s-openapi to 0.7 => breaking changes: https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v070-2020-01-23
 
-## 0.23.0 / 2019-12-31
+0.23.0 / 2019-12-31
+===================
   * Bump tokio and reqwest to 0.2 and 0.10
   * Fix bug in `log` fetcher - [#107](https://github.com/kube-rs/kube/pull/107)
   * Temporarily allow invalid certs when testing on macosx - [#105](https://github.com/kube-rs/kube/pull/105)
 
-## 0.22.2 / 2019-12-04
+0.22.2 / 2019-12-04
+===================
   * Allow sharing Reflectors between threads - [#97](https://github.com/kube-rs/kube/issues/97)
   * Fix Reflector pararall lock issue (`poll` no longer blocks `state`)
 
-## 0.22.1 / 2019-11-30
+0.22.1 / 2019-11-30
+===================
   * Improve Reflector reset algorithm (clear history less)
 
-## 0.22.0 / 2019-11-29
+0.22.0 / 2019-11-29
+===================
   * Default watch timeouts changed to 300s everywhere
   * This increases efficiency of Informers and Reflectors by keeping the connection open longer.
   * However, if your Reflector relies on frequent polling you can set `timeout` or hide the `poll()` in a different context so it doesn't block your main work
@@ -1841,11 +1977,13 @@ The following constants from `k8s_openapi::Resource` no longer exist. Please `us
   * blocking `Reflector::read()` renamed to `async Reflector::state()`
   * Expose `metadata.creation_timestamp` and `.deletion_timestamp` (behind openapi flag) - [#93](https://github.com/kube-rs/kube/issues/93)
 
-## 0.21.0 / 2019-11-29
+0.21.0 / 2019-11-29
+===================
   * All watch calls returns a stream of `WatchEvent` - [#92](https://github.com/kube-rs/kube/pull/92)
   * `Informer::poll` now returns a stream - [#92](https://github.com/kube-rs/kube/pull/92)
 
-## 0.20.1 / 2019-11-21
+0.20.1 / 2019-11-21
+===================
   * ObjectList now implements Iterator - [#91](https://github.com/kube-rs/kube/pull/91)
   * openapi feature no longer accidentally hardcoded to v1.15 feature - [#90](https://github.com/kube-rs/kube/issues/90)
 

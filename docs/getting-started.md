@@ -1,12 +1,23 @@
 <!--GENERATED FROM https://github.com/kube-rs/kube/blob/main/README.md - CHANGES MUST BE MADE THERE -->
-# Getting Started
+# kube-rs
+
+[![Crates.io](https://img.shields.io/crates/v/kube.svg)](https://crates.io/crates/kube)
+[![Rust 1.88](https://img.shields.io/badge/MSRV-1.88-dea584.svg)](https://github.com/rust-lang/rust/releases/tag/1.88.0)
+[![Tested against Kubernetes v1.31 and above](https://img.shields.io/badge/MK8SV-v1.31-326ce5.svg)](https://kube.rs/kubernetes-version)
+[![Best Practices](https://bestpractices.coreinfrastructure.org/projects/5413/badge)](https://bestpractices.coreinfrastructure.org/projects/5413)
+[![Discord chat](https://img.shields.io/discord/500028886025895936.svg?logo=discord&style=plastic)](https://discord.gg/tokio)
+
+A [Rust](https://rust-lang.org/) client for [Kubernetes](http://kubernetes.io) in the style of a more generic [client-go](https://github.com/kubernetes/client-go), a runtime abstraction inspired by [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime), and a derive macro for [CRDs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/) inspired by [kubebuilder](https://book.kubebuilder.io/reference/generating-crd.html). Hosted by [CNCF](https://cncf.io/) as a [Sandbox Project](https://www.cncf.io/sandbox-projects/).
+
+These crates build upon Kubernetes [apimachinery](https://github.com/kubernetes/apimachinery/blob/master/pkg/apis/meta/v1/types.go) + [api concepts](https://kubernetes.io/docs/reference/using-api/api-concepts/) to enable generic abstractions. These abstractions allow Rust reinterpretations of reflectors, controllers, and custom resource interfaces, so that you can write applications easily.
+
 ## Installation
 
 Select a version of `kube` along matching versions of [k8s-openapi](https://github.com/Arnavion/k8s-openapi) and [schemars](https://github.com/GREsau/schemars) for Kubernetes structs and matching schemas. See also historical [Kubernetes versions](https://kube.rs/kubernetes-version/).
 
 ```toml
 [dependencies]
-kube = { version = "3.0.1", features = ["runtime", "derive"] }
+kube = { version = "3.1.0", features = ["runtime", "derive"] }
 k8s-openapi = { version = "0.27.0", features = ["latest", "schemars"] }
 schemars = { version = "1" }
 ```
@@ -148,13 +159,13 @@ Uses [rustls](https://github.com/rustls/rustls) with `ring` provider (default) o
 To switch [rustls providers](https://docs.rs/rustls/latest/rustls/crypto/struct.CryptoProvider.html), turn off `default-features` and enable the `aws-lc-rs` feature:
 
 ```toml
-kube = { version = "3.0.1", default-features = false, features = ["client", "rustls-tls", "aws-lc-rs"] }
+kube = { version = "3.1.0", default-features = false, features = ["client", "rustls-tls", "aws-lc-rs"] }
 ```
 
 To switch to `openssl`, turn off `default-features`, and enable the `openssl-tls` feature:
 
 ```toml
-kube = { version = "3.0.1", default-features = false, features = ["client", "openssl-tls"] }
+kube = { version = "3.1.0", default-features = false, features = ["client", "openssl-tls"] }
 ```
 
 This will pull in `openssl` and `hyper-openssl`. If `default-features` is left enabled, you will pull in two TLS stacks, and the default will remain as `rustls`.
