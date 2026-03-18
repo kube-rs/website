@@ -182,7 +182,7 @@ but we can actually simplify this significantly by taking advantage of idempoten
 ```rust
 let pod_data = create_owned_pod(&obj);
 let serverside = PatchParams::apply("mycontroller");
-let pod = pods.patch(pod.name_any(), serverside, Patch::Apply(pod_data)).await?
+let pod = pods.patch(obj.name_any(), serverside, Patch::Apply(pod_data)).await?
 
 // update status object with the creation_timestamp of the owned Pod
 let status = json!({
