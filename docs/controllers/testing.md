@@ -1,6 +1,7 @@
 # Testing
 
 This chapter covers **controller testing** and example Rust Kubernetes test patterns.
+
 ## Terminology
 
 We will loosely re-use the [kube test categories](https://github.com/kube-rs/kube/blob/main/CONTRIBUTING.md#testing) and outline four types of tests:
@@ -10,14 +11,15 @@ We will loosely re-use the [kube test categories](https://github.com/kube-rs/kub
 - **Mocked unit tests** (requires mocking Kubernetes dependencies)
 - **Unit tests** (no Kubernetes calls)
 
-These types should roughly match what you see in a standard __test pyramid__ where testing power and maintenance costs both increase as you go up the list.
+These types should roughly match what you see in a standard **test pyramid** where testing power and maintenance costs both increase as you go up the list.
 
 !!! note "Classification Subjectivity"
 
     This classification and terminology re-use herein is partially subjective. Variant approaches are discussed.
+
 ## Unit Tests
 
-The basic unit `#[test]`. Typically composed of individual test function in a __tests only__ module inlined in files containing what you want to test.
+The basic unit `#[test]`. Typically composed of individual test function in a **tests only** module inlined in files containing what you want to test.
 
 We will defer to various official guides on good unit test writing in rust:
 
@@ -34,11 +36,12 @@ Works extremely well for algorithms, state machinery, and business logic that ha
 
 While it is definitely possible to [go overboard with unit tests](https://verraes.net/2014/12/how-much-testing-is-too-much/) and test too deeply (without protecting any real invariants), this is not what we will focus on here. When unit tests are appropriate, they are great.
 
-In the controller context, the **main unit test downside** is that we **cannot cover the IO component** without something standing in for Kubernetes - such as an apiserver mock or an actual cluster - making it, by definition, not a plain unit test anymore. 
+In the controller context, the **main unit test downside** is that we **cannot cover the IO component** without something standing in for Kubernetes - such as an apiserver mock or an actual cluster - making it, by definition, not a plain unit test anymore.
 
 The controller is fundamentally tied up in the [[reconciler]], so there is always going to be a sizable chunk of code that you **cannot do with plain unit tests**.
 
 ## Kubernetes IO Strategies
+
 For the [[reconciler]] (and similar Kubernetes calling logic you may have), there are **3 major strategies to test** this code.
 
 You have one basic choice:
@@ -61,6 +64,7 @@ Out of these, [tower-test](https://crates.io/crates/tower-test) integrates well 
 <!-- TODO: links to other use cases with wiremock? -->
 
 ### Example
+
 To create a mocked [Client] with `tower-test` it is sufficient to instantiate one on a mock service:
 
 ```rust
@@ -145,18 +149,201 @@ In this test we are effectively **verifying** that:
 This is **satisfied because**:
 
 1. reconcile is unwrapped while handler is running through the scenario
-2. Each scenario blocked on sequential api calls to happen (we await each message), so mockserver's joinhandle will not resolve until **every** expected message in the given scenario has happened (hence the timeout) 
+2. Each scenario blocked on sequential api calls to happen (we await each message), so mockserver's joinhandle will not resolve until **every** expected message in the given scenario has happened (hence the timeout)
 3. If the mock server is receiving more Kubernetes calls than expected the reconciler will error with a `KubeError(Service(Closed(())))` caught by the reconcilers `expect`
 
 !!! note "Context and Document constructors omitted"
 
-    Test functions to create the rest of the reconciler context and a test document used by a reconciler are not shown, see [controller-rs/fixtures.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs) for a relatively small `Context`. Note that the more things you pass in to your reconciler the larger your `Context` will be, and the more stuff you will want to mock. 
+    Test functions to create the rest of the reconciler context and a test document used by a reconciler are not shown, see [controller-rs/fixtures.rs](https://github.com/kube-rs/controller-rs/blob/main/src/fixtures.rs) for a relatively small `Context`. Note that the more things you pass in to your reconciler the larger your `Context` will be, and the more stuff you will want to mock.
+
+### Unit tests with the `envtest` crate
+
+We can create unit tests that have much less boilerplate code using the new [`envtest`](https://crates.io/crates/envtest) crate, a type-safe wrapper around the `envtest` Go package.
+ crate.
+
+Let's say we have a very simple CRD called `Team` whose reconciliation loop creates a `Namespace`. For the sake of this example, let's write a very simple reconciler:
+
+```rust
+use std::{sync::Arc, time::Duration};
+
+use futures::StreamExt;
+use k8s_openapi::{
+    api::core::v1::Namespace,
+    schemars::JsonSchema,
+    serde::{Deserialize, Serialize},
+};
+use kube::{
+    Api, Client, CustomResource, Error, Resource, ResourceExt,
+    api::{ObjectMeta, Patch, PatchParams},
+};
+use kube_runtime::{Controller, controller::Action, watcher};
+#[derive(CustomResource, Clone, Debug, Deserialize, Serialize, PartialEq, JsonSchema)]
+#[kube(
+    group = "kube.rs",
+    version = "v1beta1",
+    kind = "Team",
+    plural = "teams",
+    derive = "PartialEq"
+)]
+pub struct TeamSpec {
+    pub name: String,
+}
+
+pub struct KubeContext {
+    pub client: Client,
+}
+
+pub async fn create_controller() {
+    let client = Client::try_default().await.unwrap();
+    let api: Api<Team> = Api::all(client.clone());
+    let ns_api: Api<Namespace> = Api::all(client.clone());
+    Controller::new(api, watcher::Config::default())
+        .owns(ns_api, watcher::Config::default())
+        .shutdown_on_signal()
+        .run(
+            reconcile,
+            error_policy,
+            Arc::new(KubeContext {
+                client: client.clone(),
+            }),
+        )
+        .for_each(|res| async move {
+            match res {
+                Ok(o) => println!("reconciled {:?}", o),
+                Err(e) => println!("reconcile failed: {:?}", e),
+            }
+        })
+        .await;
+}
+
+fn error_policy(_: Arc<Team>, err: &Error, _ctx: Arc<KubeContext>) -> Action {
+    dbg!(&err);
+    Action::requeue(Duration::from_secs(5))
+}
+
+async fn reconcile(team: Arc<Team>, ctx: Arc<KubeContext>) -> Result<Action, kube::Error> {
+    let oref = team.controller_owner_ref(&());
+    let safe_oref = {
+        // orefs will be None when running in tests, so this is a simple
+        // hack that makes tests work without much cognitive overhead
+        if let Some(some_oref) = oref {
+            Some(vec![some_oref])
+        } else {
+            None
+        }
+    };
+    let ns = Namespace {
+        metadata: ObjectMeta {
+            name: Some(team.spec.name.clone()),
+            owner_references: safe_oref,
+            ..ObjectMeta::default()
+        },
+        ..Default::default()
+    };
+    let ns_api = Api::<Namespace>::all(ctx.client.clone());
+    let serverside = PatchParams::apply("kube.rs/operator");
+    ns_api
+        .patch(&ns.name_any(), &serverside, &Patch::Apply(ns))
+        .await?;
+    Ok(Action::await_change())
+}}
+```
+
+It's a pretty standard reconciler that creates a namespace and waits for resource changes, nothing special.
+Writing a test with `envtest` is really simple, since it takes care of abstracting the kube-apiserver for us!
+
+```rust
+// -- snip --
+
+mod tests {
+    use std::{env::current_dir, path::PathBuf, sync::Arc, thread::current};
+
+    use envtest::Environment;
+    use k8s_openapi::api::core::v1::Namespace;
+    use kube::{Api, Client, api::ObjectMeta, config::Kubeconfig};
+
+    use crate::reconciler::{KubeContext, Team, TeamSpec, reconcile};
+
+    // this is a simple helper function that reads your crd yaml definition
+    // and installs it in the envtest-provided kubeapiserver
+    fn envtest_with_crds(crd_paths: Vec<PathBuf>) -> Environment {
+        let crds_json: Vec<serde_json::Value> = crd_paths
+            .into_iter()
+            .map(|path| {
+                use std::fs::read_to_string;
+
+                let crd_str = read_to_string(path).unwrap();
+                let value: serde_json::Value = serde_yaml::from_str(&crd_str).unwrap();
+                value
+            })
+            .collect();
+
+        let mut env = Environment::default();
+        env.with_crds(crds_json).unwrap();
+        env
+    }
+
+    // this function extracts the kubeconfig and creates a "fake" context
+    // that we can pass to our reconciler when testing it!
+    pub async fn client_and_ctx(kubeconfig: Kubeconfig) -> (kube::Client, KubeContext) {
+        use kube_runtime::events::{Recorder, Reporter};
+        let client = Client::try_from(kubeconfig).unwrap();
+        let ctx = KubeContext {
+            client: client.clone(),
+        };
+        (client, ctx)
+    }
+
+    // this is needed as an initialization step for our test, otherwise it
+    // will panic
+    fn initialize_ring() {
+        match rustls::crypto::ring::default_provider().install_default() {
+            Ok(_) => (),
+            Err(_e) => {
+                // already initialized
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn test_namespace_creation() {
+        initialize_ring();
+        // this assumes you have a `crd.yaml` in your `src` folder
+        let env = envtest_with_crds(vec![current_dir().unwrap().join("src/crd.yaml")]);
+        let apiserver = env.create().unwrap(); // this starts the api server!
+        let (client, ctx) = client_and_ctx(apiserver.kubeconfig().unwrap()).await;
+        // let's test our reconciler!
+        let test_team = Team {
+            metadata: ObjectMeta {
+                name: Some("my-test-team-crd".into()),
+                ..Default::default()
+            },
+            spec: TeamSpec {
+                name: "my-test-team".into(),
+            },
+        };
+        // this issues real http requests towards the envtest kubeapiserver.
+        // testing the reconciliation is extremely simple, since everthing is already mocked by envtest,
+        // so we can just send our reconciliation event toward the apiserver by supplying the context
+        // and make some assertions!
+        let reconciliation_result = reconcile(Arc::new(test_team), Arc::new(ctx)).await;
+        assert!(reconciliation_result.is_ok());
+        // we can also query the apiserver for information!
+        let ns_api: Api<Namespace> = Api::all(client.clone());
+        let should_exist = ns_api.get_opt("my-test-team".into()).await.unwrap();
+        assert!(should_exist.is_some());
+    }
+}
+```
 
 ### Benefits
-Using mocks are __comparable__ to using integration tests in **power and versatility**. It lets us move up the pyramid in terms of testing power, but without needing an actual network boundary and a real cluster. As a result, we **maintain test reliability**.
+
+Using mocks are **comparable** to using integration tests in **power and versatility**. It lets us move up the pyramid in terms of testing power, but without needing an actual network boundary and a real cluster. As a result, we **maintain test reliability**.
 
 ### Downsides
+
 Compared to using a real cluster, the amount of code we need to write - to compensate for a missing apiserver - is currently quite significant. This **verbosity** means a _higher initial cost_ of writing these tests, and also **more complexity** to keep in your head and maintain. We hope that some of this complexity can be reduced in the future with more [Kubernetes focused test helpers](https://github.com/kube-rs/kube/issues/1108).
+When using `envtest`, though, maintainability is much easier and it's almost as writing tests towards a real Kubernetes cluster, at the cost of test execution time.
 
 ### External Examples
 
@@ -167,6 +354,7 @@ Compared to using a real cluster, the amount of code we need to write - to compe
 Integration tests run against a **real Kubernetes cluster**, and lets you verify that the IO components of your controller is doing the right thing in a real environment. The big selling point is that they require little code to write and are easy to understand.
 
 ### Example
+
 Let us try to verify the same status patching scenario from above using an integration test.
 
 First, we need a working [Client]. Using `Client::try_default()` inside an async-aware `#[test]` we end up using using the `current-context` set in your local [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/).
@@ -201,9 +389,8 @@ this sets up a `Client`, a `Context` (to be passed to the reconciler), then appl
 Feeding the apply result (usually seen by watching the api) is what the [Controller] internals does, so we skip testing this part. As a result, we get a much simpler test call around only `reconcile` that we can verify by querying the api after it has completed.
 
 !!! note ""
-    
-    The tests at the bottom of [controller-rs/controller.rs](https://github.com/kube-rs/controller-rs/blob/f084c15985b5de1b2cfee627613cd2b69c9530cd/src/controller.rs#L281-L315) go a little deeper, testing a larger scenario.
 
+    The tests at the bottom of [controller-rs/controller.rs](https://github.com/kube-rs/controller-rs/blob/f084c15985b5de1b2cfee627613cd2b69c9530cd/src/controller.rs#L281-L315) go a little deeper, testing a larger scenario.
 
 We **need** a cluster for these tests though, so on CI we will spin up a [k3d] instance for each PR. Here is a GitHub Actions based setup:
 
@@ -265,6 +452,7 @@ You also have to wait for resources to be ready. Usually, this involves waiting 
 It is **possible to reduce the reliability problems** a bit by using **dedicated clusters**, but that brings us onto the second pain point;
 
 #### No Isolation
+
 Tests from one file can cause **interactions and race conditions** with other tests, and re-using a cluster across test runs makes this problem worse as tests now need to be idempotent.
 
 It is **possible** to achieve full test isolation for integration tests, but it often brings impractical costs (such as setting up a new cluster per test, or writing all tests to be idempotent and using disjoint resources).
@@ -305,7 +493,8 @@ In functional tests, we instead **run the controller directly**, and test agains
 2. `kubectl apply` a test document
 3. verify your conditions outside (e.g. `kubectl wait` or a separate test suite)
 
-[CoreDB's operator follows this approach](https://github.com/CoreDB-io/coredb/tree/main/coredb-operator/tests), and it is definitely an important thing to test. In this guide, you can see functional testing done as part of __End to End Tests__.
+[CoreDB's operator follows this approach](https://github.com/CoreDB-io/coredb/tree/main/coredb-operator/tests), and it is definitely an important thing to test. In this guide, you can see functional testing done as part of **End to End Tests**.
+
 ## End to End Tests
 
 End to End tests install your release unit (image + yaml) into a cluster, then runs verification against the cluster and the application.
@@ -313,6 +502,7 @@ End to End tests install your release unit (image + yaml) into a cluster, then r
 The most common use-case of this type of test is [smoke testing](https://en.wikipedia.org/wiki/Smoke_testing_(software)), but we **can** also test a multitude of integration scenarios using this approach.
 
 ### Example
+
 We will do e2e testing to get a **basic verification** of our:
 
 - **packaging system** (does the image work and install with the yaml pipeline?)
@@ -399,18 +589,16 @@ Each test category comes with its own unique set of benefits and challenges:
 | Test Type    | Isolation             | Maintenance Cost                | Main Test Case        |
 | ------------ | --------------------- | ------------------------------- | --------------------- |
 | End-to-End   | :material-close: No   | Reliability + Isolation + Debug | Real IO + Full Smoke  |
-| Integration  | :material-close: No   | Reliability + Isolation         | Real IO + Smoke       | 
+| Integration  | :material-close: No   | Reliability + Isolation         | Real IO + Smoke       |
 | Unit w/mocks | :material-check: Yes  | Complexity + Readability        | Substitute IO         |
 | Unit         | :material-check: Yes  | Unrealistic Scenarios           | Non-IO                |
 
 The high cost of end-to-end and integration tests is almost entirely due to reliability issues with clusters on CI that ends up being a constant cost. The lack of test isolation in these real environments also make them more attractive as a form of **sanity verification**/smoke.
 
-Focusing on the **lower end** of the test pyramid (by separating the IO code from your business logic, or by mocking liberally), and proving a few specialized tests at the top end, is likely to to have the biggest **benefit-to-pain ratio**. As an exercise in redundancy, [controller-rs does everything](https://github.com/kube-rs/controller-rs/blob/main/.github/workflows/ci.yml), and can be inspected as __a__ reference.
+Focusing on the **lower end** of the test pyramid (by separating the IO code from your business logic, or by mocking liberally), and proving a few specialized tests at the top end, is likely to to have the biggest **benefit-to-pain ratio**. As an exercise in redundancy, [controller-rs does everything](https://github.com/kube-rs/controller-rs/blob/main/.github/workflows/ci.yml), and can be inspected as **a** reference.
 
 --8<-- "includes/abbreviations.md"
 --8<-- "includes/links.md"
 
-[//begin]: # "Autogenerated link references for markdown compatibility"
 [reconciler]: reconciler "The Reconciler"
 [reconciler##using-context]: reconciler "The Reconciler"
-[//end]: # "Autogenerated link references"
