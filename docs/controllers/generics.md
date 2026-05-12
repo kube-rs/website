@@ -63,11 +63,11 @@ where
     let kind = K::kind(&()).to_string();
     tracing::info!("Starting controller for {kind}");
 
-    let api = Api::<K>::all(client.clone());
+    let api = Api::<PartialObjectMeta<K>>::all(client.clone());
     let (reader, writer) = reflector::store();
 
     // controller main stream from metadata_watcher
-    let stream = metadata_watcher(api, watcher::Config::default())
+    let stream = watcher(api, watcher::Config::default())
         .default_backoff()
         .modify(|x| {
             x.managed_fields_mut().clear(); // ResourceExt pruning
@@ -87,7 +87,8 @@ where
 
 This example assumes no [[relations]] between the main controller [[object]], so that each controller can be started in isolation without worrying about inefficiencies in [[streams]] usage.
 
-It uses [metadata_watcher] to provide a consistent input stream of `PartialObjectMeta<K>` with pruning ([[optimization#pruning-fields]]) and [Store] management through [WatchStreamExt].
+It uses pruning ([[optimization#pruning-fields]]) and [Store] management through [WatchStreamExt], and uses the `PartialObjectMeta<K>` wrapper around `K` ensures kube uses the cheaper [metadata Api] for querying.
+
 
 We can start and control the lifecycle of all the controllers with a [tokio::join!]:
 
