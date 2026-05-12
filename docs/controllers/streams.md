@@ -39,25 +39,25 @@ The above example will run continuously until the end of the program. Note that 
 
 ### Metadata Watcher
 
-A [metadata_watcher] is a [watcher] analogue that using the **metadata api** that **only** returns [TypeMeta] (`.api_version` + `.kind`) + [ObjectMeta] (`.metadata`).
+A metadata watcher is a [watcher] using the [metadata api] that **only** returns [TypeMeta] (`.api_version` + `.kind`) + [ObjectMeta] (`.metadata`). (Previously this was known as [metadata_watcher] but users no longer have to select this manually).
 
-This can generally be used as a **drop-in replacement** for [watcher] provided you do not need data in `.spec` or `.status`.
+This is used whenever you use [watcher] with an [Api] using tthe [PartialObjectMeta] around a resource `K` (e.g. `Api::<PartialObjectMeta<K>>`) as this makes it explicit that you do not need the data in `.spec` or `.status`.
 
 This means less IO, and less memory usage (especially if you are using it with a [reflector]). See the **[[optimization]] chapter** for details.
 
-You can generally **replace** `watcher` with `metadata_watcher` in the examples above as:
+You can generally **replace** your resource `K` with `PartialObjectMeta<K>` in the above examples for the `Api` before passing the `Api` to `watcher`:
 
 ```diff
 # General change:
--let stream =          watcher(api, cfg).applied_objects();
-+let stream = metadata_watcher(api, cfg).applied_objects();
+-let api = Api::<Pod>::default_namespaced(client);
++let api = Api::<PartialObjectMeta<Pod>>::default_namespaced(client);
 
-# Same change inside a reflector:
--let stream = reflector(writer,          watcher(api, cfg)).applied_objects();
-+let stream = reflector(writer, metadata_watcher(api, cfg)).applied_objects();
+# generic setup
+-let api = Api::<K>::all(ctx.client.clone());
++let api = Api::<PartialObjectMeta<K>>::all(ctx.client.clone());
 ```
 
-But note this changes the stream signature slightly; returning a wrapped [PartialObjectMeta].
+But note that this signature forces the use of the metadata api for all queries using this `api`.
 
 ## Watcher Streams
 ### Terminology
