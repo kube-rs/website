@@ -103,7 +103,7 @@ impl ApiServerVerifier {
             .expect("scenario completed without errors");
         })
     }
-    
+
     /// Respond to PATCH /status with passed doc + status from request body
     async fn handle_status_patch(mut self, doc: Document) -> Result<Self> {
         let (request, send) = self.0.next_request().await.expect("service not called");
@@ -309,9 +309,9 @@ mod tests {
     async fn test_namespace_creation() {
         initialize_ring();
         // this assumes you have a `crd.yaml` in your `src` folder
-        let env = envtest_with_crds(vec![current_dir().unwrap().join("src/crd.yaml")]);
-        let apiserver = env.create().unwrap(); // this starts the api server!
-        let (client, ctx) = client_and_ctx(apiserver.kubeconfig().unwrap()).await;
+        let env = Environment::default().with_crds(Test::crd());
+        let client = apiserver.client();
+        let ctx = KubeContext{client: client.clone()};
         // let's test our reconciler!
         let test_team = Team {
             metadata: ObjectMeta {
@@ -465,7 +465,7 @@ The setup above is not a [black-box integration test](https://en.wikipedia.org/w
 
 !!! note "Rust conventions on integration tests"
 
-    [Rust defines integration tests](https://doc.rust-lang.org/book/ch11-03-test-organization.html) as acting only on public interfaces and residing in a separate `tests` directory. 
+    [Rust defines integration tests](https://doc.rust-lang.org/book/ch11-03-test-organization.html) as acting only on public interfaces and residing in a separate `tests` directory.
 
 We effectively have a [white-box integration test](https://en.wikipedia.org/wiki/White-box_testing) instead.
 
