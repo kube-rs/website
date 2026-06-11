@@ -262,37 +262,7 @@ mod tests {
     use k8s_openapi::api::core::v1::Namespace;
     use kube::{Api, Client, api::ObjectMeta, config::Kubeconfig};
 
-    use crate::reconciler::{KubeContext, Team, TeamSpec, reconcile};
-
-    // this is a simple helper function that reads your crd yaml definition
-    // and installs it in the envtest-provided kubeapiserver
-    fn envtest_with_crds(crd_paths: Vec<PathBuf>) -> Environment {
-        let crds_json: Vec<serde_json::Value> = crd_paths
-            .into_iter()
-            .map(|path| {
-                use std::fs::read_to_string;
-
-                let crd_str = read_to_string(path).unwrap();
-                let value: serde_json::Value = serde_yaml::from_str(&crd_str).unwrap();
-                value
-            })
-            .collect();
-
-        let mut env = Environment::default();
-        env.with_crds(crds_json).unwrap();
-        env
-    }
-
-    // this function extracts the kubeconfig and creates a "fake" context
-    // that we can pass to our reconciler when testing it!
-    pub async fn client_and_ctx(kubeconfig: Kubeconfig) -> (kube::Client, KubeContext) {
-        use kube_runtime::events::{Recorder, Reporter};
-        let client = Client::try_from(kubeconfig).unwrap();
-        let ctx = KubeContext {
-            client: client.clone(),
-        };
-        (client, ctx)
-    }
+    use crate::reconciler::{KubeContext, Team, TeamSpec, reconcile}; 
 
     // this is needed as an initialization step for our test, otherwise it
     // will panic
