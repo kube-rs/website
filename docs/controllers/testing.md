@@ -276,11 +276,12 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_namespace_creation() {
+    async fn test_namespace_creation() -> Result<(), Box<dyn std::error::Error>> {
         initialize_ring();
         // this assumes you have a `crd.yaml` in your `src` folder
         let env = Environment::default().with_crds(Test::crd());
-        let client = apiserver.client();
+        let apiserver = env.create().await?;
+        let client = apiserver.client()?;
         let ctx = KubeContext{client: client.clone()};
         // let's test our reconciler!
         let test_team = Team {
@@ -300,8 +301,9 @@ mod tests {
         assert!(reconciliation_result.is_ok());
         // we can also query the apiserver for information!
         let ns_api: Api<Namespace> = Api::all(client.clone());
-        let should_exist = ns_api.get_opt("my-test-team".into()).await.unwrap();
+        let should_exist = ns_api.get_opt("my-test-team".into()).await?;
         assert!(should_exist.is_some());
+        Ok(())
     }
 }
 ```
