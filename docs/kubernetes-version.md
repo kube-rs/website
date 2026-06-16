@@ -13,6 +13,8 @@ The **minimum** indicates the lower bound of our testing range, and the **latest
 | kube version   | MK8SV   | Latest  | Generated Source  | Requirements    |
 | -------------- | ------- | ------- | ----------------- | -------- |
 | `main`     |  X      | 1.36    | k8s-openapi@main  | |
+| [4.0.0](https://github.com/kube-rs/kube/releases/tag/4.0.0)  |  `1.32` | [`1.36`](https://kubernetes.io/blog/2026/04/22/kubernetes-v1-36-release/) | [k8s-openapi@0.28.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.28.0) | |
+| [3.0.0](https://github.com/kube-rs/kube/releases/tag/3.0.0)  |  `1.31` | [`1.35`](https://kubernetes.io/blog/2025/12/17/kubernetes-v1-35-release/) | [k8s-openapi@0.27.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.27.0) | |
 | [2.0.0](https://github.com/kube-rs/kube/releases/tag/2.0.0)  |  `1.30`[*](https://github.com/kube-rs/kube/pull/1756) | [`1.34`](https://kubernetes.io/blog/2025/08/27/kubernetes-v1-34-release/) | [k8s-openapi@0.26.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0260-2025-09-06) | [schemars@1](https://github.com/GREsau/schemars/releases/tag/v1.0.0) |
 | [1.0.0](https://github.com/kube-rs/kube/releases/tag/1.0.0)  |  `1.30`[*](https://github.com/kube-rs/kube/pull/1756) | [`1.33`](https://kubernetes.io/blog/2025/04/23/kubernetes-v1-33-release/) | [k8s-openapi@0.25.0](https://github.com/Arnavion/k8s-openapi/blob/master/CHANGELOG.md#v0250-2025-05-11) | [schemars@0.8](https://github.com/GREsau/schemars/releases/tag/v0.8.22) |
 | [0.98.0](https://github.com/kube-rs/kube/releases/tag/0.98.0)  |  `1.28` | [`1.32`](https://kubernetes.io/blog/2024/12/11/kubernetes-v1-32-release/) | [k8s-openapi@0.24.0](https://github.com/Arnavion/k8s-openapi/releases/tag/v0.24.0) | |
