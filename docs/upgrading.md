@@ -1,29 +1,32 @@
 # Upgrading
 
-You can upgrade `kube` using normal Rust methods to upgrade, as long as you stick to semver compatible versions of `k8s-openapi` and `schemars` (if using custom resource derive).
+You can upgrade `kube` using normal Rust methods to upgrade, as long as you stick to semver compatible versions of `k8s-openapi` and other dependencies interacting with `kube`.
 
-!!! warning "Peer dependencies"
+The most common dependencies to upgrade alongside are;
 
-    `kube` depends on a handful of unstable crates at certain versions, but new versions of these crates have not always propagated into kube.
-    To avoid build issues, `k8s-openapi` and `schemars` must NOT exist at multiple semver incompatible versions in your dependency tree.
+- [schemars] (if using custom resource derive)
+- [envtest] (if using go style integration tests)
+- [kopium] (if generating crds in rust code from external crds)
 
-We recommend you bump `kube`, `k8s-openapi` and `schemars` crates at the same time to avoid build issues.
+We recommend you upgrade these together. Example setups below.
 
-Consider bumping the [[kubernetes-version]] feature pin on `k8s-openapi` unless you are using its `latest` feature.
+!!! note "Single Dependency Versions"
 
-## Command Line
+    These crates rely on on trait implementations and compile time features that often fail to compile when multiple versions are present. To avoid build issues, `k8s-openapi`, `kube`, and `schemars` should NOT exist at multiple semver incompatible versions in your dependency tree. Use `cargo tree -p kube -i` to locate duplicates. Sometimes your lockfile will hold outdated pins.
+
+It is possible to pin the [[kubernetes-version]] on `k8s-openapi` with a feature (although using the `latest` feature is recommended, since it allows automated upgrades).
+
+## Example Setups
+
+### Command Line
 
 Using `cargo upgrade` via [cargo-edit]:
 
 ```sh
-cargo upgrade -p kube -p k8s-openapi -p schemars -i
+cargo upgrade -p kube -p k8s-openapi -p schemars -p envtest -i
 ```
 
-!!! warning "Schemars 1"
-
-  The major version of schemars 1 is expected to be released in the next Kubernetes version (1.34) in kube 2.0. Until then, if you need schemars 1, [pinning to git](https://github.com/kube-rs/kube/issues/1774#issuecomment-3072681555) is an option. Schemars 1 will not work with kube 1.
-
-## Dependabot
+### Dependabot
 
 [Configure](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file) the `cargo` ecosystem on dependabot and [group](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups) codependent crates:
 
@@ -37,10 +40,12 @@ cargo upgrade -p kube -p k8s-openapi -p schemars -i
         patterns:
           - kube
           - k8s-openapi
+          - envtest
+          - kopium
           - schemars
 ```
 
-## Renovate
+### Renovate
 
 Add [package rules](https://docs.renovatebot.com/configuration-options/) for Kubernetes crates that [match on prefixes](https://docs.renovatebot.com/configuration-options/#matchpackageprefixes):
 
@@ -50,6 +55,8 @@ packageRules: [
             matchPackagePrefixes: [
                 "kube",
                 "k8s",
+                "kopium",
+                "envtest",
                 "schemars",
             ],
             groupName: "kubernetes crates",
