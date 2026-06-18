@@ -57,6 +57,7 @@
 [tokio::join!]: https://docs.rs/tokio/latest/tokio/macro.join.html
 [kube]: https://crates.io/crates/kube
 [kopium]: https://github.com/kube-rs/kopium
+[envtest]: https://github.com/kube-rs/envtest
 [controller-rs]: https://github.com/kube-rs/controller-rs
 [version-rs]: https://github.com/kube-rs/version-rs
 [ObjectMeta]: https://docs.rs/kube/latest/kube/core/struct.ObjectMeta.html
