@@ -7,6 +7,7 @@ The Kube-rs maintainers are:
 * Kaz Yoshihara <kazk.dev@gmail.com> [@kazk](https://github.com/kazk)
 * Matei David <dev.matei@pm.me> [@mateiidavid](https://github.com/mateiidavid)
 * Danil Grigorev <daniil.grigorev.dev@gmail.com> [@Danil-Grigorev](https://github.com/danil-grigorev)
+* Doyul Kim <doxxx93@gmail.com> [@doxxx93](https://github.com/doxxx93)
 
 ## Emeriti
 
